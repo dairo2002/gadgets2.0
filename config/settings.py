@@ -157,11 +157,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-# 60 * 15 = 900s equivale a 15 min
-PASSWORD_RESET_TIMEOUT = 60 * 15
+# ! VALIDAR SI SIRVE PARA LOS DEMAS
 
-# 900
-SESSION_EXPIRE_SECONDS = 120  # 15 min
+# 60 * 5 = 300s equivale a 5 min
+PASSWORD_RESET_TIMEOUT = 60 * 5
+
+SESSION_EXPIRE_SECONDS = 900  # 15 min
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # Toma la ultima actividad del usuario 
 # Despues de que el usuario cumpla el tiempo estimado, sera redirijido al inicio de sesión
 SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion"

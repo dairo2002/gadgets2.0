@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("registrarse/", views.registrarse, name="registrarse"),
-    path('activar_cuenta/<uidb64>/<token>', views.activar_cuenta, name='activar_cuenta'),      
+    path('activar_cuenta/<uidb64>/<token>/', views.activar_cuenta, name='activar_cuenta'),      
     path("inicio_sesion/", views.inicio_sesion, name="inicio_sesion"),
     path("cerrar_sesion/", views.cerrar_sesion, name="cerrar_sesion"),
     path("recuperar_password/", views.recuperar_password, name="recuperar_password"),

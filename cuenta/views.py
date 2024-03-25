@@ -29,6 +29,8 @@ from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import CuentaSerializer
 
+from django.http import HttpResponse
+
 import requests
 
 
@@ -57,7 +59,7 @@ def registrarse(request):
                 username=usuario,
                 password=password,
             )
-     
+
             # El campo de telefono es guardado de esta forma porque es un campo obligatorio
             crear_usuario.telefono = telefono
             crear_usuario.save()
@@ -72,6 +74,7 @@ def registrarse(request):
                     "dominio": current_site,
                     "uid": urlsafe_base64_encode(force_bytes(crear_usuario.id)),
                     "token": default_token_generator.make_token(crear_usuario),
+                    "expiracion": timezone.now() + timedelta(minutes=5),
                 },
             )
 
@@ -102,15 +105,15 @@ def activar_cuenta(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, Cuenta.DoesNotExist):
         usuario = None
 
-    if usuario is not None and default_token_generator.check_token(usuario, token):
-        # Cambios el usuario a activo y guardamos
-        usuario.is_active = True
-        usuario.is_staff = True
-        usuario.save()
-        messages.success(request, "Felicidades! Tu cuenta está activada")
-        return redirect("inicio_sesion")
+    if usuario is not None:
+        if default_token_generator.check_token(usuario, token):
+            usuario.is_active = True
+            usuario.is_staff = True
+            usuario.save()
+            messages.success(request, "Felicidades! Tu cuenta está activada")
+            return redirect("inicio_sesion")
     else:
-        messages.error(request, "Enlace de activación no válido")
+        messages.error(request, "El enlace para activar la cuenta ha caducado.")
         return redirect("registrarse")
 
 
@@ -220,7 +223,7 @@ def recuperar_password(request):
 
             messages.success(
                 request,
-                "Se ha enviado un correo electrónico de restablecimiento de contraseña a su dirección de correo electrónico",
+                "Te enviamos un correo electrónico de restablecimiento de contraseña",
             )
             return redirect("inicio_sesion")
         else:
@@ -241,7 +244,10 @@ def enlace_cambiar_pwd(request, uidb64, token):
         messages.success(request, "Por favor restablecer la contraseña")
         return redirect("restablecer_password")
     else:
-        messages.error(request, "El enlace es inválido")
+        messages.error(
+            request,
+            "El enlace para recuperar la contraseña ha caducado. Por favor, solicita un nuevo enlace.",
+        )
         return redirect("inicio_sesion")
 
 
@@ -309,6 +315,7 @@ def signupAPIView(request):
                 "dominio": current_site,
                 "uid": urlsafe_base64_encode(force_bytes(crear_usuario.id)),
                 "token": default_token_generator.make_token(crear_usuario),
+                "expiracion": timezone.now() + timedelta(minutes=5),
             },
         )
 
@@ -407,11 +414,6 @@ def recover_password(request):
 
             usuario = Cuenta.objects.get(correo_electronico__exact=correo_electronico)
 
-            # expiracion_fecha = timezone.now() + timedelta(minutes=2)
-            # token = default_token_generator.make_token(usuario)
-            # token_con_expiracion = f"{token}-{expiracion_fecha.timestamp()}"
-
-            
             current_site = get_current_site(request)
             mail_subject = "Recuperar contraseña"
             mensaje = render_to_string(
