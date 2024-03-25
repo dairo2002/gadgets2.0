@@ -27,26 +27,27 @@
                     <tbody>
                       {% for articulo in articulo_carrito %}
                         <tr>
-                          <form action="{% url 'update_carrito' articulo.id %}" method="POST">
+                          {% comment %} {% url 'update_carrito' articulo.id %} {% endcomment %}
+                          <form action="" method="POST">
                             {% csrf_token %}
                             <td class="align-middle text-center">
-                              <img src="{{ articulo.imagen.url }}" class="img-fluid" alt="imagen carrito" style="max-width: 100px; max-height: 100px;" />
+                              <img src="{{ articulo.producto.imagen.url }}" class="img-fluid" alt="imagen carrito" style="max-width: 100px; max-height: 100px;" />
                             </td>
-                            <td class="align-middle" style="min-width: 180px;">{{ articulo.nombre }}</td>
+                            <td class="align-middle" style="min-width: 180px;">{{ articulo.producto.nombre }}</td>
                             <td class="align-middle text-center" style="min-width: 100px;">
                               {% comment %} <input type="hidden" name="producto_id" value="{{ articulo.id }}" /> {% endcomment %}
                               <input type="number" min="0" name="txtCantidad" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light" />
                               <button type="submit" class="btn p-0"><i class="fa-regular fa-pen-to-square fa-xl" style="color: #333333;"></i></button>
                             </td>
                             <td class="align-middle text-center" style="min-width: 150px;">
-                              {% if articulo.categoria.descuento %}
-                                <p class="mb-0">$ {{ articulo.sub_total }}</p>
+                              {% if articulo.producto.categoria.descuento %}
+                                <p class="mb-0">$ {{ articulo.subtotal }}</p>
                                 <del class="text-muted">
-                                  <small class="text-muted">$ {{ articulo.descuentoFormatiado }}</small>
+                                  <small class="text-muted">$ {{ articulo.producto.descuentoFormatiado }}</small>
                                 </del>
                               {% else %}
-                                <p class="mb-0">$ {{ articulo.sub_total }}</p>
-                                <small class="mb-0 text-muted">$ {{ articulo.precioFormatiado }}</small>
+                                <p class="mb-0">$ {{ articulo.subtotal }}</p>                                
+                                <small class="mb-0 text-muted">$ {{ articulo.producto.precioFormatiado }}</small>
                               {% endif %}
                             </td>
                             <td class="align-middle text-center" width="90px">

@@ -157,7 +157,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# ! VALIDAR SI SIRVE PARA LOS DEMAS
 
 # 60 * 5 = 300s equivale a 5 min
 PASSWORD_RESET_TIMEOUT = 60 * 5

@@ -9,17 +9,11 @@ import locale, decimal
 from .carrito import Cart
 
 
-def mostrar_carrito(request):
-    total = 0    
-    # carrito = None       
-
+def mostrar_carrito(request):     
     cart = Cart(request)
-    carrito = cart.obtener_producto()  
-    print(carrito) 
+    items, totalFormato = cart.obtener_producto() 
     contador = cart.__len__()
-
-    totalFormato = "{:,.0f}".format(total).replace(",", ".")
-    return dict(articulo_carrito=carrito, total=totalFormato,  contador=contador)
+    return dict(articulo_carrito=items, total=totalFormato,  contador=contador)
 
 
 def contar_productos(request):

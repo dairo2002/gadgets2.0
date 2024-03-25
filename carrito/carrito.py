@@ -10,11 +10,11 @@ class Cart:
     
     def add(self, producto, cantidad):
         producto_id = str(producto.id)
-        producto_cantidad = str(cantidad)
+        producto_cantidad = int(cantidad)
         if producto_id in self.cart:
-            self.cart[producto_id] += int(producto_cantidad)
+            self.cart[producto_id] += producto_cantidad
         else:
-            self.cart[producto_id] = int(producto_cantidad)
+            self.cart[producto_id] = producto_cantidad
         self.session.modified = True
     
     
@@ -22,14 +22,36 @@ class Cart:
         return len(self.cart)
 
     def obtener_producto(self):
-        producto_ids = self.cart.keys()    
-        producto = Producto.objects.filter(id__in=producto_ids)   
-        prod_cantidad = []
-        for prod in producto:
-            cantidad = self.cart[str(prod.pk)]
-            prod.cantidad = cantidad
-            prod_cantidad.append(prod)
-        return prod_cantidad
+        items = []  
+        total  = 0 
+        for prod_id, cantidad in self.cart.items():
+            producto = Producto.objects.get(id=int(prod_id))           
+            subtotal = producto.precio * cantidad
+            total += subtotal
+
+            totalFormato = "{:,.0f}".format(total).replace(",", ".")
+            subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
+
+            items.append({
+                "producto":producto,
+                "cantidad":cantidad,
+                'subtotal':subTotalFormato
+                
+            })  
+        return items, totalFormato
+ 
+    
+
+    #    def obtener_producto(self):
+    #     producto_ids = self.cart.keys()    
+    #     producto = Producto.objects.filter(id__in=producto_ids)   
+    #     prod_cantidad = []
+    #     for prod in producto:
+    #         cantidad = self.cart[str(prod.pk)]
+    #         prod.cantidad = cantidad
+    #         prod_cantidad.append(prod)
+    #     return prod_cantidad
+
 
 
     def update(self, producto, cantidad):
