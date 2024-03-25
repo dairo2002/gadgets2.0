@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section>
+    <div class="container my-4">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="card">
+            <div class="card-body">
+              <a class="text-decoration-none text-dark fw-bold" type="button" data-bs-toggle="collapse" href="#collapseCategoria" aria-expanded="false" aria-controls="collapseCategoria">Categorías <i class="fa-solid fa-chevron-down"></i></a>
+              <hr />
+              <ul class="collapse list-unstyled" id="collapseCategoria">
+                <li>
+                  <a href="{% url 'tienda' %}" class="text-decoration-none text-dark">Todos los productos</a>
+                </li>
+                {% for enlaces in enlace_categoria %}
+                  <li>
+                    <a href="{{ enlaces.get_url_categoria }}" class="text-decoration-none text-dark">{{ enlaces.nombre }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+              <a class="text-decoration-none text-dark fw-bold" type="button" data-bs-toggle="collapse" href="#collapsePrecio" aria-expanded="false" aria-controls="collapsePrecio">Rango de precios <i class="fa-solid fa-chevron-down"></i></a>
+              <hr />
+              <div class="collapse" id="collapsePrecio">
+                <form action="{% url 'filtro_precios' %}" method="POST" class="form_filtro_precio px-5">
+                  {% csrf_token %}
+                  <label for="">Mínimo</label>
+                  <input type="text" class="form-control" name="min_precio" placeholder="Precio mínimo" min="0" value="{{ request.GET.min_precio }}" />
+                  <label for="">Máximo</label>
+                  <input type="text" class="form-control" name="max_precio" placeholder="Precio máximo" min="0" value="{{ request.GET.max_precio }}" />                  
+                  <button type="submit" class="btn btn-outline-dark mt-3 w-100">Aplicar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-9">
+          <p class="mt-3 mt-lg-0">
+            <strong>{{ contador_producto }}</strong> Productos
+          </p>
+          <hr class="" />
+          {% comment %} <div class="w-25 my-2 mx-5 position-absolute top-0 end-0 z-1">
+            {% include 'client/include/alertas.html' %}
+          </div> {% endcomment %}
+          <div class="card bg-body-tertiary pt-3 p-md-3">
+            <div class="row">
+              {% if producto %}
+                {% for productos in producto %}
+                  {% if productos.categoria.descuento %}
+                    <div class="col-10 col-md-6 col-xl-4 mb-4 mx-auto mx-md-0">
+                      <div class="card h-100 border-1">
+                        <div class="card-body tarjeta_productos">
+                          <a href="{{ productos.get_url_producto }}" class="">
+                            <span class="badge p-2 text-bg-success z-1 position-absolute rounded-5">{{ productos.porcentajeDescFormtiado }}%</span>
+                            <img src="{{ productos.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" />
+                          </a>
+                          <h6 class="fw-semibold">{{ productos.nombre }}</h6>
+                          <span>$ {{ productos.descuentoFormatiado }}</span>
+                          <del>
+                            <small class="text-muted mx-2">$ {{ productos.precioFormatiado }}</small>
+                          </del>
+                          <a href="{{ productos.get_url_producto }}" class="btn btn-outline-dark w-100 mt-2">Detalle producto</a>
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="col-10 col-md-6 col-xl-4 mb-4 mx-auto mx-md-0">
+                      <div class="card h-100 border-1">
+                        <div class="card-body tarjeta_productos">
+                          <a href="{{ productos.get_url_producto }}" class=""><img src="{{ productos.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" /></a>
+                          <h6 class="fw-semibold">{{ productos.nombre }}</h6>
+                          <span>$ {{ productos.precioFormatiado }}</span>
+                          <a href="{{ productos.get_url_producto }}" class="btn btn-outline-dark w-100 mt-2">Detalle producto</a>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+                <!-- Si exite el rango de filtro de precios -->
+              {% elif filtro_precio %}
+                {% for filtro in filtro_precio %}
+                  {% if filtro.categoria.descuento %}
+                    <div class="col-10 col-md-6 col-xl-4 mb-4 mx-auto mx-md-0">
+                      <div class="card h-100 border-1">
+                        <div class="card-body tarjeta_productos">
+                          <a href="{{ filtro.get_url_producto }}" class="">
+                            <span class="badge p-2 text-bg-success z-1 position-absolute rounded-5">{{ filtro.porcentajeDescFormtiado }}%</span>
+                            <img src="{{ filtro.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" />
+                          </a>
+                          <h6 class="fw-semibold">{{ filtro.nombre }}</h6>
+                          <span>$ {{ filtro.descuentoFormatiado }}</span>
+                          <del>
+                            <small class="text-muted mx-2">$ {{ filtro.precioFormatiado }}</small>
+                          </del>
+                          <a href="{{ filtro.get_url_producto }}" class="btn btn-outline-dark w-100 mt-2">Detalle producto</a>
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="col-10 col-md-6 col-xl-4 mb-4 mx-auto mx-md-0">
+                      <div class="card h-100 border-1">
+                        <div class="card-body tarjeta_productos">
+                          <a href="{{ filtro.get_url_producto }}" class=""><img src="{{ filtro.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" /></a>
+                          <h6 class="fw-semibold">{{ filtro.nombre }}</h6>
+                          <span>$ {{ filtro.precioFormatiado }}</span>
+                          <a href="{{ filtro.get_url_producto }}" class="btn btn-outline-dark w-100 mt-2">Detalle producto</a>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% comment %}Errores de busqueda y de filtro de precio{% endcomment %}
+                <h3>{{ error_precio }}</h3>
+                <h3>{{ error_busqueda }}</h3>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Paginacion -->
+          <nav aria-label="Page navigation example ">
+            {% if producto.has_other_pages %}
+              <ul class="pagination mt-3">
+                <!-- pagina anterior has_previous -->
+                {% if producto.has_previous %}
+                  <li class="page-item">
+                    <!--                                                                                               número de la página anterior 
+                        - pagina, en la vista es llamado por el get                                                                                              -->
+                    <a class="page-link" href="?pagina={{ producto.previous_page_number }}">Anterior</a>
+                  </li>
+                {% else %}
+                  <!-- Si no puede devolverse mas, se bloquea el boton -->
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#">Anterior</a>
+                  </li>
+                {% endif %}
+
+                {% for p in producto.paginator.page_range %}
+                  <!--                                                                                             Numeros de la paginacion 
+                Comprueba si el numero de la pagina es que corresponde                                                                                            -->
+                  {% if producto.number == p %}
+                    <li class="page-item">
+                      <a class="page-link" href="#">{{ p }}</a>
+                    </li>
+                  {% else %}
+                    <!-- El número de página actual no es igual a p, significa que esta no es la página actual. -->
+                    <li class="page-item">
+                      <a class="page-link" href="?pagina={{ p }}">{{ p }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+
+                {% if producto.has_next %}
+                  <!-- pagina despue has_previous -->
+                  <li class="page-item">
+                    <a class="page-link" href="?pagina={{ producto.next_page_number }}">Después</a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#">Después</a>
+                  </li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </nav>
+          <!-- End paginacion -->
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

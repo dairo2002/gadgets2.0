@@ -1,0 +1,102 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .contaniner {
+            width: 80%;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contendor-table {
+            margin: 20px;
+
+        }
+
+        .contenido-texto {
+            margin: 20px;
+
+        }
+
+        mark {
+            color: #15359B;
+            background-color: #ffff;
+        }
+
+
+        /* Estilos para el cardview */
+        .cardview {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Estilos para las tablas */
+        .table1 {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #bbbbbb;
+
+        }
+
+        .table2 {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #bbbbbb;
+            margin-bottom: 20px;
+
+        }
+
+        .thAncho {
+            width: 389px;
+        }
+
+        th,
+        td {
+            border: 1px solid #856a6a;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .h2Centrado {
+            text-align: center;
+        }
+
+        .header {
+            padding: 10px 20px;
+            background-color: #15359B;
+            border-radius: 10px 10px 0 0 color;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contaniner">
+        <div class="header">
+            <h2 class="h2Centrado">Solicitud de restablecimiento de contraseña</h2>
+        </div>
+        <div class="contenido-texto">
+            <p>Hola {{usuario.usuario_nombre_completo}},</p>
+            <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en Gadgets Future. Para continuar con el proceso, haz clic en el siguiente enlace:</p>
+            <a href="http://{{dominio}}{% url 'enlace_cambiar_pwd' uidb64=uid token=token%}">Haz clic aquí para restablecer tu contraseña</a>
+            <p>Si no solicitaste este cambio, por favor ignora este mensaje. Tu contraseña actual seguirá siendo válida.</p>
+            <p class="mt-4">Esperamos verte pronto.</p>
+        </div>
+    </div>
+</body>
+</html>
+{% endautoescape %}

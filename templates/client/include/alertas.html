@@ -1,0 +1,27 @@
+{% if messages %}
+    {% for message in messages %}
+    <div id="messages" class="container">        
+        <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">            
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}{% endif %}                
+            <div class="d-flex justify-content-between align-content-center">
+                {{ message }}        
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>             
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- 
+    --MENSAJES--
+    alert-{{ message.tags }} nos carga el color segun:
+    success = correcto
+    info = informacion
+    error = error
+
+    ejemplo:
+    messages.success(request, 'Registro exitoso!')    
+    
+    este codigo se puede incontrar en las views.py
+-->
+

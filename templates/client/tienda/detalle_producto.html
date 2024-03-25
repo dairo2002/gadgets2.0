@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <div class="my-4">
+    <section class="container">
+      <div class="w-25 ms-auto">
+        {% include 'client/include/alertas.html' %}
+      </div>
+      <div class="card my-5 mx-auto shadow-lg col-md-10">
+        <div class="row g-0 p-4">
+          {% if producto_unico.categoria.descuento %}
+            <div class="col-12 col-md-6">
+                <span class="badge p-2 text-bg-success z-1 position-absolute rounded-5">{{ producto_unico.porcentajeDescFormtiado }}%</span>
+                <div class="d-flex justify-content-center">
+                    <img src="{{ producto_unico.imagen.url }}" alt="detalle producto" class="img-fluid rounded w-75 h-50" />
+                </div>
+            </div>
+            <div class="col-12 col-md-6 row">
+              <div class="card-body d-flex flex-column align-content-start flex-wrap my-auto">
+                <div class="mb-5">
+                  <h5 class="card-title mb-0">{{ producto_unico.nombre }}</h5>
+                  <span>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 0.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 1 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 1.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 2 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 2.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 3 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 3.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 4 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 4.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 5 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    {% comment %} <i class="fa fa-star {% if producto_unico.promedioCalificacion == 0.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 1 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 1.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 2 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 2.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 3 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 3.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 4 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i>
+                    <i class="fa fa-star {% if producto_unico.promedioCalificacion == 4.5 %}
+
+                      {% elif producto_unico.promedioCalificacion < 5 %}
+
+                      {% endif %}"
+                      style="color: #FFD43B; font-size: 1.4rem;"
+                      aria-hidden="true">
+
+                    </i> {% endcomment %}
+                    {{ producto_unico.promedioCalificacion }}
+                  </span>
+                  <p class="mb-4">
+                    <small>Reseñas {{ producto_unico.contarCalificaciones }}</small>
+                  </p>
+                </div>
+                <div class="mt-4">
+                  <p class="mb-0">$ {{ producto_unico.descuentoFormatiado }}</p>
+                  <del>
+                    <small class="text-muted mb-1">$ {{ producto_unico.precioFormatiado }}</small>
+                  </del>
+                  <br />
+                  {% if producto_unico.stock <= 0 %}
+                    <h4><span class="badge text-bg-danger mt-3 mx-auto">Agotado</span></h4>
+                  {% else %}
+                    <a href="{% url 'add_carrito' producto_unico.id %}" class="btn btn-outline-dark mt-2">Agregar al carrito</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div>
+              <h5 class="mt-3">Descripción</h5>
+              <p>{{ producto_unico.descripcion }}</p>
+            </div>
+          {% else %}
+            <div class="col-12 col-md-6">
+              <div class="d-flex justify-content-center">
+                <img src="{{ producto_unico.imagen.url }}" alt="detalle producto" class="img-fluid rounded w-75 h-50" />
+              </div>
+            </div>
+            <div class="col-12 col-md-6 row">
+              <div class="card-body d-flex flex-column align-content-start flex-wrap my-auto">
+                <div class="mb-5">
+                  <h5 class="card-title mb-0">{{ producto_unico.nombre }}</h5>
+                  <div>
+                    <span>
+                      <i class="fa fa-star {% if producto_unico.promedioCalificacion == 0.5 %}
+
+                        {% elif producto_unico.promedioCalificacion < 1 %}
+
+                        {% endif %}"
+                        style="color: #FFD43B; font-size: 1.4rem;"
+                        aria-hidden="true">
+
+                      </i>
+                      <i class="fa fa-star {% if producto_unico.promedioCalificacion == 1.5 %}
+
+                        {% elif producto_unico.promedioCalificacion < 2 %}
+
+                        {% endif %}"
+                        style="color: #FFD43B; font-size: 1.4rem;"
+                        aria-hidden="true">
+
+                      </i>
+                      <i class="fa fa-star {% if producto_unico.promedioCalificacion == 2.5 %}
+
+                        {% elif producto_unico.promedioCalificacion < 3 %}
+
+                        {% endif %}"
+                        style="color: #FFD43B; font-size: 1.4rem;"
+                        aria-hidden="true">
+
+                      </i>
+                      <i class="fa fa-star {% if producto_unico.promedioCalificacion == 3.5 %}
+
+                        {% elif producto_unico.promedioCalificacion < 4 %}
+
+                        {% endif %}"
+                        style="color: #FFD43B; font-size: 1.4rem;"
+                        aria-hidden="true">
+
+                      </i>
+                      <i class="fa fa-star {% if producto_unico.promedioCalificacion == 4.5 %}
+
+                        {% elif producto_unico.promedioCalificacion < 5 %}
+
+                        {% endif %}"
+                        style="color: #FFD43B; font-size: 1.4rem;"
+                        aria-hidden="true">
+
+                      </i>
+                      {{ producto_unico.promedioCalificacion }}
+                    </span>
+                  </div>
+                  <p class="mb-4">
+                    <small>Reseñas {{ producto_unico.contarCalificaciones }}</small>
+                  </p>
+                </div>
+                <div class="mt-4">
+                  <p class="text-muted mb-1">$ {{ producto_unico.precioFormatiado }}</p>
+                  {% if producto_unico.stock <= 0 %}
+                    <h4><span class="badge text-bg-danger mt-3 mx-auto">Agotado</span></h4>
+                  {% else %}
+                    <a href="{% url 'add_carrito' producto_unico.id %}" class="btn btn-outline-dark mt-2">Agregar al carrito</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div>
+              <h5 class="mt-3">Descripción</h5>
+              <p>{{ producto_unico.descripcion }}</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-10 mx-auto">
+        <form action="{% url 'valoraciones' producto_unico.id %}" method="POST" class="form_valoracion">
+          {% csrf_token %}
+          <h5>Escribe tu reseña</h5>
+          <div>
+            <p class="mb-0 mt-4">¿Cómo califica este producto?</p>
+            <div class="estrellas_calificaion">
+              <input type="radio" name="calificacion" id="calificacion10" value="5" required /><label for="calificacion10" title="5"></label>
+              <input type="radio" name="calificacion" id="calificacion9" value="4.5" required /><label for="calificacion9" title="4.5" class="mitad"></label>
+              <input type="radio" name="calificacion" id="calificacion8" value="4" required /><label for="calificacion8" title="4"></label>
+              <input type="radio" name="calificacion" id="calificacion7" value="3.5" required /><label for="calificacion7" title="3.5" class="mitad"></label>
+              <input type="radio" name="calificacion" id="calificacion6" value="3" required /><label for="calificacion6" title="3"></label>
+              <input type="radio" name="calificacion" id="calificacion5" value="2.5" required /><label for="calificacion5" title="2.5" class="mitad"></label>
+              <input type="radio" name="calificacion" id="calificacion4" value="2" required /><label for="calificacion4" title="2"></label>
+              <input type="radio" name="calificacion" id="calificacion3" value="1.5" required /><label for="calificacion3" title="1.5" class="mitad"></label>
+              <input type="radio" name="calificacion" id="calificacion2" value="1" required /><label for="calificacion2" title="1"></label>
+              <input type="radio" name="calificacion" id="calificacion1" value="0.5" required /><label for="calificacion1" title="0.5" class="mitad"></label>
+            </div>
+            <p class="mb-0 mt-2">Comentario:</p>
+            <textarea name="comentario" rows="3" class="form-control mt-1" placeholder="Describe cómo te ha parecido el producto..."></textarea>
+            {% if user.is_authenticated %}
+              {% if pedido %}
+                <div class="text-center">
+                  <button type="submit" class="btn btn-outline-secondary mt-3 w-25">Publicar</button>
+                </div>
+              {% else %}
+                <p class="my-3">Debes comprar este producto para publicar una reseña</p>
+              {% endif %}
+            {% else %}
+              <p class="my-3">
+                Para publicar una reseña debe, <a class="" href="{% url 'inicio_sesion' %}">Iniciar sesión</a>
+              </p>
+            {% endif %}
+          </div>
+        </form>
+
+        <h5 class="my-3">Reseñas</h5>
+
+        {% for reviews in review %}
+          <div class="card p-3 bg-light mb-2">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h6 class="mb-1 fw-bold">{{ reviews.usuario.usuario_nombre_completo }}</h6>
+
+                <span>
+                  <i class="fa fa-star {% if reviews.calificacion == 0.5 %}
+
+                    {% elif reviews.calificacion < 1 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 1.5 %}
+
+                    {% elif reviews.calificacion < 2 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 2.5 %}
+
+                    {% elif reviews.calificacion < 3 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 3.5 %}
+
+                    {% elif reviews.calificacion < 4 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 4.5 %}
+
+                    {% elif reviews.calificacion < 5 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                </span>
+                {% comment %} <span>
+                  <i class="fa fa-star {% if reviews.calificacion == 0.5 %}
+
+                    {% elif reviews.calificacion < 1 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 1.5 %}
+
+                    {% elif reviews.calificacion < 2 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 2.5 %}
+
+                    {% elif reviews.calificacion < 3 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 3.5 %}
+
+                    {% elif reviews.calificacion < 4 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                  <i class="fa fa-star {% if reviews.calificacion == 4.5 %}
+
+                    {% elif reviews.calificacion < 5 %}
+
+                    {% endif %}"
+                    style="color: #FFD43B; font-size: 1.4rem;"
+                    aria-hidden="true">
+
+                  </i>
+                </span> {% endcomment %}
+                <small class="mx-1">{{ reviews.calificacion }}</small>
+              </div>
+
+              <div>
+                <small class="date text-muted float-md-right">{{ reviews.actualizado }}</small>
+              </div>
+            </div>
+            <div class="mt-3">
+              <p>{{ reviews.comentario }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+  <link rel="stylesheet" href="{% static 'css/detalle_producto.css' %}" />
+{% endblock %}

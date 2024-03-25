@@ -1,0 +1,96 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg bg-nav sticky-top">
+  <div class="container my-1">
+    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" width="180px" /></a>
+    <button class="navbar-toggler btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="d-flex flex-column d-lg-none">
+        <hr />
+        <div class="container my-2">
+          <ul class="d-flex justify-content-around flex-column my-auto list-unstyled">
+            <li>
+              <a class="dropdown-item text-decoration-none" href="{% url 'tienda' %}">Todos los productos</a>
+            </li>
+            {% for enlaces in enlace_categoria %}
+              <li>
+                <a class="dropdown-item text-decoration-none" href="{{ enlaces.get_url_categoria }}">{{ enlaces.nombre }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <form action="{% url 'buscar_producto' %}" method="GET" class="mx-auto mb-2 mb-lg-0" role="search">
+        <div class="input-group campoBuscar mx-2">
+          <input name="txtBusqueda" type="search" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" placeholder="¿Qué estás buscando?" required />
+          <button class="btn btn_buscador" type="submit" id="inputGroupFileAddon04"><i class="fa-solid fa-magnifying-glass fa-xl icon-buscar"></i></button>
+        </div>
+      </form>
+      <div class="d-flex">
+        <div class="me-4">
+          {% if user.is_authenticated %}
+            <small class="text-muted">Bienvenido <strong>{{ user.nombre }}</strong></small>
+            <div>
+              <ul class="list-unstyled">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-user fa-lg icon-user"></i></a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="{% url 'cerrar_sesion' %}" class="dropdown-item text-decoration-none text-dark">
+                        Salir
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="" class="dropdown-item text-decoration-none text-dark">Desactivar cuenta</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <small class="text-dark">Bienvenido</small>
+            <div>
+              <ul class="list-unstyled">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-user fa-lg icon-user"></i></a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="{% url 'inicio_sesion' %}" class="dropdown-item text-decoration-none text-dark">Iniciar Sesión</a>
+                    </li>
+                    <li>
+                      <a href="{% url 'registrarse' %}" class="dropdown-item text-decoration-none text-dark">Registrarse</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+
+        <a href="{% url 'mostrar_carrito' %}" class="btn btn_carrito d-flex flex-column align-items-center p-0 btn_carrito">
+            {% if user.is_authenticated %}
+            <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">{{ contador }}</span>
+            {% else %}
+            <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">0</span>
+            {% endif %}
+          <i class="fa-solid fa-cart-arrow-down fa-xl icon-carrito"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg_menu text-light d-none d-lg-flex">
+  <div class="container my-2">
+    <ul class="d-flex justify-content-around my-auto list-unstyled">
+      <li>
+        <a class="dropdown-item text-decoration-none" href="{% url 'tienda' %}">Todos los productos</a>
+      </li>
+      {% for enlaces in enlace_categoria %}
+        <li>
+          <a class="dropdown-item text-decoration-none" href="{{ enlaces.get_url_categoria }}">{{ enlaces.nombre }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

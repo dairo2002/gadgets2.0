@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div>
+    <div class="card border-dark border-opacity-50 col-12 col-sm-10 col-md-8 col-lg-5 rounded-4 text-dark mx-auto my-3">
+      <h2 class="text-center mt-4">Iniciar Sesión</h2>
+      <form action="{% url 'inicio_sesion' %}" method="POST" class="row g-3 m-2 p-2 d-flex justify-content-center form_inicio_sesion">
+        {% csrf_token %}
+        <div class="col-11">
+          <label class="form-label mx-1 mb-1">Correo electrónico</label>
+          <input name="correo_electronico" type="text" class="form-control" placeholder="Dirección de su correo electrónico" required />
+        </div>
+        <div class="col-11">
+          <label class="form-label mx-1 mb-1">Contraseña</label>
+          <input name="password" type="password" class="form-control" placeholder="Ingrese su contraseña" required />
+        </div>
+        <div class="col-11 mt-1 mb-3 text-end">
+          <a class="link-secondary link-opacity-50-hover text-decoration-none" href="{% url 'recuperar_password' %}">¿Haz olvidado tu contraseña?</a>
+        </div>
+
+        <div>
+          {% include 'client/include/alertas.html' %}
+        </div>
+        <div class="my-4 d-flex justify-content-center">
+          <button class="btn btn-secondary col-6 rounded-pill fw-semibold fs-5" type="submit">Iniciar sesión</button>
+        </div>
+        <div class="text-center">
+          <p>
+            ¿No tienes una cuenta?
+            <a href="{% url 'registrarse' %}" class="link-secondary text-decoration-none link-opacity-100-hover fw-semibold">Registrarse</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

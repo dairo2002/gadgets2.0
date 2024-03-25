@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <section>
+    <div class="container my-4">
+      <form action="{% url 'realizar_pedido' %}" method="POST" class="form_pedido">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-lg-7 mb-3 mb-lg-0">
+            <div class="card p-3">
+              <h4 class="mb-3 mt-2">Contacto:</h4>
+              <div class="row g-3 justify-content-between">
+                <div class="col-12">{{ form.correo_electronico }}</div>
+                <h4 class="mb-2 mt-5">Detalles De Facturación:</h4>
+                <div class="col-sm-6">{{ form.nombre }}</div>
+                <div class="col-sm-6">{{ form.apellido }}</div>
+                <div class="col-6">{{ form.telefono }}</div>
+                <div class="col-6">{{ form.direccion }}</div>
+                <div class="col-12">
+                  <a id="linkDireccionLocal" onclick="mostrarDireccionLocal()" style="cursor: pointer;" class="text-secondary">Agregar apartamento,local,etc.</a>
+                  {{ form.direccion_local }}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Departamento</label>
+                  {{ form.departamento }}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Ciudad</label>
+                  {{ form.ciudad }}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Código postal</label>
+                  {{ form.codigo_postal }}
+                </div>
+                <div class="mt-2">
+                  {% if form.errors %}
+                    <ul class="d-flex flex-column list-unstyled">
+                      {% for field_errors in form.errors.values %}
+                        {% for error in field_errors %}
+                          <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error }}</small>
+                        {% endfor %}
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card p-2">
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="fs-4">Mi carro</span>
+                <small class="text-muted mb-0">{{ contador }} Artículos</small>
+              </div>
+              <div class="row p-2 col-12 mx-auto">
+                {% for articulo in articulo_carrito %}
+                  <div class="col-4 mx-auto">
+                    <img src="{{ articulo.imagen.url }}" style="max-width: 120px; max-height: 120px;" alt="producto pedido" />
+                  </div>
+                  <div class="col-8">
+                    <h6 class="">{{ articulo.nombre }}</h6>
+                    <div class="d-flex justify-content-between mt-4">
+                      <p class="mb-0">Cantidad</p>
+                      <p class="mb-0">{{ articulo.cantidad }}</p>
+                    </div>
+                    {% if articulo.categoria.descuento %}
+                      <div class="d-flex justify-content-between">
+                        <small class="mb-0 text-muted">Precio</small>
+                        <small class="mb-0 text-muted"><del>$ {{ articulo.precioFormatiado }}</del></small>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <p class="mb-0">Precio con descuento</p>
+                        <p class="mb-0">$ {{ articulo.descuentoFormatiado }}</p>
+                      </div>
+                    {% else %}
+                      <div class="d-flex justify-content-between">
+                        <small class="mb-0 text-muted">Precio</small>
+                        <small class="mb-0 text-muted"><del>$ {{ articulo.precioFormatiado }}</del></small>
+                      </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between">
+                      <p class="mb-0">Sub total</p>
+                      <p class="mb-0">$ {{ articulo.sub_total }}</p>
+                    </div>
+                    <hr>
+                  </div>
+                {% endfor %}
+                <div class="d-flex justify-content-between">
+                  <p class="mb-0 fs-4">Total</p>
+                  <p class="mb-0 fs-4">{{ total }}</p>
+                </div>
+              </div>
+              <div class="row my-2 p-3">
+                <button type="submit" class="btn btn-outline-dark">Realizar pago</button>
+                <a href="{% url 'tienda' %}" class="btn btn-outline-dark mt-2">Continuar comprando</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <script src="{% static 'js/realizar_pedido.js' %}"></script>
+{% endblock %}

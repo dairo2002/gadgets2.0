@@ -1,0 +1,55 @@
+from tienda.models import Producto
+
+class Cart:
+    def __init__(self, request):
+        self.session = request.session        
+        cart = self.session.get("session_key")        
+        if "session_key" not in request.session:
+            cart = self.session["session_key"] = {}    
+        self.cart = cart
+    
+    def add(self, producto, cantidad):
+        producto_id = str(producto.id)
+        producto_cantidad = str(cantidad)
+        if producto_id in self.cart:
+            self.cart[producto_id] += int(producto_cantidad)
+        else:
+            self.cart[producto_id] = int(producto_cantidad)
+        self.session.modified = True
+    
+    
+    def __len__(self):
+        return len(self.cart)
+
+    def obtener_producto(self):
+        producto_ids = self.cart.keys()    
+        producto = Producto.objects.filter(id__in=producto_ids)   
+        prod_cantidad = []
+        for prod in producto:
+            cantidad = self.cart[str(prod.pk)]
+            prod.cantidad = cantidad
+            prod_cantidad.append(prod)
+        return prod_cantidad
+
+
+    def update(self, producto, cantidad):
+        producto_id = str(producto)
+        cantidad = int(cantidad)
+        if producto_id in self.cart:
+            self.cart[producto_id] = cantidad
+        else:
+            pass
+            # self.add(producto, cantidad)
+        self.session.modified = True
+            
+
+    def obtener_cantidad(self):
+        cantidad_pro = self.cart
+        return cantidad_pro
+
+
+    def delete(self, producto):
+        producto_id = str(producto)        
+        if producto_id in self.cart:
+            del self.cart[producto_id]
+        self.session.modified = True

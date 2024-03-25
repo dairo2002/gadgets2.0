@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <section>
+    <div class="container my-4">
+      <div class="row">
+        <div class="col-12 mb-2 col-lg-6 mb-lg-0">
+          <div class="card">
+            <h3 class="card-header">Información del pedido</h3>
+            <div class="card-body mt-2 px-3">
+              <p class="card-text mb-0">
+                <strong>Correo electrónico:</strong> {{ pedido.correo_electronico }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Nombre y apellido:</strong> {{ pedido.nombre_completo_pedido }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Número pedido:</strong> {{ pedido.numero_pedido }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Dirección :</strong> {{ pedido.direccion_completa }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Teléfono:</strong> {{ pedido.telefono }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Departamento:</strong> {{ pedido.departamento }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Ciudad:</strong> {{ pedido.ciudad }}
+              </p>
+              <p class="card-text mb-0">
+                <strong>Código postal:</strong> <span class="mb-0" style="text-transform: uppercase;">{{ pedido.codigo_postal }}</span>
+              </p>
+
+              <hr />
+              <div class="mt-4">
+                <table class="table">
+                  <thead class="table-active">
+                    <tr>
+                      <th class="text-center" scope="col">Producto</th>
+                      <th class="text-center" scope="col">Cantidad</th>
+                      <th class="text-center" scope="col">Precio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for articulo in articulo_carrito %}
+                      <tr>
+                        <td class="align-middle text-center">
+                          <img src="{{ articulo.imagen.url }}" width="100px" height="90px" alt="imagen pedido" />
+                        </td>
+                        <td class="align-middle text-center">
+                          <p>{{ articulo.cantidad }}</p>
+                        </td>
+                        <td class="align-middle text-center">
+                          <p class="mb-0">$ {{ articulo.sub_total }}</p>
+                          <small class="mb-0 text-muted">$ {{ articulo.descuentoFormatiado }}</small>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-25 my-2 mx-5 position-absolute top-0 end-0 z-1">
+          {% include 'client/include/alertas.html' %}
+        </div>
+
+        <div class="col-12 mb-2 col-lg-6 mb-lg-0">
+          <div class="card">
+            <h3 class="card-header">Método de Pago</h3>
+            <div class="card-body px-4">
+              <span class="d-flex justify-content-between fs-5 mb-4">Total: <strong>$ {{ total }}</strong></span>
+              <form action="{% url 'pago' pedido.id %}" method="POST" enctype="multipart/form-data" class="form_pago">
+                {% csrf_token %}
+                <span>Número de cuenta: <b>312-222-0001</b></span>
+                <div class="mt-2">
+                  {{ form.metodo_pago }}
+                  <br />
+                  <p class="mb-1">Subir comprobante:</p>
+                  {{ form.comprobante }}
+                  <div class="mt-2">
+                    {% if form.errors %}
+                      <ul class="d-flex flex-column list-unstyled">
+                        {% for field_errors in form.errors.values %}
+                          {% for error in field_errors %}
+                            <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error }}</small>
+                          {% endfor %}
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-outline-secondary mt-4 w-100">Pagar</button>
+              </form>
+
+              <small class="my-2">Revise su pedido y realice el pago</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="{% static 'js/realizar_pedido.js' %}"></script>
+{% endblock %}

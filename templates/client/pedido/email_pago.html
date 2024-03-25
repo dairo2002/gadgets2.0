@@ -1,0 +1,150 @@
+{% load static %}
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .contaniner {
+            width: 90%;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contendor-table {
+            margin: 20px;
+
+        }
+
+        .contenido-texto {
+            margin: 20px;
+
+        }
+
+        mark {
+            color: #15359B;
+            background-color: #ffff;
+        }
+
+        .cardview {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .cardview p {
+            margin: 5px;
+        }
+
+        .table1 {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #bbbbbb;
+
+        }
+
+        .table2 {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #bbbbbb;
+            margin-bottom: 20px;
+
+        }
+
+        .thAncho {
+            width: 389px;
+        }
+
+        th,
+        td {
+            border: 1px solid #856a6a;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .h2Centrado {
+            text-align: center;
+
+        }
+
+        .header {
+            padding: 10px 20px;
+            background-color: #15359B;
+            border-radius: 10px 10px 0 0 color;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .ImagenLogo {
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contaniner">
+        <div class="header">
+            <h2 class="h2Centrado">Gracias por tu compra</h2>
+        </div>
+        <div class="contenido-texto">
+            <p>Hola {{pedido.nombre_completo_pedido}}</p>
+            <p>Nos complace informarte que tu pedido ha sido aprobado y está en proceso de envio. A continuación, encontrarás un resumen de tu pedido</p>
+            <h2> <mark>[Pedido #{{pedido.numero_pedido}}] (Marzo 18, 2024)</mark> </h2>
+        </div>
+        <div class="contendor-table">
+            <table class="table1">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+                <tr>
+                    <td>VSG Quasar Negro - Brown</td>
+                    <td>1</td>
+                    <td>$ 249.900</td>
+                </tr>
+            </table>
+            <table class="table2">
+                <tr>
+                    <th class="thAncho">Subtotal:</th>
+                    <td>$ 249.900</td>
+                </tr>
+                <tr>
+                    <th class="thAncho">Envío:</th>
+                    <td>Envío gratuito</td>
+                </tr>
+                <tr>
+                    <th class="thAncho">Método de pago:</th>
+                    <td>Efectivo</td>
+                </tr>
+                <tr>
+                    <th class="thAncho">Total:</th>
+                    <td>$ {{pedido.total_pedido}}</td>
+                </tr>
+            </table>
+            <div class="cardview">
+                <h3>{{pedido.nombre_completo_pedido}}</h3>
+                <p>{{pedido.direccion_completa}}</p>
+                <p>{{pedido.region}}</p>                
+            </div>
+            <img class="ImagenLogo" src="{% static 'img/Logo.svg' %}" alt="logo">
+            <img class="ImagenLogo" src="{% static 'img/logo.png' %}" alt="logo">
+        </div>
+    </div>
+</body>
+</html>
+{% endautoescape %}

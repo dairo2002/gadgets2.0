@@ -1,0 +1,139 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+{% block content %}
+  <div class="container">
+    <div class="container my-5">
+      <div class="d-flex justify-content-between my-4">
+        <div>
+          <h3>Categorias</h3>
+        </div>
+    
+        <div class="col-md-4 d-flex align-items-center">
+          <label for="" class="form-label mb-0 mx-3">Buscar</label>
+          <input type="text" class="form-control" id="validationServer01" placeholder="Escribe para filtrar..." />
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar">Agregar categoria</button>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center text-center">
+        <div class="col-12">
+          <table class="table table-hover table-bordered border-black border-opacity-25">
+            <thead class="table-active">
+              <tr>
+                <th scope="col" >Nombre</th>
+                <th scope="col" >Descuento</th>
+                <th scope="col" >Fecha inicio</th>
+                <th scope="col" >Fecha finalización</th>
+                <th scope="col" >Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-middle">Accesorios</td>
+                <td class="align-middle">20</td>
+                <td class="align-middle">22</td>
+                <td class="align-middle">22</td>
+                <td class="align-middle">
+                  <button type="button" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#modalModificar">Modificar</button>
+                  <button type="button" class="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar</button>
+                </td>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregar" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen w-75 h-auto mx-auto mt-5">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalAgregar">Crear una categoría</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="row g-3" action="" method="">
+              <div class="col-md-12">
+                <label class="form-label">Nombre</label>
+                <input name="txtNombre" type="text" class="form-control" placeholder="Nombre de la categoría" required />
+              </div>
+              <hr class="my-3">
+              <small class="mt-1">Desea agregar un descuento a la categoría</small>              
+              <div class="col-md-4">
+                <label class="form-label">Descuento</label>
+                <input name="txtDescuento" type="text" class="form-control" placeholder="Porcentaje descuento" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Fecha de inicio</label>
+                <input name="txtFechaFin" type="datetime-local" class="form-control" placeholder="" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Fecha de finalización</label>
+                <input name="txtFechaFin" type="datetime-local" class="form-control" placeholder="Nombre de la categoría" required />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Agregar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalModificar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen w-50 h-auto mx-auto mt-5">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar categoría</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="row g-3" action="" method="">
+                <div class="col-md-12">
+                  <label class="form-label">Nombre</label>
+                  <input name="txtNombreActu" type="text" class="form-control" placeholder="Nombre de la categoría" required />
+                </div>
+                <hr class="my-3">
+                <small class="mt-1">Desea agregar un descuento a la categoría</small>              
+                <div class="col-md-4">
+                  <label class="form-label">Descuento</label>
+                  <input name="txtDescuentoActu" type="text" class="form-control" placeholder="Porcentaje descuento" required />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Fecha de inicio</label>
+                  <input name="txtFechaInicioActu" type="datetime-local" class="form-control" placeholder="" required />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Fecha de finalización</label>
+                  <input name="txtFechaFinActu" type="datetime-local" class="form-control" placeholder="Nombre de la categoría" required />
+                </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning">Modificar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen w-25 h-auto mx-auto mt-5">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar categoria</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Esta seguro de eliminar la categoría?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger">Aceptar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

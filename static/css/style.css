@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
+
+body {
+    font-family: 'Quicksand';
+    /* color: rgb(121, 121, 121); */
+}
+
+
+
+/*.bg_header {
+    background-color: #AFB0A2;
+}*/
+
+.bg-iconos {
+    /* color: #7e7d7d; */
+    color: #ffffff;
+}
+
+.bg-nav {
+    /* background-color: #0460D9; */
+    background-color: #f9f9f9;
+}
+
+
+.bg_menu,
+.bg_footer {
+    background-color: #15359B;
+}
+
+.btn_buscador {
+    /* background-color: #bcbcbc; */
+    border: 1px solid #AFB0A2;
+}
+
+.btn_buscador:hover {
+    /* background-color: #bcbcbc; */
+    border: 1px solid #AFB0A2;
+}
+
+.txtBusqueda {
+    border: 1px solid #AFB0A2;
+}
+
+.btn_carrito {
+    /* background-color: #bcbcbc; */
+    border-radius: 50%;
+    border: 1px solid #AFB0A2;
+    width: 50px;
+    height: 50px;
+}
+
+.btn_carrito:hover {
+    border: 1px solid #AFB0A2;
+    color: #AFB0A2;
+}
+
+.icon-carrito,
+.icon-buscar,
+.icon-user {
+    color: #AFB0A2;
+}
+
+
+/* .btn_carrito:active {
+    border: 1px solid #AFB0A2;
+    color: #ffffff;
+} */
+
+.campoBuscar {
+    width: 400px;
+}
+
+.tarjeta_productos {
+    max-width: 350px;
+    max-height: 420px;
+}
+
+
+.tarjeta_productos img {
+    height: 250px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.tarjeta_productos img:hover {
+    transform: scale(1.1);
+}
+
+
+/** Campo de busqueda, Formulario de registro, Formulario de inicio sesión, Formulario pedido ***/
+.input-group input:focus,
+.form_registrarse input:focus,
+.form_inicio_sesion input:focus,
+.form_pedido input:focus,
+.form_pedido select:focus,
+.form_pago input:focus,
+.form_filtro_precio input:focus {
+    box-shadow: none;
+    border-color: gray;
+}
+
+
+.offcanvas-footer {
+    background-color: #115173;
+}
+
+#efectivo,
+#nequi {
+    cursor: pointer;
+    font-size: 18px;
+}
