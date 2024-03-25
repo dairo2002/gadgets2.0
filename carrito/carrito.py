@@ -24,19 +24,25 @@ class Cart:
     def obtener_producto(self):
         items = []  
         total  = 0 
+        subtotal = 0
+        subTotalFormato = 0
+        totalFormato = 0
+        
         for prod_id, cantidad in self.cart.items():
-            producto = Producto.objects.get(id=int(prod_id))           
-            subtotal = producto.precio * cantidad
-            total += subtotal
+            producto = Producto.objects.get(id=int(prod_id))  
+            if producto.aplicar_descuento():                                  
+                subtotal = producto.aplicar_descuento() * cantidad
+                total += subtotal
+            else:
+                subtotal = producto.precio * cantidad
+                total += subtotal
 
             totalFormato = "{:,.0f}".format(total).replace(",", ".")
             subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
-
             items.append({
                 "producto":producto,
                 "cantidad":cantidad,
                 'subtotal':subTotalFormato
-                
             })  
         return items, totalFormato
  

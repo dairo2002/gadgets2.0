@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from .views import _carrito_sesion
 from .models import Carrito
 from tienda.models import Producto
@@ -9,16 +10,28 @@ import locale, decimal
 from .carrito import Cart
 
 
-# FUNCIONA
-# def mostrar_carrito(request):     
-#     cart = Cart(request)
-#     items, totalFormato = cart.obtener_producto() 
-#     contador = cart.__len__()
-#     return dict(articulo_carrito=items, total=totalFormato,  contador=contador)
-
-
-def mostrar_carrito(request):     
+def mostrar_carrito(request):
     cart = Cart(request)
-    items, totalFormato = cart.obtener_producto() 
+    items, totalFormato = cart.obtener_producto()
     contador = cart.__len__()
     return dict(articulo_carrito=items, total=totalFormato,  contador=contador)
+
+
+# def mostrar_carrito(request):
+#     cart = Cart(request)
+#     items, totalFormato = cart.obtener_producto()
+#     contador = cart.__len__()
+
+#     carrito = []
+#     for item in items:
+#         carrito.append(
+#             {
+#                 "producto": item["producto"].nombre,
+#                 "cantidad": item["cantidad"],
+#                 "subtotal": item["subTotalFormato"],
+#             }
+#         )
+
+#     data = {"articulo_carrito": carrito, "total": totalFormato, "contador": contador}
+
+#     return JsonResponse(data)

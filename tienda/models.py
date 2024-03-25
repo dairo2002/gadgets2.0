@@ -58,8 +58,6 @@ class Producto(models.Model):
         return reverse("detalle_producto", args=[self.categoria.slug, self.slug])
 
     def precioFormatiado(self):
-        # precio = "{:,}".format(self.precio).replace(',', '.')
-        # 0f Elimina los dos 0 al final        
         return "{:,.0f}".format(self.precio).replace(',', '.')
 
     def descuentoFormatiado(self):

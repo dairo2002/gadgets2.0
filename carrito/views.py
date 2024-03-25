@@ -50,51 +50,50 @@ def add(request, producto_id):
             messages.error(request, "La cantidad no es un número válido")
     return redirect("mostrar_carrito")
 
-
-def update(request):
-    # JsonResponse toma un diccionario como argumento y lo convierte en una cadena JSON.
-    # La cadena JSON se envía al cliente como respuesta HTTP.
-
-    if request.method == 'POST':
-        # Obtiene los datos enviados en la solicitud POST
-        product_id = request.POST.get('producto_id')
-        quantity = request.POST.get('cantidad')        
-        # Verifica si los datos son válidos
-        if product_id is not None and quantity is not None:
-            # Actualiza las cantidades de los productos en el carrito
-            cart = Cart(request)  # Crea una instancia del carrito
-            cart.update_quantities(product_id, quantity)  # Llama al método para actualizar cantidades                        
-            # Devuelve una respuesta JSON indicando éxito
-            return JsonResponse({'success': True})
+def update(request, producto_id):
+    cart = Cart(request)
+    if request.method == "POST":
+        cantidad_str = request.POST.get("txtCantidad")
+        if cantidad_str is not None and cantidad_str.isdigit():
+            cantidad = int(cantidad_str)
+            if cantidad > 0:
+                producto = get_object_or_404(Producto, pk=producto_id)
+                if producto.stock >= cantidad:
+                    cart.update(producto=producto, cantidad=cantidad)
+                    # pdb.set_trace()                                       
+                    print("cantidad Actualizar ", cantidad)
+                    print("producto Actualizar ", producto)
+                else:
+                    messages.error(
+                        request, "La cantidad solicitada excede el stock disponible"
+                    )
+            else:
+                messages.error(request, "La cantidad debe ser mayor que 0")
         else:
-            # Si falta algún dato, devuelve un mensaje de error
-            return JsonResponse({'success': False, 'error': 'Faltan datos'})
-    else:
-        # Si no es una solicitud POST, devuelve un mensaje de error
-        return JsonResponse({'success': False, 'error': 'Solicitud no válida'})
+            messages.error(request, "La cantidad no es un número válido")
+    return redirect("mostrar_carrito")
 
-# def update(request, producto_id):
-#     cart = Cart(request)
-#     if request.method == "POST":
-#         cantidad_str = request.POST.get("txtCantidad")
-#         if cantidad_str is not None and cantidad_str.isdigit():
-#             cantidad = int(cantidad_str)
-#             if cantidad > 0:
-#                 producto = get_object_or_404(Producto, pk=producto_id)
-#                 if producto.stock >= cantidad:
-#                     cart.update(producto=producto, cantidad=cantidad)
-#                     # pdb.set_trace()                                       
-#                     print("cantidad Actualizar ", cantidad)
-#                     print("producto Actualizar ", producto)
-#                 else:
-#                     messages.error(
-#                         request, "La cantidad solicitada excede el stock disponible"
-#                     )
-#             else:
-#                 messages.error(request, "La cantidad debe ser mayor que 0")
+# def update(request):
+#     # JsonResponse toma un diccionario como argumento y lo convierte en una cadena JSON.
+#     # La cadena JSON se envía al cliente como respuesta HTTP.
+#     if request.method == 'POST':
+#         # Obtiene los datos enviados en la solicitud POST
+#         product_id = request.POST.get('producto_id')
+#         quantity = request.POST.get('cantidad')        
+#         # Verifica si los datos son válidos
+#         if product_id is not None and quantity is not None:
+#             # Actualiza las cantidades de los productos en el carrito
+#             cart = Cart(request)  # Crea una instancia del carrito
+#             cart.update_quantities(product_id, quantity)  # Llama al método para actualizar cantidades                        
+#             # Devuelve una respuesta JSON indicando éxito
+#             return JsonResponse({'success': True})
 #         else:
-#             messages.error(request, "La cantidad no es un número válido")
-#     return redirect("mostrar_carrito")
+#             # Si falta algún dato, devuelve un mensaje de error
+#             return JsonResponse({'success': False, 'error': 'Faltan datos'})
+#     else:
+#         # Si no es una solicitud POST, devuelve un mensaje de error
+#         return JsonResponse({'success': False, 'error': 'Solicitud no válida'})
+
 
 
 
