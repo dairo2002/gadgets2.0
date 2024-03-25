@@ -25,19 +25,19 @@
                 <div class="table-responsive">
                   <table class="table">
                     <tbody>
-                      {% for articulo in articulo_carrito %}
-                        <tr>
-                          {% comment %} {% url 'update_carrito' articulo.id %} {% endcomment %}
-                          <form action="" method="POST">
-                            {% csrf_token %}
+                      {% comment %} {% url 'update_carrito' articulo.id %} {% endcomment %}
+                      {% comment %} <form id="updateCartForm" action="" method="POST">
+                        {% csrf_token %} {% endcomment %}
+                        {% for articulo in articulo_carrito %}
+                          <tr>
                             <td class="align-middle text-center">
                               <img src="{{ articulo.producto.imagen.url }}" class="img-fluid" alt="imagen carrito" style="max-width: 100px; max-height: 100px;" />
                             </td>
                             <td class="align-middle" style="min-width: 180px;">{{ articulo.producto.nombre }}</td>
                             <td class="align-middle text-center" style="min-width: 100px;">
                               {% comment %} <input type="hidden" name="producto_id" value="{{ articulo.id }}" /> {% endcomment %}
-                              <input type="number" min="0" name="txtCantidad" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light" />
-                              <button type="submit" class="btn p-0"><i class="fa-regular fa-pen-to-square fa-xl" style="color: #333333;"></i></button>
+                              {% comment %} <input type="number" min="0" name="txtCantidad" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light" /> {% endcomment %}
+                              <input type="number" min="0" data-product-id="{{ articulo.producto.id }}" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light quantity-input" />
                             </td>
                             <td class="align-middle text-center" style="min-width: 150px;">
                               {% if articulo.producto.categoria.descuento %}
@@ -46,7 +46,7 @@
                                   <small class="text-muted">$ {{ articulo.producto.descuentoFormatiado }}</small>
                                 </del>
                               {% else %}
-                                <p class="mb-0">$ {{ articulo.subtotal }}</p>                                
+                                <p class="mb-0">$ {{ articulo.subtotal }}</p>
                                 <small class="mb-0 text-muted">$ {{ articulo.producto.precioFormatiado }}</small>
                               {% endif %}
                             </td>
@@ -55,9 +55,11 @@
                                 <a><i class="fa-solid fa-xmark fa-2xl" style="color: #333333;"></i></a>
                               </div>
                             </td>
-                          </form>
-                        </tr>
-                      {% endfor %}
+                          </tr>
+                        {% endfor %}
+                        {% comment %} <button type="submit" class="btn p-0" style="display: none;"></button> {% endcomment %}
+                        {% comment %} <button type="submit" class="btn p-0"><i class="fa-regular fa-pen-to-square fa-xl" style="color: #333333;"></i></button> {% endcomment %}
+                      {% comment %} </form> {% endcomment %}
                     </tbody>
                   </table>
                 </div>
@@ -93,4 +95,36 @@
       {% endif %}
     </div>
   </section>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+        $('.quantity-input').on('change', function() {
+            var productId = $(this).data('product-id');
+            var newQuantity = $(this).val();
+
+            // url: ' {% url 'update_carrito' %}',
+            $.ajax({
+                url: '/carrito/actualizar_carrito/',
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: {
+                    'producto_id': productId,
+                    'cantidad': newQuantity
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Cantidad de productos actualizada con éxito');
+                        // Aquí podrías realizar alguna acción adicional si es necesario
+                    } else {
+                        console.error('Error al actualizar la cantidad de productos:', response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al enviar la solicitud AJAX:', error);
+                }
+            });
+        });
+    });
+
+  </script>
 {% endblock %}

@@ -40,7 +40,17 @@ class Cart:
             })  
         return items, totalFormato
  
+
+    def update_quantities(self, producto_id, cantidad):                
+        self.cart[str(producto_id)] = int(cantidad)                        
+        self.session.modified = True
     
+    # def update_quantities(self, producto_id, cantidad):
+    #     for producto_id, cantidad in cantidad.items():
+    #         if str(producto_id) in self.cart:
+    #             self.cart[str(producto_id)] = int(cantidad)                
+        
+    #     self.session.modified = True
 
     #    def obtener_producto(self):
     #     producto_ids = self.cart.keys()    
