@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm
-from .models import Pedido, Pago
+from .models import Pedido, Pago, Ventas, DetallePedido
 from tienda.models import Producto
 from carrito.models import Carrito
 from django.contrib import messages
 
-#
+# Nos permiten ejecutar el pago si es valido
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 
 from cuenta.models import Cuenta
+from carrito.carrito import Cart
 
 # API
 from rest_framework import status
@@ -28,20 +29,20 @@ import datetime
 @login_required(login_url="inicio_sesion")
 def realizar_pedido(request, total=0, cantidad=0):
     usuario_actual = request.user
-    carrito = Carrito.objects.filter(usuario=usuario_actual)
     print("usuario pedido", usuario_actual)
-    contar_carrito = carrito.count()
+    # carrito = Carrito.objects.filter(usuario=usuario_actual)
+    # contar_carrito = carrito.count()
 
     # if contar_carrito <= 0:
     #     return redirect("tienda")
 
-    for articulo in carrito:
-        if articulo.producto.aplicar_descuento():
-            total += articulo.producto.aplicar_descuento() * articulo.cantidad
-            cantidad += articulo.cantidad
-        else:
-            total += articulo.producto.precio * articulo.cantidad
-            cantidad += articulo.cantidad
+    # for articulo in carrito:
+    #     if articulo.producto.aplicar_descuento():
+    #         total += articulo.producto.aplicar_descuento() * articulo.cantidad
+    #         cantidad += articulo.cantidad
+    #     else:
+    #         total += articulo.producto.precio * articulo.cantidad
+    #         cantidad += articulo.cantidad
 
     if request.method == "POST":
         formulario = PedidoForm(request.POST)
@@ -72,6 +73,7 @@ def realizar_pedido(request, total=0, cantidad=0):
             data.numero_pedido = num_pedido
             data.save()
 
+            # Redirigir a la página de pago con el ID del pedido
             return redirect("pago", id_pedido=data.pk)
     else:
         formulario = PedidoForm()
@@ -146,6 +148,9 @@ def email_info_pedido(sender, instance, **kwargs):
             pedido.ordenado = True
             pedido.save()
 
+        # STOCK
+        actualizar_stock(instance)
+
         mail_subject = "¡Su pedido ha sido aprobado!"
         mensaje = render_to_string(
             "client/pedido/email_pago.html",
@@ -157,21 +162,44 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
 
-        actualizar_stock(instance)
+        # actualizar_stock(instance)
 
-        # ! Crear gmail cuando el pedido sea incorrecto
+        # ! Crear email cuando el pago sea incorrecto
 
+
+# Traer los productos del carrito
 
 
 # Corregir porque con pedido anteriores no funciona solo en el pedido actual
-def actualizar_stock(request):
-    carrito = Carrito.objects.filter(usuario=request.usuario)
-    for articulo in carrito:
-        # producto_id acceder al _id
-        producto = Producto.objects.get(pk=articulo.producto_id)
-        producto.stock -= articulo.cantidad
+def actualizar_stock(request, instance):
+    usuario = instance.usuario
+    pedido = Pedido.objects.filter(usuario=usuario)     
+
+    cart = Cart(request)
+    items, totalFormato = cart.obtener_producto()
+
+    # Crear los detalles de pedido para cada producto en el carrito
+    for item in items:
+        producto = item["producto"]
+        cantidad = item["cantidad"]
+        subtotal = item["subtotal"]
+        DetallePedido.objects.create(
+            pedido=pedido,
+            producto=producto,
+            cantidad=cantidad,
+            subtotal=subtotal,
+            total=totalFormato,
+        )
+        producto.stock -= cantidad
         producto.save()
-        articulo.delete()
+
+    # carrito = Carrito.objects.filter(usuario=request.usuario)
+    # for articulo in carrito:
+    #     # producto_id acceder al _id
+    #     producto = Producto.objects.get(pk=articulo.producto_id)
+    #     producto.stock -= articulo.cantidad
+    #     producto.save()
+    #     articulo.delete()
 
 
 # ? API

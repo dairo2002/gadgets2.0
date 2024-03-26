@@ -27,9 +27,6 @@ class Cart:
         return len(self.cart)
 
 
-
-
-
     def obtener_producto(self):
         items = []
         total = 0
@@ -79,10 +76,7 @@ class Cart:
             pass
             # self.add(producto, cantidad)
         self.session.modified = True
-
-    def obtener_cantidad(self):
-        cantidad_pro = self.cart
-        return cantidad_pro
+  
 
     def delete(self, producto):
         producto_id = str(producto)

@@ -47,14 +47,14 @@
                     {% for articulo in articulo_carrito %}
                       <tr>
                         <td class="align-middle text-center">
-                          <img src="{{ articulo.imagen.url }}" width="100px" height="90px" alt="imagen pedido" />
+                          <img src="{{ articulo.producto.imagen.url }}" width="100px" height="90px" alt="imagen pedido" />
                         </td>
                         <td class="align-middle text-center">
                           <p>{{ articulo.cantidad }}</p>
                         </td>
                         <td class="align-middle text-center">
-                          <p class="mb-0">$ {{ articulo.sub_total }}</p>
-                          <small class="mb-0 text-muted">$ {{ articulo.descuentoFormatiado }}</small>
+                          <p class="mb-0">$ {{ articulo.subtotal }}</p>
+                          <small class="mb-0 text-muted">$ {{ articulo.producto.descuentoFormatiado }}</small>
                         </td>
                       </tr>
                     {% endfor %}

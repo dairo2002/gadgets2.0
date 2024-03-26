@@ -59,6 +59,7 @@ class Pedido(models.Model):
     # blank = Permite dejar el campo en blanco, opcional
     usuario = models.ForeignKey(Cuenta, on_delete=models.SET_NULL, null=True)
     pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, blank=True, null=True)
+    productos = models.ManyToManyField(Producto)
     numero_pedido = models.CharField(max_length=50)
     correo_electronico = models.EmailField(max_length=100)
     nombre = models.CharField(max_length=50)
@@ -83,3 +84,26 @@ class Pedido(models.Model):
 
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"
+
+class Ventas(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    precio = models.DecimalField(max_digits=12, decimal_places=2)
+    ordenado = models.BooleanField(default=False)
+    fecha = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.producto.nombre
+    
+class DetallePedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=0)
+    subtotal = models.DecimalField(max_digits=12, decimal_places=2)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def __str__(self):
+        return f"Detalle del Pedido #{self.pedido.id} - Producto: {self.producto.nombre}"
