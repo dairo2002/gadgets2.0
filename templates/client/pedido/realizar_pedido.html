@@ -55,32 +55,32 @@
               <div class="row p-2 col-12 mx-auto">
                 {% for articulo in articulo_carrito %}
                   <div class="col-4 mx-auto">
-                    <img src="{{ articulo.imagen.url }}" style="max-width: 120px; max-height: 120px;" alt="producto pedido" />
+                    <img src="{{ articulo.producto.imagen.url }}" style="max-width: 120px; max-height: 120px;" alt="producto pedido" />
                   </div>
                   <div class="col-8">
-                    <h6 class="">{{ articulo.nombre }}</h6>
+                    <h6 class="">{{ articulo.producto.nombre }}</h6>
                     <div class="d-flex justify-content-between mt-4">
                       <p class="mb-0">Cantidad</p>
                       <p class="mb-0">{{ articulo.cantidad }}</p>
                     </div>
-                    {% if articulo.categoria.descuento %}
+                    {% if articulo.producto.categoria.descuento %}
                       <div class="d-flex justify-content-between">
                         <small class="mb-0 text-muted">Precio</small>
-                        <small class="mb-0 text-muted"><del>$ {{ articulo.precioFormatiado }}</del></small>
+                        <small class="mb-0 text-muted"><del>$ {{ articulo.producto.precioFormatiado }}</del></small>
                       </div>
                       <div class="d-flex justify-content-between">
                         <p class="mb-0">Precio con descuento</p>
-                        <p class="mb-0">$ {{ articulo.descuentoFormatiado }}</p>
+                        <p class="mb-0">$ {{ articulo.producto.descuentoFormatiado }}</p>
                       </div>
                     {% else %}
                       <div class="d-flex justify-content-between">
                         <small class="mb-0 text-muted">Precio</small>
-                        <small class="mb-0 text-muted"><del>$ {{ articulo.precioFormatiado }}</del></small>
+                        <small class="mb-0 text-muted">$ {{ articulo.producto.precioFormatiado }}</small>
                       </div>
                     {% endif %}
                     <div class="d-flex justify-content-between">
                       <p class="mb-0">Sub total</p>
-                      <p class="mb-0">$ {{ articulo.sub_total }}</p>
+                      <p class="mb-0">$ {{ articulo.subtotal }}</p>
                     </div>
                     <hr>
                   </div>
