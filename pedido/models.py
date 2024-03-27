@@ -104,6 +104,7 @@ class DetallePedido(models.Model):
     cantidad = models.PositiveIntegerField(default=0)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2)
     total = models.DecimalField(max_digits=12, decimal_places=2)
+    ordenado = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Detalle del Pedido #{self.pedido.id} - Producto: {self.producto.nombre}"

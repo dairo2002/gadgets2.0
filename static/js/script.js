@@ -6,7 +6,7 @@ setTimeout(function () {
         mensage_alerta.style.opacity = '0';
         setTimeout(function () {
             mensage_alerta.style.display = 'none'
-        }, 2000);
+        }, 2500);
 
     }
-}, 4000)
+}, 5000)

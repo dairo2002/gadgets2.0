@@ -112,58 +112,6 @@ def _post_save_receiver(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.nombre)
 
-    # ? Moneda colombiana
-    # return "{:,.0f}".format(self.precio).replace(",", ".")
-    # locale.setlocale(locale.LC_ALL,'es_CO.UTF-8')
-    # return locale.currency(self.precio, grouping=True)
-
-    # ? Ejemplo hecho por el instructor
-    # def descuento_con_precio(self):
-    #     # Verificar si la categoría tiene un descuento y si las fechas de inicio y fin están definidas
-    #     if (
-    #         self.categoria.descuento
-    #         and self.categoria.fecha_inicio
-    #         and self.categoria.fecha_fin
-    #     ):
-    #         # Verificar si la fecha actual está dentro del rango de fechas de inicio y fin del descuento
-    #         fecha_actual = timezone.now()
-    #         if self.categoria.fecha_inicio <= fecha_actual <= self.categoria.fecha_fin:
-    #             # Convierte el descuento de procentaje a decimal
-    #             descuento_decimal = 1 - (self.categoria.descuento / 100)
-    #             # Calcula el precio con descuento
-    #             # precio_descuento = self.precio - (self.precio * descuento_decimal)
-    #             precio_descuento = self.precio * descuento_decimal
-    #             # redondeo a dos decimales
-    #             precio_descuento = round(precio_descuento, 2)
-
-    #             precio_descuento_texto = str(precio_descuento)
-    #             precio_descuento_arreglo = precio_descuento_texto.split(".")
-    #             precio_descuento_texto = precio_descuento_arreglo[0][::-1]
-    #             indice = 1
-    #             precio_descuento_arreglo[0] = ""
-    #             for element in range(0, len(precio_descuento_texto)):
-    #                 precio_descuento_arreglo[0] = (
-    #                     precio_descuento_arreglo[0] + precio_descuento_texto[element]
-    #                 )
-
-    #                 if indice % 3 == 0 and len(precio_descuento_texto) != indice:
-    #                     precio_descuento_arreglo[0] = precio_descuento_arreglo[0] + "."
-
-    #                 indice += 1
-    #             precio_descuento_texto = precio_descuento_arreglo[0][::-1]
-    #             # precio_descuento=Decimal(precio_descuento_texto)
-    #             return precio_descuento_texto
-    #         else:
-    #             # Si la fecha actual está fuera del rango de fechas de descuento, limpiar los campos relacionados con el descuento
-    #             self.categoria.descuento = None
-    #             self.categoria.fecha_inicio = None
-    #             self.categoria.fecha_fin = None
-    #             self.categoria.save()
-    #             return self.precio
-
-    #     return self.precio
-
-
 class Valoraciones(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)

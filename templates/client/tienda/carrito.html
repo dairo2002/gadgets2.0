@@ -7,12 +7,12 @@
     </div>
     <div class="container py-5">
       {% if not articulo_carrito %}
-        <h2 class="text-muted text-center">El carrito de compras esta vacío</h2>
+        <h2 class="text-muted text-center">El carrito de compras esta vacío</h2>    
         <br />
         <div class="text-center">
           <a href="{% url 'tienda' %}" class="btn btn-dark">Continuar comprando <i class="fa-solid fa-store"></i></a>
         </div>
-      {% else %}
+      {% else %}    
         <div class="row d-flex justify-content-center h-100">
           <div class="col col-sm-12 mb-2 col-lg-8 mb-lg-0">
             <div class="card rounded-4">
@@ -37,12 +37,12 @@
                           </td>
                           <td class="align-middle text-center" style="min-width: 150px;">
                             {% if articulo.producto.categoria.descuento %}
-                              <p class="mb-0">$ {{ articulo.subtotal }}</p>
+                              <p class="mb-0">$ {{ subtotal }}</p>
                               <del class="text-muted">
                                 <small class="text-muted">$ {{ articulo.producto.descuentoFormatiado }}</small>
                               </del>
                             {% else %}
-                              <p class="mb-0">$ {{ articulo.subtotal }}</p>
+                              <p class="mb-0">$ {{ subtotal }}</p>
                               <small class="mb-0 text-muted">$ {{ articulo.producto.precioFormatiado }}</small>
                             {% endif %}
                           </td>

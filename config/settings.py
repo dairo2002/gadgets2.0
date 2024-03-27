@@ -46,10 +46,10 @@ INSTALLED_APPS = [
     # 'rest_framework_simplejwt',    
     'corsheaders',
     # 'bootstrap5',
-    "tienda",
-    "carrito",
-    "cuenta",
-    "pedido",
+    "tienda.apps.TiendaConfig",
+    "carrito.apps.CarritoConfig",
+    "cuenta.apps.CuentaConfig",
+    "pedido.apps.PedidoConfig",
     # "admin_thumbnails",
 ]
 

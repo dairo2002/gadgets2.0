@@ -15,7 +15,6 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 
 from cuenta.models import Cuenta
-from carrito.carrito import Cart
 
 # API
 from rest_framework import status
@@ -24,6 +23,10 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import PedidoSerializer
 
 import datetime
+
+from django.db import transaction
+
+import pdb
 
 
 @login_required(login_url="inicio_sesion")
@@ -72,6 +75,27 @@ def realizar_pedido(request, total=0, cantidad=0):
             num_pedido = fecha_actual + str(data.id)
             data.numero_pedido = num_pedido
             data.save()
+
+            cart = Cart(request)
+            items, totalFormato = cart.obtener_producto()
+
+            # Crear los detalles de pedido para cada producto en el carrito
+            for item in items:
+                producto = item["producto"]
+                cantidad = item["cantidad"]
+                subtotal = item["subtotal"]
+
+                # totalFormato = "{:,.0f}".format(totalFormato).replace(",", ".")
+                # subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
+
+                DetallePedido.objects.create(
+                    pedido=data,
+                    producto=producto,
+                    cantidad=cantidad,
+                    ordenado=False,
+                    subtotal=subtotal,
+                    total=totalFormato,
+                )
 
             # Redirigir a la página de pago con el ID del pedido
             return redirect("pago", id_pedido=data.pk)
@@ -124,9 +148,7 @@ def pago(request, id_pedido):
                 request, "Pago exitoso, Se verificara si el comprobante es valido"
             )
 
-            # Filtro eliminar los producto de usuario actual al realizar el pago
-            # carrito = Carrito.objects.filter(usuario=request.user)
-            # carrito.delete()
+         
 
             return redirect("index")
         else:
@@ -143,63 +165,43 @@ def email_info_pedido(sender, instance, **kwargs):
     if instance.estado_pago == "Aprobado" and instance.estado_envio == "Enviado":
         usuario = instance.usuario
 
-        datos = Pedido.objects.filter(usuario=usuario)
-        for pedido in datos:
-            pedido.ordenado = True
-            pedido.save()
+        pedido = Pedido.objects.filter(usuario=usuario)
+        for datos in pedido:
+            datos.ordenado = True
+            datos.save()
 
-        # STOCK
-        actualizar_stock(instance)
+            
 
         mail_subject = "¡Su pedido ha sido aprobado!"
         mensaje = render_to_string(
             "client/pedido/email_pago.html",
-            {"pedido": pedido},
+            {"pedido": datos},
         )
 
-        to_email = pedido.correo_electronico
+        to_email = datos.correo_electronico
         send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
 
-        # actualizar_stock(instance)
-
-        # ! Crear email cuando el pago sea incorrecto
-
-
-# Traer los productos del carrito
+        actualizar_stock(instance)
+        # pdb.set_trace()
 
 
-# Corregir porque con pedido anteriores no funciona solo en el pedido actual
-def actualizar_stock(request, instance):
-    usuario = instance.usuario
-    pedido = Pedido.objects.filter(usuario=usuario)     
-
-    cart = Cart(request)
-    items, totalFormato = cart.obtener_producto()
-
-    # Crear los detalles de pedido para cada producto en el carrito
-    for item in items:
-        producto = item["producto"]
-        cantidad = item["cantidad"]
-        subtotal = item["subtotal"]
-        DetallePedido.objects.create(
-            pedido=pedido,
-            producto=producto,
-            cantidad=cantidad,
-            subtotal=subtotal,
-            total=totalFormato,
-        )
-        producto.stock -= cantidad
-        producto.save()
-
-    # carrito = Carrito.objects.filter(usuario=request.usuario)
-    # for articulo in carrito:
-    #     # producto_id acceder al _id
-    #     producto = Producto.objects.get(pk=articulo.producto_id)
-    #     producto.stock -= articulo.cantidad
-    #     producto.save()
-    #     articulo.delete()
+def actualizar_stock(request):
+    pass
+    # cart.limpiar_carrito()
+    
+    # detalle_pedido = DetallePedido.objects.filter(pedido__usuario=usuario)
+    # for detalle in detalle_pedido:
+    #     if detalle.pedido.ordenado:
+    #         producto = detalle.producto
+    #         cantidad = detalle.cantidad
+    #         print("producto stock", producto)
+    #         print("cantidad stock", cantidad)
+    #         producto.stock -= cantidad
+    #         producto.save()
+        # producto.delete()
+        # pdb.set_trace()
 
 
 # ? API

@@ -15,7 +15,6 @@ from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from carrito.views import _carrito_sesion
 from carrito.models import Carrito
 
 # API
@@ -117,7 +116,7 @@ def activar_cuenta(request, uidb64, token):
         return redirect("registrarse")
 
 
-# ! Corregir, el tema de carrito
+
 def inicio_sesion(request):
     # Verifica si la solicitud al servidor es de tipo POST
     if request.method == "POST":
@@ -143,6 +142,25 @@ def inicio_sesion(request):
                     messages.success(
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
                     )
+
+                    # Treamos la session con los productos del usuario
+                    if 'cart_id' in request.session:
+                        cart_id = request.session['cart_id']
+                        print(f"ID del carrito de la sesión: {cart_id}")
+                        try:
+                            cart = Carrito.objects.get(id=cart_id)
+                            print(f"Carrito encontrado: {cart}")
+                            # Verificar si el usuario ya tiene un carrito asociado
+                            if not cart.usuario:
+                                print("Asignar carrito al usuario")
+                                # Si el usuario es diferente al usuario actual, asignar el carrito al nuevo usuario
+                                cart.usuario = usuarios
+                                cart.save()
+                            else:
+                                print("Carrito ya asignado a una usuario")
+                        except Carrito.DoesNotExist:
+                            print("Carrito no exite")
+                            pass
                     return redirect("index")
             else:
                 messages.error(request, "Tu cuenta está desactivada.")
@@ -193,9 +211,29 @@ def inicio_sesion(request):
 
 @login_required(login_url="inicio_sesion")
 def cerrar_sesion(request):
+    if 'cart_id' in request.session:
+        # Obtener el ID del carrito de la sesión
+        cart_id = request.session['cart_id']
+        try:
+            # Obtener el carrito asociado al ID
+            cart = Carrito.objects.get(id=cart_id)
+            # Eliminar todos los productos del carrito
+            cart.items.all().delete()
+            # Eliminar la sesión del carrito
+            del request.session['cart_id']
+        except Carrito.DoesNotExist:
+            pass
     auth.logout(request)
     messages.success(request, "Has cerrado sesión exitosamente.")
     return redirect("inicio_sesion")
+
+
+
+# @login_required(login_url="inicio_sesion")
+# def cerrar_sesion(request):
+#     auth.logout(request)
+#     messages.success(request, "Has cerrado sesión exitosamente.")
+#     return redirect("inicio_sesion")
 
 
 def recuperar_password(request):
