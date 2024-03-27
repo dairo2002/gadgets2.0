@@ -20,7 +20,7 @@ def mostrar_carrito(request):
 def add(request):
     data = json.loads(request.body)
     producto_id = data['id']
-    #  data["id"]
+    #  data['id']
     producto = Producto.objects.get(id=producto_id)
     print(producto)
     if request.user.is_authenticated:
@@ -32,7 +32,7 @@ def add(request):
         )
         cartitem.cantidad += 1
         cartitem.save()
-        print(cart)
+        print("add ",cart)
     return JsonResponse("Muy bien", safe=False)
 
 

@@ -17,12 +17,13 @@ function getCookie(name) {
 // Creamos el csrftoken para cookie
 const csrftoken = getCookie('csrftoken');
 
-// let btn = document.querySelectorAll("#contaninerProductos button")
-let btn = document.getElementById("btnAgregarCarrito")
-btn.addEventListener('click', agregarCarrito)
-// btn.forEach(bt => {
-//     bt.addEventListener('click', agregarCarrito)
-// })
+// let btn = document.getElementById("btnAgregarCarrito")
+// btn.addEventListener('click', agregarCarrito)
+
+let btn = document.querySelectorAll(".contaninerProductos button")
+btn.forEach(bt => {
+    bt.addEventListener('click', agregarCarrito)
+})
 
 function agregarCarrito(e) {
     // e = asigna el evento DOM a la variable con el valor 

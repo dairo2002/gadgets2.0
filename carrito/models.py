@@ -27,11 +27,11 @@ class ItemCarrito(models.Model):
     def __str__(self):
         return f"Item de {self.producto.nombre} en {self.carrito}"
 
-    # def subtotal(self):
-    #     return "{:,.0f}".format(self.operacion()).replace(',', '.')
+    def subtotal(self):
+        return "{:,.0f}".format(self.operacion()).replace(',', '.')
 
-    # def operacion(self):
-    #     if self.producto.aplicar_descuento():
-    #         return self.producto.aplicar_descuento() * self.cantidad
-    #     else:
-    #         return self.producto.precio * self.cantidad
+    def operacion(self):
+        if self.producto.aplicar_descuento():
+            return self.producto.aplicar_descuento() * self.cantidad
+        else:
+            return self.producto.precio * self.cantidad

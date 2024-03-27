@@ -37,12 +37,12 @@
                           </td>
                           <td class="align-middle text-center" style="min-width: 150px;">
                             {% if articulo.producto.categoria.descuento %}
-                              <p class="mb-0">$ {{ subtotal }}</p>
+                              <p class="mb-0">$ {{ articulo.subtotal }}</p>
                               <del class="text-muted">
                                 <small class="text-muted">$ {{ articulo.producto.descuentoFormatiado }}</small>
                               </del>
                             {% else %}
-                              <p class="mb-0">$ {{ subtotal }}</p>
+                              <p class="mb-0">$ {{ articulo.subtotal }}</p>
                               <small class="mb-0 text-muted">$ {{ articulo.producto.precioFormatiado }}</small>
                             {% endif %}
                           </td>

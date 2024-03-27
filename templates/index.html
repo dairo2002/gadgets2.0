@@ -39,7 +39,7 @@
           {% for productos in producto %}
             <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3 mb-4">
               <div class="card tarjeta_productos h-100">
-                <div class="card-body">
+                <div class="card-body contaninerProductos">
                   {% comment %} <form  action="{% url 'add_carrito' productos.id %}" method="POST">
                     {% csrf_token %} {% endcomment %}
                     {% if productos.categoria.descuento %}
@@ -64,7 +64,8 @@
                     {% else %}
                       <div class="d-flex gap-2 mt-2">
                         {% comment %} <input class="form-control" min="1" type="number" name="txtCantidad" required/> {% endcomment %}
-                        <button id="btnAgregarCarrito" type="button" value="{{ productos.id }}" class="btn btn-outline-dark w-100">Agregar <i class="fa-solid fa-cart-shopping"></i></button>
+                        {% comment %} id="btnAgregarCarrito" {% endcomment %}
+                        <button value="{{ productos.id }}" class="btn btn-outline-dark w-100">Agregar <i class="fa-solid fa-cart-shopping"></i></button>
                       </div>
                     {% endif %}
                   {% comment %} </form> {% endcomment %}
