@@ -29,7 +29,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import CuentaSerializer
 
 from django.http import HttpResponse
-
+import pdb
 import requests
 
 
@@ -118,6 +118,9 @@ def activar_cuenta(request, uidb64, token):
 
 
 def inicio_sesion(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+
     # Verifica si la solicitud al servidor es de tipo POST
     if request.method == "POST":
         # Obtener los datos del formulario
@@ -143,24 +146,21 @@ def inicio_sesion(request):
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
                     )
 
-                    # Treamos la session con los productos del usuario
-                    if 'cart_id' in request.session:
-                        cart_id = request.session['cart_id']
-                        print(f"ID del carrito de la sesión: {cart_id}")
-                        try:
-                            cart = Carrito.objects.get(id=cart_id)
-                            print(f"Carrito encontrado: {cart}")
-                            # Verificar si el usuario ya tiene un carrito asociado
-                            if not cart.usuario:
-                                print("Asignar carrito al usuario")
-                                # Si el usuario es diferente al usuario actual, asignar el carrito al nuevo usuario
-                                cart.usuario = usuarios
-                                cart.save()
-                            else:
-                                print("Carrito ya asignado a una usuario")
-                        except Carrito.DoesNotExist:
-                            print("Carrito no exite")
-                            pass
+                    try:
+                        cart = Carrito.objects.get(session_id=request.session['nonuser'], completed=False)
+                        print("inicio sesion ",cart)
+                        if Carrito.objects.filter(usuario=request.user, completed=False).exists():
+                            cart.usuario=None                            
+                            cart.save()
+                            print("inicio sesion filtro ",cart)
+                            # pdb.set_trace()
+                        else:
+                            cart.usuario = request.user
+                            cart.save()
+                            print("inicio sesion NO filtro ",cart)       
+
+                    except Exception as e:
+                        print("Error ",e)
                     return redirect("index")
             else:
                 messages.error(request, "Tu cuenta está desactivada.")
@@ -211,18 +211,6 @@ def inicio_sesion(request):
 
 @login_required(login_url="inicio_sesion")
 def cerrar_sesion(request):
-    if 'cart_id' in request.session:
-        # Obtener el ID del carrito de la sesión
-        cart_id = request.session['cart_id']
-        try:
-            # Obtener el carrito asociado al ID
-            cart = Carrito.objects.get(id=cart_id)
-            # Eliminar todos los productos del carrito
-            cart.items.all().delete()
-            # Eliminar la sesión del carrito
-            del request.session['cart_id']
-        except Carrito.DoesNotExist:
-            pass
     auth.logout(request)
     messages.success(request, "Has cerrado sesión exitosamente.")
     return redirect("inicio_sesion")

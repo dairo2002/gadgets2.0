@@ -48,7 +48,7 @@
                           </td>
                           <td class="align-middle text-center" width="90px">
                             <div class="">
-                              <a><i class="fa-solid fa-xmark fa-2xl" style="color: #333333;"></i></a>
+                              <button class="btn p-1 border border-0 deleteProductCart"  value="{{articulo.producto.id}}"> <i class="fa-solid fa-xmark fa-xl" ></i></button>
                             </div>
                           </td>
                         </tr>
@@ -88,35 +88,5 @@
       {% endif %}
     </div>
   </section>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $('.quantity-input').on('change', function () {
-        var productId = $(this).data('product-id')
-        var newQuantity = $(this).val()
-    
-        // url: ' {% url 'update_carrito' %}',
-        $.ajax({
-          url: '/carrito/actualizar_carrito/',
-          method: 'POST',
-          headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-          data: {
-            producto_id: productId,
-            cantidad: newQuantity
-          },
-          success: function (response) {
-            if (response.success) {
-              //console.log('Cantidad de productos actualizada con éxito')
-              // Aquí podrías realizar alguna acción adicional si es necesario
-            } else {
-              console.error('Error al actualizar la cantidad de productos:', response.error)
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error('Error al enviar la solicitud AJAX:', error)
-          }
-        })
-      })
-    })
-  </script>
+  <script src="{% static 'js/carrito/agregar.js' %}"></script>
 {% endblock %}

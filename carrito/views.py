@@ -1,4 +1,6 @@
-import json
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -7,6 +9,8 @@ from .models import Carrito, ItemCarrito
 from django.urls import resolve
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+import json
+import uuid
 import pdb
 
 
@@ -19,10 +23,9 @@ def mostrar_carrito(request):
 # @login_required(login_url="inicio_sesion")
 def add(request):
     data = json.loads(request.body)
-    producto_id = data['id']
+    producto_id = data["id"]
     #  data['id']
     producto = Producto.objects.get(id=producto_id)
-    print(producto)
     if request.user.is_authenticated:
         cart, created = Carrito.objects.get_or_create(
             usuario=request.user, completed=False
@@ -32,8 +35,93 @@ def add(request):
         )
         cartitem.cantidad += 1
         cartitem.save()
-        print("add ",cart)
-    return JsonResponse("Muy bien", safe=False)
+        return redirect("mostrar_carrito")
+        # contador = cart.count()
+    else:
+        try:
+            # Bloque en el cual se comprueba si ya hay una session
+            cart = Carrito.objects.get(
+                session_id=request.session["nonuser"], completed=False
+            )
+        except:
+            request.session["nonuser"] = str(uuid.uuid4())
+            cart = Carrito.objects.create(
+                session_id=request.session["nonuser"], completed=False
+            )
+        cartitem, created = ItemCarrito.objects.get_or_create(
+            carrito=cart, producto=producto
+        )
+        cartitem.cantidad += 1
+        cartitem.save()
+
+        # contador = cart.count()
+    return JsonResponse(
+        {"redirect": "/carrito/"}, safe=False
+    )
+
+
+def delete(request):
+    data = json.loads(request.body)
+    producto_id = data["id"]
+    producto = Producto.objects.get(id=producto_id)
+
+    if request.user.is_authenticated:
+        cart, _ = Carrito.objects.get_or_create(
+            usuario=request.user, completed=False
+        )
+    else:
+        cart_id = request.session.get("nonuser")
+        if not cart_id:
+            return JsonResponse({"error": "El carrito no existe"})
+
+        cart, _ = Carrito.objects.get_or_create(
+            session_id=cart_id, completed=False
+        )                
+    try:
+        # pdb.set_trace()
+        cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+        cartitem.delete()
+    except ItemCarrito.DoesNotExist:
+        return JsonResponse({"error": "El producto no está en el carrito"})
+
+    return JsonResponse({"message": "Producto eliminado del carrito"})
+
+
+@api_view(["POST"])
+def addAPI(request):
+    data = json.loads(request.body)
+    #  data["id"]
+    producto_id = data.get(
+        "id"
+    )  # Usamos .get() para evitar KeyError si 'id' no está presente en el JSON
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return Response(
+            {"error": "Producto no encontrado"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if request.user.is_authenticated:
+        cart, created = Carrito.objects.get_or_create(
+            usuario=request.user, completed=False
+        )
+    else:
+        session_id = request.session.get("nonuser") or str(uuid.uuid4())
+        request.session["nonuser"] = session_id
+        cart, created = Carrito.objects.get_or_create(
+            session_id=session_id, completed=False
+        )
+
+    cart_item, created = ItemCarrito.objects.get_or_create(
+        carrito=cart, producto=producto
+    )
+    cart_item.cantidad += 1
+    cart_item.save()
+
+    return Response(
+        {"message": "Producto agregado al carrito correctamente"},
+        status=status.HTTP_200_OK,
+    )
 
 
 # def add(request, producto_id):

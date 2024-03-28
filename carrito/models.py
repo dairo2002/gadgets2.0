@@ -7,7 +7,7 @@ import locale, decimal
 
 # Articulo del carrito
 class Carrito(models.Model):    
-    # UUID, que es un identificador único universa
+    # UUID, que es un identificador único universa, PK
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     usuario = models.OneToOneField(Cuenta, on_delete=models.CASCADE, null=True, blank=True)
     completed = models.BooleanField(default=False)
@@ -20,8 +20,8 @@ class Carrito(models.Model):
 class ItemCarrito(models.Model):
     #  related_name='items' puedo acceder a los objecto de carrito con este nombre
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name="cartitems")
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField(default=1)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='items')
+    cantidad = models.IntegerField(default=0)
     # Otros campos de ItemCarrito
 
     def __str__(self):
