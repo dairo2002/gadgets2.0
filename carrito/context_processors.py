@@ -9,7 +9,65 @@ import pdb
 
 # pdb.set_trace()
 
+from django.http import JsonResponse
 
+
+# def mostrar_carrito(request):
+#     cartitem = []
+#     descuento = 0
+#     subtotal = 0
+#     cantidad = 0
+#     contador = 0
+#     total = 0
+#     cart = None
+
+#     # data = json.loads(request.body)
+#     try:
+#         if request.user.is_authenticated:
+#             cart = Carrito.objects.get(usuario=request.user, completed=False)
+#         else:
+#             cart = Carrito.objects.get(
+#                 session_id=request.session["nonuser"], completed=False
+#             )
+
+#         item = ItemCarrito.objects.filter(carrito=cart)
+#         for articulo in item:
+#             if articulo.producto.aplicar_descuento:
+#                 descuento = articulo.producto.aplicar_descuento()
+#                 cantidad = articulo.cantidad
+#                 subtotal = descuento * cantidad
+#                 total += subtotal
+#             else:
+#                 precio = articulo.producto.precio
+#                 cantidad = articulo.cantidad
+#                 subtotal = precio * cantidad
+#                 total += subtotal
+
+#             cartitem.append(
+#                 {
+#                     "producto": articulo.producto.nombre,
+#                     "imagen": articulo.producto.imagen.url,
+#                     "cantidad": cantidad,
+#                 }
+#             )
+
+#         # cartitem = list(cart.cartitems.all())
+#         contador = len(cartitem)
+#     except Exception as e:
+#         print(e)
+
+#     subtotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
+#     totalFormato = "{:,.0f}".format(total).replace(",", ".")   
+
+#     return dict(
+#         articulo_carrito=cartitem,
+#         subtotal=subtotalFormato,
+#         total=totalFormato,
+#         contador=contador,
+#     )
+
+
+# ? codigo funcional mostrar producto del carrito
 def mostrar_carrito(request):
     cartitem = []
     descuento = 0
@@ -53,7 +111,7 @@ def mostrar_carrito(request):
         # cartitem almacena todo los productos del carrito
         # cartitems =  related_name="cartitems"
         cartitem = cart.cartitems.all()
-        print(cartitem)
+        # print(cartitem)
         # Utilizamos este metodo count() para contar cuantos objetos ahi en el carrito
         contador = cartitem.count()
     except Exception as e:

@@ -7,12 +7,12 @@
     </div>
     <div class="container py-5">
       {% if not articulo_carrito %}
-        <h2 class="text-muted text-center">El carrito de compras esta vacío</h2>    
+        <h2 class="text-muted text-center">El carrito de compras esta vacío</h2>
         <br />
         <div class="text-center">
           <a href="{% url 'tienda' %}" class="btn btn-dark">Continuar comprando <i class="fa-solid fa-store"></i></a>
         </div>
-      {% else %}    
+      {% else %}
         <div class="row d-flex justify-content-center h-100">
           <div class="col col-sm-12 mb-2 col-lg-8 mb-lg-0">
             <div class="card rounded-4">
@@ -22,8 +22,7 @@
                   <small class="text-muted mb-0">{{ contador }} Artículos</small>
                 </div>
                 <hr class="my-4" />
-
-                <div id="tbl-carrito" class="table-responsive">
+                <div class="table-responsive">
                   <table class="table">
                     <tbody>
                       {% for articulo in articulo_carrito %}
@@ -48,7 +47,7 @@
                           </td>
                           <td class="align-middle text-center" width="90px">
                             <div class="">
-                              <button class="btn p-1 border border-0 deleteProductCart"  value="{{articulo.producto.id}}"> <i class="fa-solid fa-xmark fa-xl" ></i></button>
+                              <button class="btn p-1 border border-0 deleteProductCart" value="{{ articulo.producto.id }}"><i class="fa-solid fa-xmark fa-xl"></i></button>
                             </div>
                           </td>
                         </tr>

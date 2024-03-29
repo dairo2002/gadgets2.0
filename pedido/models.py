@@ -8,7 +8,7 @@ from django.core.validators import validate_image_file_extension
 from django.core.validators import FileExtensionValidator
 
 
-class Pago(models.Model):    
+class Pago(models.Model):
     OPCIONES_ESTADO_PAGOS = [
         ("Verificacion", "Verificacion"),
         ("Aprobado", "Aprobado"),
@@ -85,6 +85,25 @@ class Pedido(models.Model):
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"
 
+
+class Departamento(models.Model):
+    nombre = models.CharField(max_length=100)
+    codigo = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Municipio(models.Model):
+    nombre = models.CharField(max_length=100)
+    codigo = models.CharField(max_length=10)
+    # departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    codigo_departamento = models.CharField(max_length=5)
+
+    def __str__(self):
+        return self.nombre
+
+
 class Ventas(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
@@ -97,7 +116,8 @@ class Ventas(models.Model):
 
     def __str__(self):
         return self.producto.nombre
-    
+
+
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
@@ -108,3 +128,4 @@ class DetallePedido(models.Model):
 
     def __str__(self):
         return f"Detalle del Pedido #{self.pedido.id} - Producto: {self.producto.nombre}"
+        

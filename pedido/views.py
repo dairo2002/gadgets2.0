@@ -1,7 +1,8 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm
-from .models import Pedido, Pago, Ventas, DetallePedido
+from .models import Pedido, Pago, Ventas, DetallePedido, Departamento, Municipio
 from tienda.models import Producto
 from carrito.models import Carrito
 from django.contrib import messages
@@ -30,103 +31,73 @@ import pdb
 
 
 @login_required(login_url="inicio_sesion")
-def realizar_pedido(request, total=0, cantidad=0):
+def realizar_pedido(request, total=0):
     usuario_actual = request.user
     print("usuario pedido", usuario_actual)
-    # carrito = Carrito.objects.filter(usuario=usuario_actual)
-    # contar_carrito = carrito.count()
 
-    # if contar_carrito <= 0:
-    #     return redirect("tienda")
+    # Listar los departamentos
+    departamneto = Departamento.objects.all()
 
-    # for articulo in carrito:
-    #     if articulo.producto.aplicar_descuento():
-    #         total += articulo.producto.aplicar_descuento() * articulo.cantidad
-    #         cantidad += articulo.cantidad
-    #     else:
-    #         total += articulo.producto.precio * articulo.cantidad
-    #         cantidad += articulo.cantidad
+    # if request.method == "POST":
+    #     formulario = PedidoForm(request.POST)
+    #     if formulario.is_valid():
+    #         data = Pedido()
+    #         data.usuario = usuario_actual
+    #         data.nombre = formulario.cleaned_data["nombre"]
+    #         data.apellido = formulario.cleaned_data["apellido"]
+    #         data.telefono = formulario.cleaned_data["telefono"]
+    #         data.correo_electronico = formulario.cleaned_data["correo_electronico"]
+    #         data.direccion = formulario.cleaned_data["direccion"]
+    #         data.direccion_local = formulario.cleaned_data["direccion_local"]
+    #         data.departamento = formulario.cleaned_data["departamento"]
+    #         data.ciudad = formulario.cleaned_data["ciudad"]
+    #         data.codigo_postal = formulario.cleaned_data["codigo_postal"]
+    #         data.total_pedido = total
+    #         data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
 
-    if request.method == "POST":
-        formulario = PedidoForm(request.POST)
-        if formulario.is_valid():
-            data = Pedido()
-            data.usuario = usuario_actual
-            data.nombre = formulario.cleaned_data["nombre"]
-            data.apellido = formulario.cleaned_data["apellido"]
-            data.telefono = formulario.cleaned_data["telefono"]
-            data.correo_electronico = formulario.cleaned_data["correo_electronico"]
-            data.direccion = formulario.cleaned_data["direccion"]
-            data.direccion_local = formulario.cleaned_data["direccion_local"]
-            data.departamento = formulario.cleaned_data["departamento"]
-            data.ciudad = formulario.cleaned_data["ciudad"]
-            data.codigo_postal = formulario.cleaned_data["codigo_postal"]
-            data.total_pedido = total
-            data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
+    #         # Numero del pedido: fecha del año, mes, y dia
+    #         year = int(datetime.date.today().strftime("%Y"))
+    #         months = int(datetime.date.today().strftime("%m"))
+    #         day = int(datetime.date.today().strftime("%d"))
 
-            # Numero del pedido: fecha del año, mes, y dia
-            year = int(datetime.date.today().strftime("%Y"))
-            months = int(datetime.date.today().strftime("%m"))
-            day = int(datetime.date.today().strftime("%d"))
-
-            dt = datetime.date(year, months, day)
-            fecha_actual = dt.strftime("%Y%m%d")
-            # 2024 02 06 1.. ingremento por el id de cada pedido
-            num_pedido = fecha_actual + str(data.id)
-            data.numero_pedido = num_pedido
-            data.save()
-
-            cart = Cart(request)
-            items, totalFormato = cart.obtener_producto()
+    #         dt = datetime.date(year, months, day)
+    #         fecha_actual = dt.strftime("%Y%m%d")
+    #         # 2024 02 06 1.. ingremento por el id de cada pedido
+    #         num_pedido = fecha_actual + str(data.id)
+    #         data.numero_pedido = num_pedido
+    #         data.save()
 
             # Crear los detalles de pedido para cada producto en el carrito
-            for item in items:
-                producto = item["producto"]
-                cantidad = item["cantidad"]
-                subtotal = item["subtotal"]
+            # for item in items:
+            #     producto = item["producto"]
+            #     cantidad = item["cantidad"]
+            #     subtotal = item["subtotal"]
 
-                # totalFormato = "{:,.0f}".format(totalFormato).replace(",", ".")
-                # subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
+            #     # totalFormato = "{:,.0f}".format(totalFormato).replace(",", ".")
+            #     # subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
 
-                DetallePedido.objects.create(
-                    pedido=data,
-                    producto=producto,
-                    cantidad=cantidad,
-                    ordenado=False,
-                    subtotal=subtotal,
-                    total=totalFormato,
-                )
+            #     DetallePedido.objects.create(
+            #         pedido=data,
+            #         producto=producto,
+            #         cantidad=cantidad,
+            #         ordenado=False,
+            #         subtotal=subtotal,
+            #         total=totalFormato,
+            #     )
 
             # Redirigir a la página de pago con el ID del pedido
-            return redirect("pago", id_pedido=data.pk)
-    else:
-        formulario = PedidoForm()
-    return render(request, "client/pedido/realizar_pedido.html", {"form": formulario})
+    #         return redirect("pago", id_pedido=data.pk)
+    # else:
+    #     formulario = PedidoForm()
+    return render(request, "client/pedido/realizar_pedido.html", {"departamneto":departamneto})
 
 
-@api_view(["GET", "POST"])
-def orderAPIView(request):
-    # HACER PRUEBAS MAS ADELANTE
-    # total = 0
-    # cantidad = 0
-    # usuario_actual = request.user
-    # carrito = Carrito.objects.filter(usuario=usuario_actual)
-    # contar_carrito = carrito.count()
 
-    # if contar_carrito <= 0:
-    #     return Response({"message": "No hay artículos en el carrito"}, status=status.HTTP_400_BAD_REQUEST)
-
-    # for articulo in carrito:
-    #     if articulo.producto.descuento_con_precio():
-    #         total += articulo.producto.descuento_con_precio() * articulo.cantidad
-    #         cantidad += articulo.cantidad
-    #     else:
-    #         total += articulo.producto.precio * articulo.cantidad
-    #         cantidad += articulo.cantidad
-    if request.method == "POST":
-        serializer = PedidoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+def regiones(request):        
+    codigo_departamento = request.GET.get("codigo_departamento")    
+    municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)    
+    lista = list(municipios.values("codigo", "nombre"))    
+    return JsonResponse({'municipios': lista})
 
 
 def pago(request, id_pedido):
@@ -147,9 +118,6 @@ def pago(request, id_pedido):
             messages.success(
                 request, "Pago exitoso, Se verificara si el comprobante es valido"
             )
-
-         
-
             return redirect("index")
         else:
             messages.error(request, "Por favor corrija los errores en el formulario.")
@@ -170,8 +138,6 @@ def email_info_pedido(sender, instance, **kwargs):
             datos.ordenado = True
             datos.save()
 
-            
-
         mail_subject = "¡Su pedido ha sido aprobado!"
         mensaje = render_to_string(
             "client/pedido/email_pago.html",
@@ -190,7 +156,7 @@ def email_info_pedido(sender, instance, **kwargs):
 def actualizar_stock(request):
     pass
     # cart.limpiar_carrito()
-    
+
     # detalle_pedido = DetallePedido.objects.filter(pedido__usuario=usuario)
     # for detalle in detalle_pedido:
     #     if detalle.pedido.ordenado:
@@ -200,8 +166,16 @@ def actualizar_stock(request):
     #         print("cantidad stock", cantidad)
     #         producto.stock -= cantidad
     #         producto.save()
-        # producto.delete()
-        # pdb.set_trace()
+    # producto.delete()
+    # pdb.set_trace()
 
 
 # ? API
+
+
+@api_view(["GET", "POST"])
+def orderAPIView(request):
+    if request.method == "POST":
+        serializer = PedidoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()

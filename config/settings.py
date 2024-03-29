@@ -70,9 +70,9 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -99,7 +99,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "tienda.context_processors.enlaces_categorias",
                 # "carrito.context_processors.contar_productos",
-                "carrito.context_processors.mostrar_carrito",
+                 "carrito.context_processors.mostrar_carrito",
             ],
         },
     },
@@ -200,9 +200,13 @@ EMAIL_USE_TLS = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-'''
+
 CORS_ALLOWED_ORIGINS = [
-"http://127.0.0.1:5500",
-"http://localhost:5500"
+"http://127.0.0.1:8000",
+# "http://localhost:8000"
 ]
-'''
+
+
+# CORS_ORIGIN_WHITELIST = [
+#     'http://tusitio.com',
+# ]

@@ -1,8 +1,12 @@
+console.log('hhhh');
+
 // Funcion ocultar boton 
 function mostrarDireccionLocal() {
     var txtDireccionLocal = document.getElementById('txtDireccionLocal')
     txtDireccionLocal.style.display = 'block'
 }
+
+
 
 document.querySelectorAll('input[name="metodo_pago"]').forEach(function (radio) {
     radio.addEventListener('change', function () {
@@ -18,3 +22,29 @@ document.querySelectorAll('input[name="metodo_pago"]').forEach(function (radio) 
         }
     });
 });
+
+
+
+//** peticon filtron de departamentos a municipios */
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('Cambio de departamento detectado')
+    document.getElementById('selectDepartamento').addEventListener('change', function () {
+        var codigo_departamento = this.value
+        var selectMunicipio = document.getElementById('selectMunicipio')
+        selectMunicipio.disabled = true // Deshabilita el select
+        //  fetch('{% url "regiones" %}?codigo_departamento=' + codigo_departamento)
+        fetch('pedidos/regiones/?codigo_departamento=' + codigo_departamento)
+            .then((response) => response.json())
+            .then((data) => {
+                selectMunicipio.innerHTML = '' // Vacía el select de municipios
+                data.municipios.forEach(function (municipio) {
+                    selectMunicipio.innerHTML += '<option value="' + municipio.codigo + '">' + municipio.nombre + '</option>'
+                })
+                selectMunicipio.disabled = false
+            })
+            .catch((error) => {
+                selectMunicipio.innerHTML = '<option value="">Error al cargar</option>'
+                console.error('Error:', error)
+            })
+    })
+})

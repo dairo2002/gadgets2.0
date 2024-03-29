@@ -3,34 +3,51 @@
 {% block content %}
   <section>
     <div class="container my-4">
-      <form action="{% url 'realizar_pedido' %}" method="POST" class="form_pedido">
+      <form action="" method="POST" class="form_pedido">
         {% csrf_token %}
         <div class="row">
           <div class="col-lg-7 mb-3 mb-lg-0">
             <div class="card p-3">
               <h4 class="mb-3 mt-2">Contacto:</h4>
               <div class="row g-3 justify-content-between">
-                <div class="col-12">{{ form.correo_electronico }}</div>
+                <div class="col-12">
+                  <input name="txtCorreo" type="email" placeholder="Dirección correo electrónico" class="form-control" />
+                </div>
                 <h4 class="mb-2 mt-5">Detalles De Facturación:</h4>
-                <div class="col-sm-6">{{ form.nombre }}</div>
-                <div class="col-sm-6">{{ form.apellido }}</div>
-                <div class="col-6">{{ form.telefono }}</div>
-                <div class="col-6">{{ form.direccion }}</div>
+                <div class="col-sm-6">
+                  <input name="txtNombre" type="text" placeholder="Nombre" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                  <input name="txtApellido" type="text" placeholder="Apellido" class="form-control" />
+                </div>
+                <div class="col-6">
+                  <input name="txtTelefono" type="text" placeholder="Número telefónico" class="form-control" />
+                </div>
+                <div class="col-6">
+                  <input name="txtDireccion" type="text" placeholder="Dirección" class="form-control" />
+                </div>
                 <div class="col-12">
                   <a id="linkDireccionLocal" onclick="mostrarDireccionLocal()" style="cursor: pointer;" class="text-secondary">Agregar apartamento,local,etc.</a>
-                  {{ form.direccion_local }}
+                  <input name="txtDireccionLocal" type="text" placeholder="Casa,apartamento,etc.(opcional)" class="form-control" />
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Departamento</label>
-                  {{ form.departamento }}
+                  <select id="selectDepartamento" name="selectDepartamento" class="form-select" aria-label="Default select example">
+                    <option selected>Seleccionar</option>
+                    {% for d in departamneto %}
+                      <option value="{{ d.codigo }}">{{ d.nombre }}</option>
+                    {% endfor %}
+                  </select>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label">Ciudad</label>
-                  {{ form.ciudad }}
+                  <label class="form-label">Municipio</label>
+                  <select id="selectMunicipio" name="selectMunicipio" class="form-select" aria-label="Default select example">
+                    <option selected disabled>Seleccionar</option>
+                  </select>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Código postal</label>
-                  {{ form.codigo_postal }}
+                  <input type="text" placeholder="Dirección" class="form-control" />
                 </div>
                 <div class="mt-2">
                   {% if form.errors %}
@@ -82,7 +99,7 @@
                       <p class="mb-0">Sub total</p>
                       <p class="mb-0">$ {{ articulo.subtotal }}</p>
                     </div>
-                    <hr>
+                    <hr />
                   </div>
                 {% endfor %}
                 <div class="d-flex justify-content-between">
