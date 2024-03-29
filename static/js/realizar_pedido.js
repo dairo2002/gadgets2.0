@@ -32,8 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var codigo_departamento = this.value
         var selectMunicipio = document.getElementById('selectMunicipio')
         selectMunicipio.disabled = true // Deshabilita el select
-        //  fetch('{% url "regiones" %}?codigo_departamento=' + codigo_departamento)
-        fetch('pedidos/regiones/?codigo_departamento=' + codigo_departamento)
+
+        // '?' se utiliza pra enviar datos al servidor, GET con un parametro
+        // parametro: codigo_departamento = request.GET.get("codigo_departamento")  
+        // + codigo_departamento, se llama la variable declarada y se concatena con el valor 
+
+        fetch('/pedido/regiones/?codigo_departamento=' + codigo_departamento)
             .then((response) => response.json())
             .then((data) => {
                 selectMunicipio.innerHTML = '' // Vacía el select de municipios
