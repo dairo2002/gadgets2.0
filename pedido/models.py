@@ -57,7 +57,7 @@ class Pedido(models.Model):
     ordenado = models.BooleanField(default=False)
     direccion_local = models.CharField(max_length=50, blank=True)
     departamento = models.CharField(max_length=50)
-    ciudad = models.CharField(max_length=50)
+    municpio = models.CharField(max_length=50)
     codigo_postal = models.CharField(max_length=50)
     total_pedido = models.DecimalField(max_digits=12, decimal_places=2)
 

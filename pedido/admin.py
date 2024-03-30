@@ -68,7 +68,7 @@ class PedidoAdmin(admin.ModelAdmin):
         # Se llama la funcion para la conversion a mayúsculas
         "cod_postal_upper",
         "departamento",
-        "ciudad",
+        # "ciudad",
         "ordenado",
         "total_pedido",
     )

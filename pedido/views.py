@@ -50,7 +50,7 @@ def realizar_pedido(request, total=0):
             data.direccion = formulario.cleaned_data["direccion"]
             data.direccion_local = formulario.cleaned_data["direccion_local"]
             data.departamento = formulario.cleaned_data["departamento"]
-            data.ciudad = formulario.cleaned_data["ciudad"]
+            data.municpio = formulario.cleaned_data["ciudad"]
             data.codigo_postal = formulario.cleaned_data["codigo_postal"]
             data.total_pedido = total
             data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
