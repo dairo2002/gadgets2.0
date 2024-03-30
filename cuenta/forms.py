@@ -31,11 +31,12 @@ class RegistroForms(forms.ModelForm):
 
         password = cleaned_data.get("password")
         confirmar_password = cleaned_data.get("confirm_pwd")
+        errores = []
 
         print(f"Registro: password {password} confirmar_password: {confirmar_password}")
 
         if password != confirmar_password:
-            raise forms.ValidationError("Las contraseñas no coinciden")
+            errores.append("Las contraseñas no coinciden")
 
         if (
             len(password) < 5
@@ -43,55 +44,61 @@ class RegistroForms(forms.ModelForm):
             and len(confirmar_password) < 5
             or len(confirmar_password) > 12
         ):
-            raise forms.ValidationError(
-                "Las contraseña debe tener de 5 a 12 caracteres"
-            )
-        
-        if not re.search(r'\d', password) or not re.search(r'[a-zA-Z]', confirmar_password):
-            raise forms.ValidationError("La contraseña debe contener al menos una letra y un número")
+            errores.append("Las contraseña debe tener de 5 a 12 caracteres")
+
+        if not re.search(r"\d", password) or not re.search(
+            r"[a-zA-Z]", confirmar_password
+        ):
+            errores.append("La contraseña debe contener al menos una letra y un número")
+
+        if errores:
+            raise forms.ValidationError(errores)
 
         return password
 
     def clean_nombre(self):
         nombre = self.cleaned_data.get("nombre")
+        errores = []
 
         if any(char.isdigit() for char in nombre):
-            raise forms.ValidationError("El nombre no puede tener números")
+            errores.append("El nombre no puede tener números")
 
         if len(nombre) < 3 or len(nombre) > 15:
-            raise forms.ValidationError("El nombre debe tener entre 3 y 15 caracteres")
+            errores.append("El nombre debe tener entre 3 y 15 caracteres")
+
+        if errores:
+            raise forms.ValidationError(errores)
 
         return nombre
 
     def clean_apellido(self):
         nombre = self.cleaned_data.get("apellido")
+        errores = []
 
         if any(char.isdigit() for char in nombre):
-            raise forms.ValidationError("El apellido no puede tener números")
+            errores.append("El apellido no puede tener números")
 
         if len(nombre) < 3 or len(nombre) > 15:
-            raise forms.ValidationError(
-                "El apellido debe tener entre 3 y 15 caracteres"
-            )
+            errores.append("El apellido debe tener entre 3 y 15 caracteres")
+        if errores:
+            raise forms.ValidationError(errores)
 
         return nombre
 
     def clean_telefono(self):
         telefono = self.cleaned_data.get("telefono")
+        errores = []
 
         if not telefono.isdigit():
-            raise forms.ValidationError("El teléfono debe tener solo números")
+            errores.append("El teléfono debe tener solo números")
 
         if len(telefono) < 8 or len(telefono) > 10:
-            raise forms.ValidationError(
-                "El número de teléfono debe tener entre 8 y 10 dígitos"
-            )
+            errores.append("El número de teléfono debe tener entre 8 y 10 dígitos")
+
+        if errores:
+            raise forms.ValidationError(errores)
 
         return telefono
-    
-        
-
-
 
     def __init__(self, *args, **kwargs):
         super(RegistroForms, self).__init__(*args, **kwargs)
@@ -105,6 +112,3 @@ class RegistroForms(forms.ModelForm):
         # Se itera para que cada campo tenga la misma clase
         for field in self.fields:
             self.fields[field].widget.attrs["class"] = "form-control"
-
-
-
