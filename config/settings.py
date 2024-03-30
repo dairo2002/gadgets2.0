@@ -99,7 +99,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "tienda.context_processors.enlaces_categorias",
                 # "carrito.context_processors.contar_productos",
-                 "carrito.context_processors.mostrar_carrito",
+                "carrito.context_processors.mostrar_carrito",
             ],
         },
     },

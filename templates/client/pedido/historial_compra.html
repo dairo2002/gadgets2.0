@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/historial_compra.css' %}" />
+  <div class="container">
+    <h1 class="text-center my-4">Mis compras</h1>
+    <div class="col-12 cardview">
+      <h3>11 de enero</h3>
+      <hr />
+      <div class="d-flex row">
+        <div class="col-6 col-lg-2 contenedor-imagen">
+          <img class="imagenleft" src="img/macbook.png" alt="#" />
+        </div>
+        <div class="col-6 col-lg-8 textoCard">
+          <p style="color: #0dda29">Entregado</p>
+          <h5>Llegó el 13 de enero</h5>
+          <p class="mt-4">Laptop Apple Macbook Pro 14'' M1 Pro 16gb Ram + 1tb Ssd Gris</p>
+        </div>
+        <div class="col-12 col-lg-2 text-center">
+          <button type="button" class="btnCompra">Ver compra</button>
+          <button type="button" class="btnVolverACompra">Volver a comprar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

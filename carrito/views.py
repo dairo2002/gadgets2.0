@@ -76,7 +76,8 @@ def mostrar_carrito(request):
 #         "contador": contador,
 #     }
 
-#     return JsonResponse(data)
+#     print(data)
+#     return JsonResponse({'data': data})
 
 # ? validar stock
 # @login_required(login_url="inicio_sesion")
@@ -93,8 +94,7 @@ def add(request):
             carrito=cart, producto=producto
         )
         cartitem.cantidad += 1
-        cartitem.save()
-        return redirect("mostrar_carrito")
+        cartitem.save()        
         # contador = cart.count()
     else:
         try:
@@ -114,11 +114,11 @@ def add(request):
         cartitem.save()
 
         # contador = cart.count()
-    return JsonResponse({"redirect": "/carrito/"}, safe=False)
+    return JsonResponse({"redirect": "/carrito/"})
 
 
 
-def update(request):
+def updates(request):
     data = json.loads(request.body)
     producto_id = data["id"]
     nueva_cantidad = int(data["cantidad"])
@@ -151,11 +151,7 @@ def update(request):
         pass
         # Si el producto no está en el carrito, podemos decidir si crear un nuevo
         # item en el carrito con la cantidad proporcionada, o simplemente ignorar la solicitud.
-    return JsonResponse({"redirect": "/carrito/"}, safe=False)
-
-
-
-
+    return JsonResponse({"redirect": "/carrito/"})
 
 
 # def delete(request):
@@ -191,26 +187,25 @@ def delete(request):
     data = json.loads(request.body)
     producto_id = data.get("id")
     if not producto_id:
-        return JsonResponse({"error": "ID del producto no proporcionado"}, status=400)
+        return JsonResponse({"error": "ID del producto no proporcionado"})
     try:
         producto = Producto.objects.get(id=producto_id)
     except Producto.DoesNotExist:
-        return JsonResponse({"error": "Producto no encontrado"}, status=404)
+        return JsonResponse({"error": "Producto no encontrado"})
     if request.user.is_authenticated:
         cart, _ = Carrito.objects.get_or_create(usuario=request.user, completed=False)
     else:
         cart_id = request.session.get("nonuser")
         if not cart_id:
-            return JsonResponse({"error": "El carrito no existe"}, status=404)
+            return JsonResponse({"error": "El carrito no existe"})
         cart, _ = Carrito.objects.get_or_create(session_id=cart_id, completed=False)
     try:
         cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
         cartitem.delete()
-        return JsonResponse({"message": "Producto eliminado del carrito"})
+        return JsonResponse({"redirect": "/carrito/"})        
     except ItemCarrito.DoesNotExist:
-        return JsonResponse({"error": "El producto no está en el carrito"}, status=404)
-    except ObjectDoesNotExist:
-        return JsonResponse({"error": "Error al eliminar el producto del carrito"}, status=500)
+        return JsonResponse({"redirect": "/carrito/"})    
+        
 
 
 

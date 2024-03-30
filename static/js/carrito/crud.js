@@ -18,11 +18,12 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 
-document.addEventListener("DOMContentLoaded", function() {    
+
+/*document.addEventListener("DOMContentLoaded", function () {
     const carritoContainer = document.getElementById("carrito-container");
-    
+
     // Si el elemento existe, continúa con la lógica para mostrar el carrito
-    if (carritoContainer) {       
+    if (carritoContainer) {
         fetch("/carrito/")
             .then(response => response.json())
             .then(data => {
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
                       </td>
                     </tr>`
                 });
-                
+
                 carritoContainer.innerHTML = html;
             })
             .catch(error => {
@@ -65,9 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("El elemento 'carrito-container' no existe en el DOM.");
     }
 });
-
-
-
+*/
 
 /*<table class="table">
 <tbody>
@@ -103,11 +102,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-
-
-// let btn = document.getElementById("btnAgregarCarrito")
-// btn.addEventListener('click', agregarCarrito)
-
 let btn = document.querySelectorAll(".contaninerProductos button")
 btn.forEach(bt => {
     bt.addEventListener('click', agregarCarrito)
@@ -128,25 +122,64 @@ function agregarCarrito(e) {
     })
         .then(response => response.json())
         .then(data => {
-            // ** CORREGIR Redirijir a carrito
-            window.localtion.href = "/carrito/";
-            
+            window.location.href = data.redirect;
             //Contador de producto
             //document.getElementById("contador").innerHTML = data
             //console.log(data);
         })
         .catch(error => {
-            //console.log(error);
+            console.log(error);
         })
 
 }
 
+
 document.addEventListener("DOMContentLoaded", function () {
-    // Selecciona todos los botones de eliminar y agrega un evento de clic a cada uno
+    const btnActualizarTodo = document.getElementById("btnActualizarTodo");
+
+    btnActualizarTodo.addEventListener("click", function () {
+        const inputCantidades = document.querySelectorAll(".inputCantidadCarrito");
+
+        inputCantidades.forEach(input => {
+            const productoId = input.dataset.productId;
+            const nuevaCantidad = input.value;
+
+            actualizarCantidadEnCarrito(productoId, nuevaCantidad);
+        });
+    });
+
+    function actualizarCantidadEnCarrito(productoId, nuevaCantidad) {
+        const data = {
+            id: productoId,
+            cantidad: nuevaCantidad
+        };
+
+        fetch("/carrito/actualizar_carrito/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = data.redirect;
+            })
+            .catch(error => {
+                console.error("Error al actualizar la cantidad:", error);
+            });
+    }
+
+
+
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
     const eliminarBotones = document.querySelectorAll(".deleteProductCart");
     eliminarBotones.forEach(btn => {
         btn.addEventListener("click", function () {
-            // Obtén el ID del producto del atributo data-producto-id del elemento padre
             const productoID = btn.value;
             eliminarProductoDelCarrito(productoID);
         });
@@ -155,10 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function eliminarProductoDelCarrito(producto_id) {
-    // Crear el objeto de datos que se enviará en la solicitud    
     const data = { id: producto_id };
-
-    // Realizar la solicitud Fetch para eliminar el producto del carrito
     fetch("/carrito/eliminar_carrito/", {
         method: "POST",
         headers: {
@@ -169,10 +199,9 @@ function eliminarProductoDelCarrito(producto_id) {
     })
         .then(response => response.json())
         .then(data => {
-            //console.log(data);
+            window.location.href = data.redirect;
         })
         .catch(error => {
-            // Capturar y manejar errores de la solicitud Fetch
             console.error("Error:", error);
         });
 }

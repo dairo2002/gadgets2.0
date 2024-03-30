@@ -40,7 +40,7 @@
             <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3 mb-4">
               <div class="card tarjeta_productos h-100">
                 <div class="card-body contaninerProductos">
-                  {% comment %} <form  action="{% url 'add_carrito' productos.id %}" method="POST">
+                  {% comment %} <form action="{% url 'add_carrito' productos.id %}" method="POST">
                     {% csrf_token %} {% endcomment %}
                     {% if productos.categoria.descuento %}
                       <a href="{{ productos.get_url_producto }}">
@@ -63,12 +63,13 @@
                       <h5><span class="badge text-bg-danger mt-3 mx-auto">Agotado</span></h5>
                     {% else %}
                       <div class="d-flex gap-2 mt-2">
-                        {% comment %} <input class="form-control" min="1" type="number" name="txtCantidad" required/> {% endcomment %}
-                        {% comment %} id="btnAgregarCarrito" {% endcomment %}
+                        {% comment %} <input class="form-control" min="1" type="number" name="txtCantidad" required /> {% endcomment %}
+                        {% comment %}id="btnAgregarCarrito"{% endcomment %}
                         <button value="{{ productos.id }}" class="btn btn-outline-dark w-100">Agregar <i class="fa-solid fa-cart-shopping"></i></button>
                       </div>
                     {% endif %}
-                  {% comment %} </form> {% endcomment %}
+                    {% comment %}
+                  </form> {% endcomment %}
                 </div>
               </div>
             </div>
@@ -77,18 +78,16 @@
       </section>
 
       <div class="my-4 d-flex justify-content-center">
-        <div class="card rounded-5 w-25 p-3 bg-light">
-          <div>
+        <div class="col-10 col-md-6 col-lg-3">
+          <div class="card rounded-5 p-3 bg-light">
             <h3 class="text-center">Descargar</h3>
             <div class="text-center mt-4">
-              <a href="">                
-                <a href=""><img class="" src="{% static 'img/logo.svg' %}" alt="descargar mobil" /></a>
-              </a>
+              <a href=""><a href=""><img class="" src="{% static 'img/logo.svg' %}" alt="descargar mobil" /></a></a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <script src="{% static 'js/carrito/agregar.js' %}"></script>
+  <script src="{% static 'js/carrito/crud.js' %}"></script>
 {% endblock %}
