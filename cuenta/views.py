@@ -30,7 +30,6 @@ from .serializers import CuentaSerializer
 
 from django.http import HttpResponse
 import pdb
-import requests
 
 
 def registrarse(request):

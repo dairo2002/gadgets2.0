@@ -42,19 +42,7 @@ class Pago(models.Model):
 
 
 class Pedido(models.Model):
-    OPCION_DEPARTAMENTO = [
-        # 1, se almacena en la base de datos, 2 se muestra en la interfaz
-        ("Amazonas", "Amazonas"),
-        ("Antioquía", "Antioquía"),
-        ("Huila", "Huila"),
-    ]
-
-    OPCION_CIUDADES = [
-        ("Leticia", "Leticia"),
-        ("Medellin", "Medellin"),
-        ("Neiva", "Neiva"),
-    ]
-
+ 
     # null = acepta valores nulos
     # blank = Permite dejar el campo en blanco, opcional
     usuario = models.ForeignKey(Cuenta, on_delete=models.SET_NULL, null=True)
@@ -68,8 +56,8 @@ class Pedido(models.Model):
     direccion = models.CharField(max_length=50)
     ordenado = models.BooleanField(default=False)
     direccion_local = models.CharField(max_length=50, blank=True)
-    departamento = models.CharField(max_length=50, choices=OPCION_DEPARTAMENTO)
-    ciudad = models.CharField(max_length=50, choices=OPCION_CIUDADES)
+    departamento = models.CharField(max_length=50)
+    ciudad = models.CharField(max_length=50)
     codigo_postal = models.CharField(max_length=50)
     total_pedido = models.DecimalField(max_digits=12, decimal_places=2)
 
