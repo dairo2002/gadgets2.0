@@ -38,34 +38,37 @@ def realizar_pedido(request, total=0):
     # Listar los departamentos
     departamneto = Departamento.objects.all()
 
-    # if request.method == "POST":
-    #     formulario = PedidoForm(request.POST)
-    #     if formulario.is_valid():
-    #         data = Pedido()
-    #         data.usuario = usuario_actual
-    #         data.nombre = formulario.cleaned_data["nombre"]
-    #         data.apellido = formulario.cleaned_data["apellido"]
-    #         data.telefono = formulario.cleaned_data["telefono"]
-    #         data.correo_electronico = formulario.cleaned_data["correo_electronico"]
-    #         data.direccion = formulario.cleaned_data["direccion"]
-    #         data.direccion_local = formulario.cleaned_data["direccion_local"]
-    #         data.departamento = formulario.cleaned_data["departamento"]
-    #         data.ciudad = formulario.cleaned_data["ciudad"]
-    #         data.codigo_postal = formulario.cleaned_data["codigo_postal"]
-    #         data.total_pedido = total
-    #         data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
+    if request.method == "POST":
+        formulario = PedidoForm(request.POST)
+        if formulario.is_valid():
+            data = Pedido()
+            data.usuario = usuario_actual
+            data.nombre = formulario.cleaned_data["nombre"]
+            data.apellido = formulario.cleaned_data["apellido"]
+            data.telefono = formulario.cleaned_data["telefono"]
+            data.correo_electronico = formulario.cleaned_data["correo_electronico"]
+            data.direccion = formulario.cleaned_data["direccion"]
+            data.direccion_local = formulario.cleaned_data["direccion_local"]
+            data.departamento = formulario.cleaned_data["departamento"]
+            data.ciudad = formulario.cleaned_data["ciudad"]
+            data.codigo_postal = formulario.cleaned_data["codigo_postal"]
+            data.total_pedido = total
+            data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
 
-    #         # Numero del pedido: fecha del año, mes, y dia
-    #         year = int(datetime.date.today().strftime("%Y"))
-    #         months = int(datetime.date.today().strftime("%m"))
-    #         day = int(datetime.date.today().strftime("%d"))
+            # Numero del pedido: fecha del año, mes, y dia
+            year = int(datetime.date.today().strftime("%Y"))
+            months = int(datetime.date.today().strftime("%m"))
+            day = int(datetime.date.today().strftime("%d"))
 
-    #         dt = datetime.date(year, months, day)
-    #         fecha_actual = dt.strftime("%Y%m%d")
-    #         # 2024 02 06 1.. ingremento por el id de cada pedido
-    #         num_pedido = fecha_actual + str(data.id)
-    #         data.numero_pedido = num_pedido
-    #         data.save()
+            dt = datetime.date(year, months, day)
+            fecha_actual = dt.strftime("%Y%m%d")
+            # 2024 02 06 1.. ingremento por el id de cada pedido
+            num_pedido = fecha_actual + str(data.id)
+            data.numero_pedido = num_pedido
+            data.save()
+
+            # Redirigir a la página de pago con el ID del pedido
+            return redirect("pago", id_pedido=data.pk)
 
             # Crear los detalles de pedido para cada producto en el carrito
             # for item in items:
@@ -83,21 +86,21 @@ def realizar_pedido(request, total=0):
             #         ordenado=False,
             #         subtotal=subtotal,
             #         total=totalFormato,
-            #     )
+        #     )
+    else:
+        formulario = PedidoForm()
+    return render(
+        request,
+        "client/pedido/realizar_pedido.html",
+        {"form": formulario, "departamneto": departamneto},
+    )
 
-            # Redirigir a la página de pago con el ID del pedido
-    #         return redirect("pago", id_pedido=data.pk)
-    # else:
-    #     formulario = PedidoForm()
-    return render(request, "client/pedido/realizar_pedido.html", {"departamneto":departamneto})
 
-
-
-def regiones(request):        
-    codigo_departamento = request.GET.get("codigo_departamento")    
-    municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)    
-    lista = list(municipios.values("codigo", "nombre"))    
-    return JsonResponse({'municipios': lista})
+def regiones(request):
+    codigo_departamento = request.GET.get("codigo_departamento")
+    municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)
+    lista = list(municipios.values("codigo", "nombre"))
+    return JsonResponse({"municipios": lista})
 
 
 def pago(request, id_pedido):

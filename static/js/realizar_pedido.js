@@ -1,4 +1,3 @@
-console.log('hhhh');
 
 // Funcion ocultar boton 
 function mostrarDireccionLocal() {
@@ -27,7 +26,6 @@ document.querySelectorAll('input[name="metodo_pago"]').forEach(function (radio) 
 
 //** peticon filtron de departamentos a municipios */
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Cambio de departamento detectado')
     document.getElementById('selectDepartamento').addEventListener('change', function () {
         var codigo_departamento = this.value
         var selectMunicipio = document.getElementById('selectMunicipio')

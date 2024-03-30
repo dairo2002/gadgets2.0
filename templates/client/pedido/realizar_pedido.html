@@ -10,25 +10,15 @@
             <div class="card p-3">
               <h4 class="mb-3 mt-2">Contacto:</h4>
               <div class="row g-3 justify-content-between">
-                <div class="col-12">
-                  <input name="txtCorreo" type="email" placeholder="Dirección correo electrónico" class="form-control" />
-                </div>
+                <div class="col-12">{{ form.correo_electronico }}</div>
                 <h4 class="mb-2 mt-5">Detalles De Facturación:</h4>
-                <div class="col-sm-6">
-                  <input name="txtNombre" type="text" placeholder="Nombre" class="form-control" />
-                </div>
-                <div class="col-sm-6">
-                  <input name="txtApellido" type="text" placeholder="Apellido" class="form-control" />
-                </div>
-                <div class="col-6">
-                  <input name="txtTelefono" type="text" placeholder="Número telefónico" class="form-control" />
-                </div>
-                <div class="col-6">
-                  <input name="txtDireccion" type="text" placeholder="Dirección" class="form-control" />
-                </div>
+                <div class="col-sm-6">{{ form.nombre }}</div>
+                <div class="col-sm-6">{{ form.apellido }}</div>
+                <div class="col-6">{{ form.telefono }}</div>
+                <div class="col-6">{{ form.direccion }}</div>
                 <div class="col-12">
                   <a id="linkDireccionLocal" onclick="mostrarDireccionLocal()" style="cursor: pointer;" class="text-secondary">Agregar apartamento,local,etc.</a>
-                  <input name="txtDireccionLocal" type="text" placeholder="Casa,apartamento,etc.(opcional)" class="form-control" />
+                  {{ form.direccion_local }}
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Departamento</label>
@@ -47,7 +37,7 @@
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Código postal</label>
-                  <input type="text" placeholder="Dirección" class="form-control" />
+                  {{ form.codigo_postal }}
                 </div>
                 <div class="mt-2">
                   {% if form.errors %}
