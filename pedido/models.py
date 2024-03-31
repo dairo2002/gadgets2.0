@@ -1,4 +1,5 @@
 from django.db import models
+from carrito.models import ItemCarrito
 from cuenta.models import Cuenta
 from tienda.models import Producto
 from django.utils import timezone
@@ -57,7 +58,7 @@ class Pedido(models.Model):
     ordenado = models.BooleanField(default=False)
     direccion_local = models.CharField(max_length=50, blank=True)
     departamento = models.CharField(max_length=50)
-    municpio = models.CharField(max_length=50)
+    municipio = models.CharField(max_length=50)
     codigo_postal = models.CharField(max_length=50)
     total_pedido = models.DecimalField(max_digits=12, decimal_places=2)
 
@@ -68,10 +69,22 @@ class Pedido(models.Model):
         return f"{self.nombre} {self.apellido}"
 
     def region(self):
-        return f"{self.ciudad}-{self.departamento}"
+        return f"{self.municipio}-{self.departamento}"
 
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"
+
+
+class Ventas(models.Model):
+    cartItem = models.ForeignKey(ItemCarrito, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
+    # producto = models.ForeignKey(Producto, on_delete=models.CASCADE)            
+    fecha = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.producto.nombre
 
 
 class Departamento(models.Model):
@@ -92,18 +105,6 @@ class Municipio(models.Model):
         return self.nombre
 
 
-class Ventas(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    precio = models.DecimalField(max_digits=12, decimal_places=2)
-    ordenado = models.BooleanField(default=False)
-    fecha = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.producto.nombre
 
 
 class DetallePedido(models.Model):

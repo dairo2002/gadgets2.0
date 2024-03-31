@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('/pedido/regiones/?codigo_departamento=' + codigo_departamento)
             .then((response) => response.json())
             .then((data) => {
-                selectMunicipio.innerHTML = '' // Vacía el select de municipios
+                // selectMunicipio.innerHTML = '' // Vacía el select de municipios
                 data.municipios.forEach(function (municipio) {
                     selectMunicipio.innerHTML += '<option value="' + municipio.codigo + '">' + municipio.nombre + '</option>'
                 })

@@ -88,10 +88,6 @@ class VentasAdmin(admin.ModelAdmin):
         "pedido",
         "pago",
         "usuario",
-        "producto",
-        "cantidad",
-        "precio",
-        "ordenado",
         "fecha",
     )
 

@@ -6,6 +6,7 @@ from .models import Pedido, Pago, Ventas, DetallePedido, Departamento, Municipio
 from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
 from django.contrib import messages
+from django.utils import timezone
 
 # Nos permiten ejecutar el pago si es valido
 from django.db.models.signals import post_save
@@ -36,7 +37,7 @@ def realizar_pedido(request, total=0):
     print("usuario pedido", usuario_actual)
 
     # Listar los departamentos
-    queryset = Departamento.objects.all().order_by('nombre')
+    queryset = Departamento.objects.all().order_by("nombre")
 
     if request.method == "POST":
         formulario = PedidoForm(request.POST)
@@ -49,20 +50,20 @@ def realizar_pedido(request, total=0):
             data.correo_electronico = formulario.cleaned_data["correo_electronico"]
             data.direccion = formulario.cleaned_data["direccion"]
             data.direccion_local = formulario.cleaned_data["direccion_local"]
-
-            cod_departamento = request.POST.get("selectDepartamento")
-            departamento = Departamento.objects.get(codigo=cod_departamento).nombre
-            data.departamento = departamento
-
-            cod_municipio = request.POST.get("selectMunicipio")
-            municipio = Municipio.objects.get(codigo=cod_municipio).nombre
-            data.municipio = municipio
-
-            # data.departamento = formulario.cleaned_data["departamento"]
-            # data.municpio = formulario.cleaned_data["ciudad"]
             data.codigo_postal = formulario.cleaned_data["codigo_postal"]
             data.total_pedido = total
-            data.save()  
+            data.save()
+
+            
+            cod_departamento = request.POST.get("selectDepartamento")
+            departamento = Departamento.objects.get(codigo=cod_departamento)
+            data.departamento = departamento.nombre
+            data.save()
+
+            cod_municipio = request.POST.get("selectMunicipio")
+            municipio = Municipio.objects.filter(codigo=cod_municipio).first()
+            data.municipio = municipio.nombre
+            data.save()
 
             # Numero del pedido: fecha del año, mes, y dia
             year = int(datetime.date.today().strftime("%Y"))
@@ -94,6 +95,7 @@ def regiones(request):
     return JsonResponse({"municipios": lista})
 
 
+@login_required(login_url="inicio_sesion")
 def pago(request, id_pedido):
     pedido = get_object_or_404(Pedido, pk=id_pedido)
     if request.method == "POST":
@@ -158,17 +160,25 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.send()
 
 
-
-
 def actualizar_stock(request):
     cartItem = ItemCarrito.objects.filter(usuario=request.user)
+    pedido = Pedido.objects.filter(usuario=request.user)
+    pago = Pago.objects.filter(usuario=request.user)
     for item in cartItem:
+        venta = Ventas.objects.create(
+            cartItem=item,
+            pedido=pedido,
+            pago=pago,
+            usuario=request.user,
+            fecha=timezone.now(),
+        )
+        venta.save()
         prod = Producto.objects.get(pk=item.producto_id)
         prod.stock -= item.cantidad
         prod.save()
         # Elimina los producto del carrito
         item.delete()
-    
+
 
 # ? API
 
