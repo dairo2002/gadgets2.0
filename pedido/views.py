@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm
 from .models import Pedido, Pago, Ventas, DetallePedido, Departamento, Municipio
 from tienda.models import Producto
-from carrito.models import Carrito
+from carrito.models import Carrito, ItemCarrito
 from django.contrib import messages
 
 # Nos permiten ejecutar el pago si es valido
@@ -143,26 +143,32 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
 
+        # Pago correcto, se actualiza el stock
         actualizar_stock(instance)
-        # pdb.set_trace()
+    else:
+        mail_subject = "¡El pedido ha sido cancelado!"
+        mensaje = render_to_string(
+            "client/pedido/email_pago_cancelado.html",
+            {"pedido": datos},
+        )
+
+        to_email = datos.correo_electronico
+        send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
+        send_email.attach_alternative(mensaje, "text/html")
+        send_email.send()
+
+
 
 
 def actualizar_stock(request):
-    pass
-    # cart.limpiar_carrito()
-
-    # detalle_pedido = DetallePedido.objects.filter(pedido__usuario=usuario)
-    # for detalle in detalle_pedido:
-    #     if detalle.pedido.ordenado:
-    #         producto = detalle.producto
-    #         cantidad = detalle.cantidad
-    #         print("producto stock", producto)
-    #         print("cantidad stock", cantidad)
-    #         producto.stock -= cantidad
-    #         producto.save()
-    # producto.delete()
-    # pdb.set_trace()
-
+    cartItem = ItemCarrito.objects.filter(usuario=request.user)
+    for item in cartItem:
+        prod = Producto.objects.get(pk=item.producto_id)
+        prod.stock -= item.cantidad
+        prod.save()
+        # Elimina los producto del carrito
+        item.delete()
+    
 
 # ? API
 

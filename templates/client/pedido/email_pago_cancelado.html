@@ -1,0 +1,72 @@
+{% load static %}
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .contaniner {
+            width: 30%;
+            margin: 0 auto; 
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contendor-table {
+            margin: 20px;
+            
+        }
+        
+        .contenido-texto{
+            margin: 20px;
+            
+        }
+        mark{
+            color: #15359B;
+            background-color: #ffff;
+        }
+        
+                
+        .cardview {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }        
+        
+        .h2Centrado {
+            text-align: center;        
+        }
+        
+        .header{
+            padding: 10px 20px; 
+            background-color: #15359B;         
+            color: #ffffff;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contaniner">
+        <div class="header">
+            <h2 class="h2Centrado">Cancelación de Pedido</h2>
+        </div>
+
+        <div class="contenido-texto">
+            <p>Hola {{pedido.nombre_completo_pedido}}</p>
+            <p>
+                Lamentamos informarle que su pedido ha sido cancelado debido a que su comprobante de pago no es valido. Le sugerimos
+                revisar sus detalles de pago para asegurarse de que todo esté en orden. Si necesita más información, no
+                dude en contactar a nuestro equipo de atención al cliente. Estaremos encantados de ayudarle en lo que
+                podamos.</p>
+            <h2> <mark>[ERROR Pedido #{{pedido.numero_pedido}}] (Marzo 18, 2024)</mark> </h2>
+        </div>
+</body>
+</html>
+{% endautoescape %}
