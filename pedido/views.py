@@ -36,7 +36,7 @@ def realizar_pedido(request, total=0):
     print("usuario pedido", usuario_actual)
 
     # Listar los departamentos
-    queryset = Departamento.objects.all()
+    queryset = Departamento.objects.all().order_by('nombre')
 
     if request.method == "POST":
         formulario = PedidoForm(request.POST)
