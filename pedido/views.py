@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm
-from .models import Pedido, Pago, Ventas, DetallePedido, Departamento, Municipio
+from .models import Pedido, Pago, DetallePedido, Departamento, Municipio, Ventas
 from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
 from django.contrib import messages
@@ -128,62 +128,89 @@ def pago(request, id_pedido):
 def email_info_pedido(sender, instance, **kwargs):
     usuario = instance.usuario
 
-    pedido = Pedido.objects.filter(usuario=usuario)
-    for datos in pedido:
-        datos.ordenado = True
-        datos.save()
+    cartItem = ItemCarrito.objects.filter(carrito__usuario=usuario).first()
+    pedido = Pedido.objects.filter(usuario=usuario).first()
+    pago = Pago.objects.filter(usuario=usuario).first()
+    venta = Ventas()        
 
     if instance.estado_pago == "Aprobado" and instance.estado_envio == "Enviado":
+
+        if cartItem and pedido and pago:
+            pedido.ordenado = True
+            pedido.save()
+            
+            venta.pedido = pedido
+            venta.pago = pago
+            venta.usuario_id = usuario.id
+            venta.producto_id = cartItem.producto_id
+            venta.cantidad = cartItem.cantidad
+            venta.precio = cartItem.producto.precio
+            venta.fecha = timezone.now()
+            venta.save()
+
+            prod = Producto.objects.get(pk=cartItem.producto_id)
+            prod.stock -= cartItem.cantidad
+            prod.save()
+
+            # Elimina los producto del carrito
+            cartItem.delete()    
+
 
         mail_subject = "¡Su pedido ha sido aprobado!"
         mensaje = render_to_string(
             "client/pedido/email_pago.html",
-            {"pedido": datos},
+            {"pedido": venta},
         )
 
-        to_email = datos.correo_electronico
+        to_email = venta.pedido.correo_electronico
         send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
-
-        # Pago correcto, se actualiza el stock
-        actualizar_stock(instance)
+        
+        
+        
     else:
         mail_subject = "¡El pedido ha sido cancelado!"
         mensaje = render_to_string(
             "client/pedido/email_pago_cancelado.html",
-            {"pedido": datos},
+            {"pedido": venta},
         )
 
-        to_email = datos.correo_electronico
+        to_email = venta.pedido.correo_electronico
         send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
 
 
-def actualizar_stock(request):
-    cartItem = ItemCarrito.objects.filter(carrito__usuario=request.user)
-    pedido = Pedido.objects.filter(usuario=request.user)
-    pago = Pago.objects.filter(usuario=request.user)
-    for item in cartItem:
-        venta = Ventas.objects.create(
-            cartItem=item,
-            pedido=pedido,
-            pago=pago,
-            usuario=request.user,
-            fecha=timezone.now(),
-        )
-        venta.save()
-        prod = Producto.objects.get(pk=item.producto_id)
-        prod.stock -= item.cantidad
-        prod.save()
-        # Elimina los producto del carrito
-        item.delete()
+# def actualizar_stock(usuario):
+#     cartItem = ItemCarrito.objects.filter(carrito__usuario=usuario).first()
+#     pedido = Pedido.objects.filter(usuario=usuario).first()
+#     pago = Pago.objects.filter(usuario=usuario).first()
+#     if cartItem and pedido and pago:
+#         pedido.ordenado = True
+#         pedido.save()
 
+#         venta = Ventas()
+#         venta.pedido = pedido
+#         venta.pago = pago
+#         venta.usuario_id = usuario.id
+#         venta.producto_id = cartItem.producto_id
+#         venta.cantidad = cartItem.cantidad
+#         venta.precio = cartItem.producto.precio
+#         venta.fecha = timezone.now()
+#         venta.save()
+
+#         prod = Producto.objects.get(pk=cartItem.producto_id)
+#         prod.stock -= cartItem.cantidad
+#         prod.save()
+
+#         # Elimina los producto del carrito
+#         cartItem.delete()
 
 
 def historial_compra(request):
     return render(request, "client/pedido/historial_compra.html")
+
 
 # ? API
 

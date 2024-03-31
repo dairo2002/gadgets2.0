@@ -43,7 +43,7 @@ class Pago(models.Model):
 
 
 class Pedido(models.Model):
- 
+
     # null = acepta valores nulos
     # blank = Permite dejar el campo en blanco, opcional
     usuario = models.ForeignKey(Cuenta, on_delete=models.SET_NULL, null=True)
@@ -76,15 +76,17 @@ class Pedido(models.Model):
 
 
 class Ventas(models.Model):
-    cartItem = models.ForeignKey(ItemCarrito, on_delete=models.CASCADE)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
     usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
-    # producto = models.ForeignKey(Producto, on_delete=models.CASCADE)            
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    precio = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    total = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fecha = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.usuario
+        return self.producto.nombre
 
 
 class Departamento(models.Model):
@@ -105,8 +107,6 @@ class Municipio(models.Model):
         return self.nombre
 
 
-
-
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
@@ -116,5 +116,6 @@ class DetallePedido(models.Model):
     ordenado = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Detalle del Pedido #{self.pedido.id} - Producto: {self.producto.nombre}"
-        
+        return (
+            f"Detalle del Pedido #{self.pedido.id} - Producto: {self.producto.nombre}"
+        )

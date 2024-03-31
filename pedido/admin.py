@@ -88,8 +88,13 @@ class VentasAdmin(admin.ModelAdmin):
         "pedido",
         "pago",
         "usuario",
+        'producto',
+        'precio',
+        'cantidad',
+        "total",
         "fecha",
     )
+
 
 
 admin.site.register(Pago, PagoAdmin)
