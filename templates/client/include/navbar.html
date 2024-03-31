@@ -41,7 +41,10 @@
                       </a>
                     </li>
                     <li>
-                      <a href="" class="dropdown-item text-decoration-none text-dark">Desactivar cuenta</a>
+                      <a href="" class="dropdown-item text-decoration-none text-dark">Mis compras <i class="fa-solid fa-basket-shopping"></i></a>
+                    </li>
+                    <li>
+                      <a href="" class="dropdown-item text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Desactivar cuenta <i class="fa-solid fa-power-off"></i></a>
                     </li>
                   </ul>
                 </li>
@@ -66,13 +69,12 @@
             </div>
           {% endif %}
         </div>
-
         <a href="{% url 'mostrar_carrito' %}" class="btn btn_carrito d-flex flex-column align-items-center p-0 btn_carrito">
-            {% if user.is_authenticated %}
+          {% if user.is_authenticated %}
             <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">{{ contador }}</span>
-            {% else %}
+          {% else %}
             <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">0</span>
-            {% endif %}
+          {% endif %}
           <i class="fa-solid fa-cart-arrow-down fa-xl icon-carrito"></i>
         </a>
       </div>
@@ -92,5 +94,21 @@
         </li>
       {% endfor %}
     </ul>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Desactivar cuenta</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">¿Está seguro de desactivar tu cuenta?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-dark">Aceptar</button>
+      </div>
+    </div>
   </div>
 </div>

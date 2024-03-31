@@ -84,7 +84,7 @@ class Ventas(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.producto.nombre
+        return self.usuario
 
 
 class Departamento(models.Model):
