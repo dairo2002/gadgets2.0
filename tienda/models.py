@@ -84,8 +84,7 @@ class Producto(models.Model):
                 self.categoria.fecha_fin = None
                 self.categoria.save()
                 return self.precio
-        return self.precio
-        # return "{:,}".format(self.precio).replace(",", ".")
+        return self.precio        
 
     def promedioCalificacion(self):
         revisar = Valoraciones.objects.filter(producto=self, estado=True).aggregate(

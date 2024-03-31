@@ -32,14 +32,7 @@
                           </td>
                           <td class="align-middle" style="min-width: 180px;">{{ articulo.producto.nombre }}</td>
                           <td class="align-middle text-center" style="min-width: 100px;">
-                            <input type="number" min="0" data-product-id="{{ articulo.producto.id }}" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light quantity-input" />
-                            {% comment %} <select id="selectMunicipio" name="selectMunicipio" class="form-select" aria-label="Default select example">
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                            </select> {% endcomment %}
+                            <input type="number" min="0" data-product-id="{{ articulo.producto.id }}" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light quantity-input" />                      
                           </td>
                           <td class="align-middle text-center" style="min-width: 150px;">
                             {% if articulo.producto.categoria.descuento %}

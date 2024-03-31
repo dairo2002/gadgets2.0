@@ -36,7 +36,7 @@ def realizar_pedido(request, total=0):
     print("usuario pedido", usuario_actual)
 
     # Listar los departamentos
-    departamneto = Departamento.objects.all()
+    queryset = Departamento.objects.all()
 
     if request.method == "POST":
         formulario = PedidoForm(request.POST)
@@ -49,11 +49,20 @@ def realizar_pedido(request, total=0):
             data.correo_electronico = formulario.cleaned_data["correo_electronico"]
             data.direccion = formulario.cleaned_data["direccion"]
             data.direccion_local = formulario.cleaned_data["direccion_local"]
-            data.departamento = formulario.cleaned_data["departamento"]
-            data.municpio = formulario.cleaned_data["ciudad"]
+
+            cod_departamento = request.POST.get("selectDepartamento")
+            departamento = Departamento.objects.get(codigo=cod_departamento).nombre
+            data.departamento = departamento
+
+            cod_municipio = request.POST.get("selectMunicipio")
+            municipio = Municipio.objects.get(codigo=cod_municipio).nombre
+            data.municipio = municipio
+
+            # data.departamento = formulario.cleaned_data["departamento"]
+            # data.municpio = formulario.cleaned_data["ciudad"]
             data.codigo_postal = formulario.cleaned_data["codigo_postal"]
             data.total_pedido = total
-            data.save()  # Guarda el pedido, para hacer uso del ID en el numero de pedido
+            data.save()  
 
             # Numero del pedido: fecha del año, mes, y dia
             year = int(datetime.date.today().strftime("%Y"))
@@ -69,30 +78,12 @@ def realizar_pedido(request, total=0):
 
             # Redirigir a la página de pago con el ID del pedido
             return redirect("pago", id_pedido=data.pk)
-
-            # Crear los detalles de pedido para cada producto en el carrito
-            # for item in items:
-            #     producto = item["producto"]
-            #     cantidad = item["cantidad"]
-            #     subtotal = item["subtotal"]
-
-            #     # totalFormato = "{:,.0f}".format(totalFormato).replace(",", ".")
-            #     # subTotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
-
-            #     DetallePedido.objects.create(
-            #         pedido=data,
-            #         producto=producto,
-            #         cantidad=cantidad,
-            #         ordenado=False,
-            #         subtotal=subtotal,
-            #         total=totalFormato,
-        #     )
     else:
         formulario = PedidoForm()
     return render(
         request,
         "client/pedido/realizar_pedido.html",
-        {"form": formulario, "departamneto": departamneto},
+        {"form": formulario, "departamneto": queryset},
     )
 
 

@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Departamento</label>
-                  <select id="selectDepartamento" name="selectDepartamento" class="form-select" aria-label="Default select example">
+                  <select id="selectDepartamento" name="selectDepartamento" class="form-select" aria-label="Default select example" required>
                     <option selected>Seleccionar</option>
                     {% for d in departamneto %}
                       <option value="{{ d.codigo }}">{{ d.nombre }}</option>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Municipio</label>
-                  <select id="selectMunicipio" name="selectMunicipio" class="form-select" aria-label="Default select example">
+                  <select id="selectMunicipio" name="selectMunicipio" class="form-select" aria-label="Default select example" required>
                     <option selected disabled>Seleccionar</option>
                   </select>
                 </div>
