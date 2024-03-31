@@ -3,44 +3,37 @@
     margin-right: auto;
     background-color: #ffffff;
     padding: 20px;
-    height:auto ;
-    border-radius: 10px;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    height: auto;
+    border-radius: 10px;   
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom:  50px;
+    margin-bottom: 50px;
     overflow: hidden;
-    
-  
-  }
-  
-   .imagenleft {
-    /* float: left;  */
-    /* max-width: calc(20% - 100px); */
+}
+
+.imagenleft {
     width: 180px;
     height: auto;
     margin-right: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  .btnCompra {
+}
+
+
+.btnCompra {
     width: 150px;
-    margin-top: 30px; 
-    background-color:#3483FA;
+    margin-top: 30px;
+    background-color: #3483FA;
     color: #ffffff;
-    border: 2px solid #3483FA; 
-    border-radius: 20px; 
-  
-  }
-  .btnVolverACompra {
+    border: 2px solid #3483FA;
+    border-radius: 20px;
+
+}
+
+.btnVolverACompra {
     width: 150px;
-    margin-top: 30px; 
+    margin-top: 30px;
     color: #3483FA;
     background-color: #E3EDFB;
-    border: 2px solid #E3EDFB; 
+    border: 2px solid #E3EDFB;
     border-radius: 20px;
-  }
-
-  
-
+}

@@ -181,6 +181,10 @@ def actualizar_stock(request):
         item.delete()
 
 
+
+def historial_compra(request):
+    return render(request, "client/pedido/historial_compra.html")
+
 # ? API
 
 
