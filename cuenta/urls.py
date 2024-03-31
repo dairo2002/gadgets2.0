@@ -18,7 +18,6 @@ urlpatterns = [
     ),
     
     # ? API
-    # api/v1/login/
     path("api/v1/signup/", views.signup),
     path("api/v1/login/", views.login),
     path("api/v1/logout/", views.logout),

@@ -115,7 +115,6 @@ def filtro_buscar_producto(request):
     )
 
 
-# ? Corregir que el filtro pueda buscar con decimales
 def filtro_rango_precios(request):
     try:
         # replace(".", "") es utilizado para la busqueda por punto eje: 1.000.000
@@ -235,6 +234,21 @@ def storeAPIView(request, category_id=None):
 
 # Detalle de un unico producto
 @api_view(["GET"])
+def detail_productsAPIView(request, product_id):
+    try:
+        producto = get_object_or_404(Producto, id=product_id)
+
+        serializer = ProductoSerializer(producto)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Producto.DoesNotExist:
+        return Response(
+            {"error": "Lista de productos no encontrado"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+
+# api/v3
+@api_view(["GET"])
 def detail_productAPIView(request, category_slug, product_slug):
     try:
         # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
@@ -250,26 +264,13 @@ def detail_productAPIView(request, category_slug, product_slug):
         )
 
 
+# api/v2
 @api_view(["GET"])
-def detail_productAPIView2(request, category_id, product_id):
+def detail_productAPIView(request, category_id, product_id):
     try:
         # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
         categoria = get_object_or_404(Categoria, id=category_id)
         producto = get_object_or_404(Producto, categoria=categoria, id=product_id)
-
-        serializer = ProductoSerializer(producto)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Producto.DoesNotExist:
-        return Response(
-            {"error": "Lista de productos no encontrado"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-
-
-@api_view(["GET"])
-def detail_productsAPIView(request, product_id):
-    try:
-        producto = get_object_or_404(Producto, id=product_id)
 
         serializer = ProductoSerializer(producto)
         return Response(serializer.data, status=status.HTTP_200_OK)
