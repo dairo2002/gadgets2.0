@@ -107,7 +107,10 @@
       <div class="modal-body">¿Está seguro de desactivar tu cuenta?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-dark">Aceptar</button>
+        <form action="{% url 'desactivar_cuenta' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark">Aceptar</button>
+        </form>
       </div>
     </div>
   </div>

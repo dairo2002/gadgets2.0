@@ -115,18 +115,14 @@ def activar_cuenta(request, uidb64, token):
         return redirect("registrarse")
 
 
-
 def inicio_sesion(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect("index")
 
     # Verifica si la solicitud al servidor es de tipo POST
     if request.method == "POST":
-        # Obtener los datos del formulario
         correo_electronico = request.POST["correo_electronico"]
         password = request.POST["password"]
-
-        #  authenticate: Toma el correo electrónico y la contraseña ingresada, busca un usuario que coincida en la base de datos
         usuarios = auth.authenticate(
             correo_electronico=correo_electronico, password=password
         )
@@ -146,20 +142,24 @@ def inicio_sesion(request):
                     )
 
                     try:
-                        cart = Carrito.objects.get(session_id=request.session['nonuser'], completed=False)
-                        print("inicio sesion ",cart)
-                        if Carrito.objects.filter(usuario=request.user, completed=False).exists():
-                            cart.usuario=None                            
+                        cart = Carrito.objects.get(
+                            session_id=request.session["nonuser"], completed=False
+                        )
+                        print("inicio sesion ", cart)
+                        if Carrito.objects.filter(
+                            usuario=request.user, completed=False
+                        ).exists():
+                            cart.usuario = None
                             cart.save()
-                            print("inicio sesion filtro ",cart)
+                            print("inicio sesion filtro ", cart)
                             # pdb.set_trace()
                         else:
                             cart.usuario = request.user
                             cart.save()
-                            print("inicio sesion NO filtro ",cart)       
+                            print("inicio sesion NO filtro ", cart)
 
                     except Exception as e:
-                        print("Error ",e)
+                        print("Error ", e)
                     return redirect("index")
             else:
                 messages.error(request, "Tu cuenta está desactivada.")
@@ -215,12 +215,20 @@ def cerrar_sesion(request):
     return redirect("inicio_sesion")
 
 
-
-# @login_required(login_url="inicio_sesion")
-# def cerrar_sesion(request):
-#     auth.logout(request)
-#     messages.success(request, "Has cerrado sesión exitosamente.")
-#     return redirect("inicio_sesion")
+@login_required(login_url="inicio_sesion")
+def desactivar_cuenta(request):
+    cuenta = Cuenta.objects.get(correo_electronico=request.user)
+    if request.method == "POST":
+        cuenta.is_active = False
+        cuenta.is_staff = False
+        cuenta.is_admin = False
+        cuenta.save()
+        # Cerramos la sesión
+        auth.logout(request)
+        messages.success(request, "Tu cuenta ha sido desactivada")
+    else:
+        messages.error(request, "Ha ocurrido un error")
+    return redirect("index")
 
 
 def recuperar_password(request):
@@ -303,7 +311,7 @@ def restablecer_password(request):
 
 # Validar que en api que las dos contraseñas concidan, sino hacer la validacion en movil
 @api_view(["POST"])
-def signupAPIView(request):
+def signup(request):
     serializer = CuentaSerializer(data=request.data)
     if serializer.is_valid():
         nombre = serializer.validated_data.get("nombre")
@@ -364,7 +372,7 @@ def signupAPIView(request):
 
 
 @api_view(["POST"])
-def loginAPIView(request):
+def login(request):
     if request.method == "POST":
         correo_electronico = request.data.get("correo_electronico")
         password = request.data.get("password")
@@ -405,25 +413,85 @@ def loginAPIView(request):
 
 @api_view(["POST"])
 # @permission_classes([IsAuthenticated])
-def logoutAPIView(request):
+def logout(request):
     try:
-        token = request.GET.get("token")
-        print(token)
-        token = Token.objects.filter(key=token).first()
-
-        if token:
-            # user= token.user
-            token.user.auth_token.delete()
+        # token = request.GET.get("token") = Query parameter
+        #  token = request.data.get("token") = JSON 
+        token = request.data.get("token")
+        token_obj = Token.objects.filter(key=token).first()
+        if token_obj:
+            # token.user.auth_token.delete()
+            token = token_obj.user
+            token_obj.delete()
             return Response(
-                {"success": True, "message": "Has cerrado sesión exitosamente."}
+                {"success": True, "message": "Has cerrado sesión exitosamente."},
+                status=status.HTTP_200_OK,
             )
-
         return Response(
-            {"error": False, "message": "No se ha encontrado un usuario con este token"}
+            {
+                "error": False,
+                "message": "No se ha encontrado un usuario con este token",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
     except:
         return Response(
-            {"error": False, "message": "No se ha encontrado el token en la petición"}
+            {"error": False, "message": "No se ha encontrado el token en la petición"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+def deactivate_account(request):
+    try:        
+        token = request.data.get("token")
+        token_obj = Token.objects.filter(key=token).first()
+
+        if token_obj:
+            user = token_obj.user
+            user.is_active = False
+            user.is_staff = False
+            user.is_admin = False
+            user.save()
+
+            # Eliminar el token de autenticación
+            token_obj.delete()
+
+            # auth.logout(request)
+            return Response(
+                {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"mensaje": "No se ha encontrado un usuario con este token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    except:
+        return Response(
+            {"mensaje": "Ha ocurrido un error al desactivar la cuenta"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+def deactivate_accountV2(request):
+    cuenta = Cuenta.objects.get(correo_electronico=request.user)
+    try:
+        cuenta.is_active = False
+        cuenta.is_staff = False
+        cuenta.is_admin = False
+        cuenta.save()
+        # Cerramos la sesión
+        auth.logout(request)
+        return Response(
+            {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
+        )
+    except:
+        return Response(
+            {"mensaje": "Tu cuenta ha sido desactivada"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 

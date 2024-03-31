@@ -6,6 +6,7 @@ urlpatterns = [
     path('activar_cuenta/<uidb64>/<token>/', views.activar_cuenta, name='activar_cuenta'),      
     path("inicio_sesion/", views.inicio_sesion, name="inicio_sesion"),
     path("cerrar_sesion/", views.cerrar_sesion, name="cerrar_sesion"),
+    path("desactivar_cuenta/", views.desactivar_cuenta, name="desactivar_cuenta"),    
     path("recuperar_password/", views.recuperar_password, name="recuperar_password"),
     path(
         "cambiar_password/<uidb64>/<token>/",
@@ -18,9 +19,13 @@ urlpatterns = [
     
     # ? API
     # api/v1/login/
-    path("api/signup/v1/", views.signupAPIView),
-    path("api/login/v1/", views.loginAPIView),
-    path("api/logout/v1/", views.logoutAPIView),
-    path("api/recover_password/v1/", views.recover_password),
+    path("api/v1/signup/", views.signup),
+    path("api/v1/login/", views.login),
+    path("api/v1/logout/", views.logout),
+    path("api/v1/deactivate_account/", views.deactivate_account),
+
+    path("api/v2/deactivate_account/", views.deactivate_accountV2),
+
+    path("api/v1/recover_password/", views.recover_password),
     
 ]

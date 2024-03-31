@@ -24,6 +24,13 @@ document.querySelectorAll('input[name="metodo_pago"]').forEach(function (radio) 
 
 
 
+function btnPagoDisabled(x) {
+    x.disabled = true
+}
+
+
+
+
 //** peticon filtron de departamentos a municipios */
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('selectDepartamento').addEventListener('change', function () {
