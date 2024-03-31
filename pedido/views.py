@@ -51,19 +51,17 @@ def realizar_pedido(request, total=0):
             data.direccion = formulario.cleaned_data["direccion"]
             data.direccion_local = formulario.cleaned_data["direccion_local"]
             data.codigo_postal = formulario.cleaned_data["codigo_postal"]
-            data.total_pedido = total
-            data.save()
-
+            data.total_pedido = total    
+            # Se guarda para obtener el id, y ser utilizado en el numero del pedido
+            data.save()        
             
             cod_departamento = request.POST.get("selectDepartamento")
-            departamento = Departamento.objects.get(codigo=cod_departamento)
-            data.departamento = departamento.nombre
-            data.save()
+            departamento = Departamento.objects.get(codigo=cod_departamento)            
+            data.departamento = departamento.nombre            
 
             cod_municipio = request.POST.get("selectMunicipio")
-            municipio = Municipio.objects.filter(codigo=cod_municipio).first()
-            data.municipio = municipio.nombre
-            data.save()
+            municipio = Municipio.objects.filter(codigo=cod_municipio, codigo_departamento=cod_departamento).first()                        
+            data.municipio = municipio.nombre            
 
             # Numero del pedido: fecha del año, mes, y dia
             year = int(datetime.date.today().strftime("%Y"))
