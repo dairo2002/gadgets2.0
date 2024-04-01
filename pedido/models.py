@@ -69,7 +69,7 @@ class Pedido(models.Model):
         return f"{self.nombre} {self.apellido}"
 
     def region(self):
-        return f"{self.municipio}-{self.departamento}"
+        return f"{self.departamento}-{self.municipio}"
 
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"

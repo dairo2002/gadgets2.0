@@ -12,7 +12,7 @@ import pdb
 from django.http import JsonResponse
 
 
-# # ? codigo funcional mostrar producto del carrito
+
 def mostrar_carrito(request):
     cartitem = []
     descuento = 0
@@ -53,10 +53,10 @@ def mostrar_carrito(request):
                     cantidad = articulo.cantidad
                     subtotal = precio * cantidad
                     total += subtotal
-        # cartitem almacena todo los productos del carrito
+                
         # cartitems =  related_name="cartitems"
         cartitem = cart.cartitems.all()
-        # print(cartitem)
+        
         # Utilizamos este metodo count() para contar cuantos objetos ahi en el carrito
         contador = cartitem.count()
     except Exception as e:

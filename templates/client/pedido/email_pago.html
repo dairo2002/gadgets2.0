@@ -101,9 +101,9 @@
             <h2 class="h2Centrado">Gracias por tu compra</h2>
         </div>
         <div class="contenido-texto">
-            <p>Hola {{pedido.nombre_completo_pedido}}</p>
+            <p>Hola {{venta.pedido.nombre_completo_pedido}}</p>
             <p>Nos complace informarte que tu pedido ha sido aprobado y está en proceso de envio. A continuación, encontrarás un resumen de tu pedido</p>
-            <h2> <mark>[Pedido #{{pedido.numero_pedido}}] (Marzo 18, 2024)</mark> </h2>
+            <h2> <mark>[Pedido #{{venta.pedido.numero_pedido}}] ({{venta.fecha}})</mark> </h2>
         </div>
         <div class="contendor-table">
             <table class="table1">
@@ -112,37 +112,28 @@
                     <th>Cantidad</th>
                     <th>Precio</th>
                 </tr>
-                <tr>
-                    <td>VSG Quasar Negro - Brown</td>
-                    <td>1</td>
-                    <td>$ 249.900</td>
+                <tr>                    
+                    <td>{{venta.producto.nombre}}</td>
+                    <td>{{venta.cantidad}}</td>
+                    <td>{{venta.precio}}</td>                    
                 </tr>
             </table>
-            <table class="table2">
-                <tr>
-                    <th class="thAncho">Subtotal:</th>
-                    <td>$ 249.900</td>
-                </tr>
-                <tr>
-                    <th class="thAncho">Envío:</th>
-                    <td>Envío gratuito</td>
-                </tr>
+            <table class="table2">             
                 <tr>
                     <th class="thAncho">Método de pago:</th>
-                    <td>Efectivo</td>
+                    <td>{{venta.pago.metodo_pago}}</td>
                 </tr>
                 <tr>
                     <th class="thAncho">Total:</th>
-                    <td>$ {{pedido.total_pedido}}</td>
+                    <td>$ {{venta.pedido.total_pedido}}</td>
                 </tr>
             </table>
             <div class="cardview">
-                <h3>{{pedido.nombre_completo_pedido}}</h3>
-                <p>{{pedido.direccion_completa}}</p>
-                <p>{{pedido.region}}</p>                
+                <h3>{{venta.pedido.nombre_completo_pedido}}</h3>
+                <p>{{venta.pedido.direccion_completa}}</p>
+                <p>{{venta.pedido.region|lower}}</p>                
             </div>
-            <img class="ImagenLogo" src="{% static 'img/Logo.svg' %}" alt="logo">
-            <img class="ImagenLogo" src="{% static 'img/logo.png' %}" alt="logo">
+            <img class="ImagenLogo" src="{% static 'img/Logo.svg' %}" alt="logo">           
         </div>
     </div>
 </body>
