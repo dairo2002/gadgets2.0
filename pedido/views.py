@@ -183,16 +183,15 @@ def email_info_pedido(sender, instance, **kwargs):
                 # Elimina los producto del carrito
                 item.delete()    
     
-                mail_subject = "¡Su pedido ha sido aprobado!"
-                mensaje = render_to_string(
-                    "client/pedido/email_pago.html",
-                    {"venta": venta},
-                )
-    
-                to_email = ped.correo_electronico
-                send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
-                send_email.attach_alternative(mensaje, "text/html")
-                send_email.send()            
+        mail_subject = "¡Su pedido ha sido aprobado!"
+        mensaje = render_to_string(
+            "client/pedido/email_pago.html",
+            {"venta": venta},
+        )
+        to_email = ped.correo_electronico
+        send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
+        send_email.attach_alternative(mensaje, "text/html")
+        send_email.send()            
     else:
         mail_subject = "¡El pedido ha sido cancelado!"
         mensaje = render_to_string(
@@ -235,7 +234,8 @@ def email_info_pedido(sender, instance, **kwargs):
 
 
 def historial_compra(request):
-    return render(request, "client/pedido/historial_compra.html")
+    querset = Ventas.objects.filter(usuario=request.user)
+    return render(request, "client/pedido/historial_compra.html", {"ventas":querset})
 
 
 # ? API

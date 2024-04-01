@@ -4,25 +4,26 @@
   <link rel="stylesheet" href="{% static 'css/historial_compra.css' %}" />
   <section>
     <div class="container">
-      <h1 class="text-center my-4">Mis compras</h1>
+      <h2 class="text-center my-4">Mis compras</h2>
+      {% for venta in ventas %}
       <div class="col-12 cardview">
-        <h3>11 de enero</h3>
+        <h4>{{venta.fecha}}</h4>
         <hr />
         <div class="d-flex row">
           <div class="col-6 col-lg-2 contenedor-imagen">
-            <img class="imagenleft" src="img/macbook.png" alt="#" />
+            <img class="imagenleft" src="{{venta.producto.imagen.url}}" alt="#" />
           </div>
           <div class="col-6 col-lg-8 textoCard">
-            <p style="color: #0dda29">Entregado</p>
-            <h5>Llegó el 13 de enero</h5>
-            <p class="mt-4">Laptop Apple Macbook Pro 14'' M1 Pro 16gb Ram + 1tb Ssd Gris</p>
+            <p style="color: #0dda29">{{venta.pago.estado_pago}}</p>
+            <p style="color: #0dda29">{{venta.pago.estado_envio}}</p>            
+            <p class="mt-4">{{venta.producto}}</p>
           </div>
           <div class="col-12 col-lg-2 text-center">
-            <button type="button" class="btnCompra">Ver compra</button>
-            <button type="button" class="btnVolverACompra">Volver a comprar</button>
+            <a  href="{{ venta.producto.get_url_producto }}" class="btn btn-outline-dark mt-3">Volver a compra</a>            
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
   </section>
 {% endblock %}
