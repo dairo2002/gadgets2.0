@@ -80,8 +80,18 @@
                 <div class="mt-2">
                   {{ form.metodo_pago }}
                   <br />
-                  <p class="mb-1">Subir comprobante:</p>
-                  {{ form.comprobante }}
+                  <br />
+                  <p class="mb-1">Subir comprobante:</p>                  
+                  {% comment %} <label class="custum-file-upload" for="file">
+                    <div class="icon">
+                      <i class="fa-regular fa-file-image fa-2xl"></i>
+                    </div>
+                    <div class="text">
+                      <span>Haga clic para subir la imagen</span>
+                    </div>
+                    <input type="file" name="txtComprobante" id="file" required />
+                </label> {% endcomment %}
+                {{ form.comprobante }}                    
                   <div class="mt-2">
                     {% if form.errors %}
                       <ul class="d-flex flex-column list-unstyled">
@@ -94,8 +104,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <button type="submit" class="btn btn-outline-secondary mt-4 w-100" >Pagar</button>
-                {% comment %} <button type="submit" class="btn btn-outline-secondary mt-4 w-100" onclick="btnPagoDisabled(this)">Pagar</button> {% endcomment %}
+                <button type="submit" class="btn btn-outline-secondary mt-4 w-100">Pagar</button>
               </form>
               <small class="my-2">Revise su pedido y realice el pago</small>
             </div>
@@ -104,5 +113,6 @@
       </div>
     </div>
   </section>
+  <link rel="stylesheet" href="{% static 'css/pago.css' %}" />
   <script src="{% static 'js/realizar_pedido.js' %}"></script>
 {% endblock %}

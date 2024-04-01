@@ -111,7 +111,7 @@ function agregarCarrito(e) {
     // e = asigna el evento DOM a la variable con el valor 
     let producto_id = e.target.value
     let data = {
-        id: producto_id        
+        id: producto_id
     }
 
     fetch("/carrito/agregar_carrito/", {
@@ -136,16 +136,18 @@ function agregarCarrito(e) {
 document.addEventListener("DOMContentLoaded", function () {
     const btnActualizarTodo = document.getElementById("btnActualizarTodo");
 
-    btnActualizarTodo.addEventListener("click", function () {
-        const inputCantidades = document.querySelectorAll(".inputCantidadCarrito");
+    if (btnActualizarTodo) {
+        btnActualizarTodo.addEventListener("click", function () {
+            const inputCantidades = document.querySelectorAll(".inputCantidadCarrito");
 
-        inputCantidades.forEach(input => {
-            const productoId = input.dataset.productId;
-            const nuevaCantidad = input.value;
+            inputCantidades.forEach(input => {
+                const productoId = input.dataset.productId;
+                const nuevaCantidad = input.value;
 
-            actualizarCantidadEnCarrito(productoId, nuevaCantidad);
+                actualizarCantidadEnCarrito(productoId, nuevaCantidad);
+            });
         });
-    });
+    }
 
     function actualizarCantidadEnCarrito(productoId, nuevaCantidad) {
         const data = {
@@ -169,9 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error al actualizar la cantidad:", error);
             });
     }
-
-
-
 });
 
 

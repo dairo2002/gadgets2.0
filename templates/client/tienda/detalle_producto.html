@@ -125,8 +125,7 @@
                   {% if producto_unico.stock <= 0 %}
                     <h4><span class="badge text-bg-danger mt-3 mx-auto">Agotado</span></h4>
                   {% else %}
-                    <button value="{{ producto_unico.id }}" class="btn btn-outline-dark w-100 btnAgregarProducto">Agregar <i class="fa-solid fa-cart-shopping"></i></button>
-                    {% comment %} <a href="" class="btn btn-outline-dark mt-2">Agregar al carrito</a> {% endcomment %}
+                    <button value="{{ producto_unico.id }}" class="btn btn-outline-dark btnAgregarProducto px-5">Agregar<i class="fa-solid fa-cart-shopping"></i></button>                    
                   {% endif %}
                 </div>
               </div>
@@ -203,8 +202,8 @@
                   <p class="text-muted mb-1">$ {{ producto_unico.precioFormatiado }}</p>
                   {% if producto_unico.stock <= 0 %}
                     <h4><span class="badge text-bg-danger mt-3 mx-auto">Agotado</span></h4>
-                  {% else %}
-                    <button value="{{ producto_unico.id }}" class="btn btn-outline-dark w-100 btnAgregarProducto">Agregar <i class="fa-solid fa-cart-shopping"></i></button>
+                  {% else %}                                    
+                    <button value="{{ producto_unico.id }}" class="btn btn-outline-dark btnAgregarProducto px-5">Agregar<i class="fa-solid fa-cart-shopping"></i></button>
                   {% endif %}
                 </div>
               </div>

@@ -28,11 +28,13 @@
                       {% for articulo in articulo_carrito %}
                         <tr>
                           <td class="align-middle text-center">
-                            <img src="{{ articulo.producto.imagen.url }}" class="img-fluid" alt="imagen carrito" style="max-width: 100px; max-height: 100px;" />
+                            <a href="{{ articulo.producto.get_url_producto }}">
+                                <img src="{{ articulo.producto.imagen.url }}" class="img-fluid" alt="imagen carrito" style="max-width: 100px; max-height: 100px;" />
+                            </a>
                           </td>
                           <td class="align-middle" style="min-width: 180px;">{{ articulo.producto.nombre }}</td>
                           <td class="align-middle text-center" style="min-width: 100px;">
-                            <input type="number" min="0" data-product-id="{{ articulo.producto.id }}" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light quantity-input" />                      
+                            <input type="number" min="0" data-product-id="{{ articulo.producto.id }}" value="{{ articulo.cantidad }}" class="text-center form-control form-control-sm inputCantidadCarrito bg-light " />                      
                           </td>
                           <td class="align-middle text-center" style="min-width: 150px;">
                             {% if articulo.producto.categoria.descuento %}

@@ -203,8 +203,7 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
-
-        logger.info("Correo electrónico de cancelación enviado correctamente.")
+       
 
 
 # def actualizar_stock(usuario):

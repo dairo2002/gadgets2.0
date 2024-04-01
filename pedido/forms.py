@@ -24,7 +24,7 @@ class PedidoForm(forms.ModelForm):
 
         if len(nombre) < 3 or len(nombre) > 15:
             errores.append("El nombre debe tener entre 3 y 15 caracteres")
-        
+
         if errores:
             raise forms.ValidationError(errores)
 
@@ -73,9 +73,7 @@ class PedidoForm(forms.ModelForm):
             "placeholder"
         ] = "Casa,apartamento,etc.(opcional)"
         self.fields["direccion_local"].widget.attrs["id"] = "txtDireccionLocal"
-        self.fields["direccion_local"].widget.attrs["style"] = "display:none;"
-        # self.fields["departamento"].widget.attrs["placeholder"] = "Elige"
-        # self.fields["ciudad"].widget.attrs["placeholder"] = "Elige"
+        self.fields["direccion_local"].widget.attrs["style"] = "display:none;"                
         self.fields["codigo_postal"].widget.attrs[
             "style"
         ] = "text-transform: uppercase;"
@@ -85,14 +83,9 @@ class PedidoForm(forms.ModelForm):
 
 
 class PagoForm(forms.ModelForm):
-    metodo_pago = forms.ChoiceField(
-        choices=(
-            ("Efectivo", "Efectivo"),
-            ("Nequi", "Nequi"),
-        ),
-        widget=forms.RadioSelect,
-    )
+    OPCIONES_CHOICES = (("Efectivo", "Efectivo"), ("Nequi", "Nequi"))
 
+    metodo_pago = forms.ChoiceField(choices=OPCIONES_CHOICES, widget=forms.RadioSelect)    
     class Meta:
         model = Pago
         fields = [
@@ -102,5 +95,5 @@ class PagoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
-        # Agregar clases de Bootstrap a los campos
+        # self.fields["metodo_pago"].widget.attrs["style"] = "font-size: 50px;"
         self.fields["comprobante"].widget.attrs["class"] = "form-control"
