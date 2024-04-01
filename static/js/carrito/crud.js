@@ -102,7 +102,7 @@ const csrftoken = getCookie('csrftoken');
 
 
 
-let btn = document.querySelectorAll(".contaninerProductos button")
+let btn = document.querySelectorAll(".btnAgregarProducto")
 btn.forEach(bt => {
     bt.addEventListener('click', agregarCarrito)
 })
@@ -111,8 +111,7 @@ function agregarCarrito(e) {
     // e = asigna el evento DOM a la variable con el valor 
     let producto_id = e.target.value
     let data = {
-        id: producto_id
-        // cantidad: cantidad
+        id: producto_id        
     }
 
     fetch("/carrito/agregar_carrito/", {

@@ -81,9 +81,9 @@ class Ventas(models.Model):
     usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    precio = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    total = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    fecha = models.DateTimeField(default=timezone.now)
+    precio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    total = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    fecha = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.producto.nombre
