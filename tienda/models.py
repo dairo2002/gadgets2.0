@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from decimal import Decimal
 from django.utils import timezone
 from cuenta.models import Cuenta
 from django.db.models import Count, Avg
@@ -9,9 +8,6 @@ from django.utils.text import slugify
 from django.db.models.signals import pre_save
 from django.core.validators import FileExtensionValidator
 
-import locale, decimal
-
-from django.template.defaultfilters import floatformat
 
 
 class Categoria(models.Model):

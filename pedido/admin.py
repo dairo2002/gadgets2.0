@@ -55,8 +55,7 @@ class PagoAdmin(admin.ModelAdmin):
 
 class PedidoAdmin(admin.ModelAdmin):
     list_display = (
-        "usuario",
-        "productos_list",
+        "usuario",        
         "pago",
         "numero_pedido",
         "correo_electronico",
@@ -73,8 +72,6 @@ class PedidoAdmin(admin.ModelAdmin):
         "total_pedido",
     )
 
-    def productos_list(self, obj):
-        return ", ".join([producto.nombre for producto in obj.productos.all()])
 
     def cod_postal_upper(self, obj):
         return obj.codigo_postal.upper()

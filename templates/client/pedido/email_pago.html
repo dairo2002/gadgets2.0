@@ -112,11 +112,13 @@
                     <th>Cantidad</th>
                     <th>Precio</th>
                 </tr>
+                {% for prod in producto  %}
                 <tr>                    
-                    <td>{{venta.producto.nombre}}</td>
-                    <td>{{venta.cantidad}}</td>
-                    <td>{{venta.precio}}</td>                    
+                    <td>{{prod.producto.nombre}}</td>
+                    <td>{{prod.cantidad}}</td>
+                    <td>{{prod.precio}}</td>                      
                 </tr>
+                {% endfor %}
             </table>
             <table class="table2">             
                 <tr>
@@ -125,15 +127,15 @@
                 </tr>
                 <tr>
                     <th class="thAncho">Total:</th>
-                    <td>$ {{venta.pedido.total_pedido}}</td>
+                    <td>$ {{venta.total}}</td>
                 </tr>
             </table>
             <div class="cardview">
-                <h3>{{venta.pedido.nombre_completo_pedido}}</h3>
-                <p>{{venta.pedido.direccion_completa}}</p>
+                <h3 >{{venta.pedido.nombre_completo_pedido|capfirst}}</h3>
+                <p>{{venta.pedido.direccion_completa|capfirst}}</p>
                 <p>{{venta.pedido.region|lower}}</p>                
             </div>
-            <img class="ImagenLogo" src="{% static 'img/Logo.svg' %}" alt="logo">           
+            {% comment %} <img class="ImagenLogo" src="{% static 'img/Logo.svg' %}" alt="logo">            {% endcomment %}
         </div>
     </div>
 </body>

@@ -8,8 +8,10 @@
       <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
     <div class="carousel-inner">
-      <div class="w-25 my-2 mx-5 position-absolute top-0 end-0 z-1">
-        {% include 'client/include/alertas.html' %}
+      <div class="d-flex justify-content-end">
+        <div class="my-2 mx-5 w-auto z-2 position-absolute">
+          {% include 'client/include/alertas.html' %}
+        </div>
       </div>
       <div class="carousel-item active">
         <img src="{% static 'img/disco-duro.jpg' %}" width="100%" />

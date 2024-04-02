@@ -65,9 +65,11 @@
           </div>
         </div>
 
-        <div class="w-25 my-2 mx-5 position-absolute top-0 end-0 z-1">
-          {% include 'client/include/alertas.html' %}
-        </div>
+        {% comment %} <div class="d-flex justify-content-end">
+          <div class="my-2 mx-5 w-auto z-2 position-absolute">
+            {% include 'client/include/alertas.html' %}
+          </div>
+        </div> {% endcomment %}
 
         <div class="col-12 mb-2 col-lg-6 mb-lg-0">
           <div class="card">
@@ -81,7 +83,7 @@
                   {{ form.metodo_pago }}
                   <br />
                   <br />
-                  <p class="mb-1">Subir comprobante:</p>                  
+                  <p class="mb-1">Subir comprobante:</p>
                   {% comment %} <label class="custum-file-upload" for="file">
                     <div class="icon">
                       <i class="fa-regular fa-file-image fa-2xl"></i>
@@ -90,8 +92,8 @@
                       <span>Haga clic para subir la imagen</span>
                     </div>
                     <input type="file" name="txtComprobante" id="file" required />
-                </label> {% endcomment %}
-                {{ form.comprobante }}                    
+                  </label> {% endcomment %}
+                  {{ form.comprobante }}
                   <div class="mt-2">
                     {% if form.errors %}
                       <ul class="d-flex flex-column list-unstyled">
@@ -114,5 +116,5 @@
     </div>
   </section>
   <link rel="stylesheet" href="{% static 'css/pago.css' %}" />
-  <script src="{% static 'js/realizar_pedido.js' %}"></script>
+  {% comment %} <script src="{% static 'js/realizar_pedido.js' %}"></script> {% endcomment %}
 {% endblock %}
