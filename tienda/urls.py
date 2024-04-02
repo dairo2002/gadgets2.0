@@ -30,8 +30,8 @@ urlpatterns = [
     path("categoria/api/v3/detail_product/<int:category_id>/<int:product_id>/",views.detail_productAPIView),
 
     # ? ADMIN
-    path("productos/", views.listar_productos, name="lista_productos"),
-    path("productos/<int:id_producto>/", views.detalle_producto_admin, name="detalle_producto_admin"),
-    path("productos/<int:id_producto>/eliminar", views.eliminar_producto, name="eliminar_producto"),
+    path("admin/productos/", views.listar_productos, name="lista_productos"),
+    path("admin/productos/<int:id_producto>/", views.detalle_producto_admin, name="detalle_producto_admin"),
+    path("admin/productos/<int:id_producto>/eliminar", views.eliminar_producto, name="eliminar_producto"),
     path("admin/categorias/", views.lista_categorias, name="lista_categorias"),
 ]

@@ -162,8 +162,7 @@ PASSWORD_RESET_TIMEOUT = 60 * 5
 SESSION_EXPIRE_SECONDS = 900  # 15 min
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # Toma la ultima actividad del usuario 
 # Despues de que el usuario cumpla el tiempo estimado, sera redirijido al inicio de sesión
-SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion"
-
+SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion/"
 
 
 # Static files (CSS, JavaScript, Images)

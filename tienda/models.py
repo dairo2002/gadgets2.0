@@ -31,6 +31,11 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+@receiver(pre_save, sender=Categoria)
+def _post_save_receiver(sender, instance, **kwargs):
+    if not instance.slug:
+        instance.slug = slugify(instance.nombre)
 
 
 class Producto(models.Model):
@@ -106,6 +111,8 @@ class Producto(models.Model):
 def _post_save_receiver(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.nombre)
+
+
 
 class Valoraciones(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

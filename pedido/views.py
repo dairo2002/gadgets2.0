@@ -2,11 +2,10 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm
-from .models import Pedido, Pago, DetallePedido, Departamento, Municipio, Ventas
+from .models import Pedido, Pago, Departamento, Municipio, Ventas
 from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
 from django.contrib import messages
-from django.utils import timezone
 
 # Nos permiten ejecutar el pago si es valido
 from django.db.models.signals import post_save
@@ -24,13 +23,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import PedidoSerializer
 
-import logging
-
-logger = logging.getLogger(__name__)
 
 import datetime
 
-from django.db import transaction
 
 import pdb
 

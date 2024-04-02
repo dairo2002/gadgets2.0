@@ -44,6 +44,17 @@ class ProductoForm(forms.ModelForm):
         self.fields["disponible"].widget.attrs["class"] = "form-check-input"
 
 
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = [
+            "nombre",            
+            "descuento",
+            "fecha_inicio",
+            "fecha_fin"
+        ]
+
+
 class ValoracionesForm(forms.ModelForm):
     class Meta:
         model = Valoraciones

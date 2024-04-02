@@ -24,10 +24,10 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("administrador/", admin.site.urls),
     # Vista principal, inicio
     path("", views.index, name="index"),
-    path("administrador/", views.panel_admin, name="panel_admin"),
+    path("admin/", views.panel_admin, name="panel_admin"),
 
     path("tienda/", include("tienda.urls")),
     path("carrito/", include("carrito.urls")),

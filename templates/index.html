@@ -43,7 +43,7 @@
               <div class="card tarjeta_productos h-100">
                 <div class="card-body contaninerProductos">
                   {% if productos.categoria.descuento %}
-                    <a href="{{ productos.get_url_producto }}">
+                    <a href="{{ productos.get_url_producto }}">                        
                       <span class="badge p-2 text-bg-success z-1 position-absolute rounded-5">{{ productos.porcentajeDescFormtiado }}%</span>
                       <img src="{{ productos.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" />
                     </a>

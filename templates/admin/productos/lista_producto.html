@@ -16,46 +16,48 @@
       </div>
       <div class="d-flex justify-content-center text-center">
         <div class="col-12">
-          <table id="tblProductos" class="table table-responsive table-hover table-bordered">
-            <thead class="table-active">
-              <tr>
-                <th class="col-2" scope="col">Producto</th>
-                <th class="col-2" scope="col">Nombre</th>
-                <th class="col-4" scope="col">Descripción</th>
-                <th class="col-1" scope="col">Precio</th>
-                <th class="col-1" scope="col">Stock</th>
-                <th class="col-1" scope="col">disponible</th>
-                <th class="col-1" scope="col">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for p in producto %}
+          <div class="table-responsive">
+            <table id="tblProductos" class="table table-hover table-bordered">
+              <thead class="table-active">
                 <tr>
-                  <td class="align-middle text-center">
-                    <a href="{{ p.imagen.url }}"><img class="w-50 h-auto" src="{{ p.imagen.url }}" alt="imagen producto" /></a>
-                  </td>
-                  <td class="align-middle">
-                    <span>{{ p.nombre }}</span>
-                  </td>
-                  <td class="align-middle">{{ p.descripcion }}</td>
-                  <td class="align-middle">{{ p.precio }}</td>
-                  <td class="align-middle text-center">{{ p.stock }}</td>
-                  <td class="align-middle text-center">
-                    {% if p.disponible %}
-                      <i class="fas fa-check-circle fa-xl text-success"></i>
-                    {% else %}
-                      <i class="fas fa-times-circle fa-xl text-danger"></i>
-                    {% endif %}
-                  </td>
-                  <td class="align-middle">
-                    <div class="d-flex gap-1">
-                      <a href="{% url 'detalle_producto_admin' p.id %}" class="btn btn-secondary btn-sm">Detalle <i class="fa-regular fa-eye"></i></a>
-                    </div>
-                  </td>
+                  <th class="col-2" scope="col">Producto</th>
+                  <th class="col-2" scope="col">Nombre</th>
+                  <th class="col-4" scope="col">Descripción</th>
+                  <th class="col-1" scope="col">Precio</th>
+                  <th class="col-1" scope="col">Stock</th>
+                  <th class="col-1" scope="col">disponible</th>
+                  <th class="col-1" scope="col">Acción</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% for p in producto %}
+                  <tr>
+                    <td class="align-middle text-center">
+                      <a href="{{ p.imagen.url }}"><img class="w-50 h-auto" src="{{ p.imagen.url }}" alt="imagen producto" /></a>
+                    </td>
+                    <td class="align-middle">
+                      <span>{{ p.nombre }}</span>
+                    </td>
+                    <td class="align-middle">{{ p.descripcion }}</td>
+                    <td class="align-middle">{{ p.precio }}</td>
+                    <td class="align-middle text-center">{{ p.stock }}</td>
+                    <td class="align-middle text-center">
+                      {% if p.disponible %}
+                        <i class="fas fa-check-circle fa-xl text-success"></i>
+                      {% else %}
+                        <i class="fas fa-times-circle fa-xl text-danger"></i>
+                      {% endif %}
+                    </td>
+                    <td class="align-middle">
+                      <div class="d-flex gap-1">
+                        <a href="{% url 'detalle_producto_admin' p.id %}" class="btn btn-secondary btn-sm">Detalle <i class="fa-regular fa-eye"></i></a>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -73,10 +75,12 @@
             </div>
             <div class="modal-body">
               <div class="row p-md-4">
+                {% comment %}Campos{% endcomment %}
                 {% for field in form %}
                   <div class="col-12 col-md-6 mb-3">{{ field.label_tag }}
                     {{ field }}</div>
                 {% endfor %}
+                {% comment %}Errores{% endcomment %}
                 {% if form.errors %}
                   <ul class="d-flex flex-column list-unstyled">
                     {% for field_errors in form.errors.values %}
@@ -96,9 +100,6 @@
         </form>
       </div>
     </div>
-
-    {% comment %} {% include 'admin/productos/actualizar_producto.html' %} {% endcomment %}
-    {% comment %} {% include 'admin/productos/eliminar_producto.html' %} {% endcomment %}
   </div>
-  <script src="{% static 'js/tblProducto.js' %}"></script>
+  <script src="{% static 'js/admin_tables/tblProducto.js' %}"></script>
 {% endblock %}

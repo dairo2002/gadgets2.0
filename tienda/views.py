@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Producto, Categoria, Valoraciones
+from config.decorators import protect_route
 from pedido.models import Pedido
-from carrito.models import Carrito
 from django.contrib import messages
 from .forms import ValoracionesForm, ProductoForm
 
 # Q es utilizado para consultas complejas
 from django.db.models import Q
 
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import  Paginator
 
 # API
 from rest_framework import status
@@ -310,25 +310,9 @@ def searchProductAPIView(request):
 
 
 # ? Admin
-# @login_required(login_url="inicio_sesion")
-def agregar_productos(request):
-    if request.method == "POST":
-        form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Producto agregado")
-            form = ProductoForm()
-        else:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta agregar otra vez el producto",
-            )
-    else:
-        form = ProductoForm()
-    return render(request, "admin/productos/form_producto.html", {"form": form})
-
 
 @login_required(login_url="inicio_sesion")
+@protect_route
 def listar_productos(request):
     # Listar
     queryset = Producto.objects.all()
@@ -353,7 +337,8 @@ def listar_productos(request):
         {"producto": queryset, "form": form},
     )
 
-
+@login_required(login_url="inicio_sesion")
+@protect_route
 def detalle_producto_admin(request, id_producto):
     if request.method == "GET":
         detalle_producto = get_object_or_404(Producto, pk=id_producto)
@@ -361,7 +346,6 @@ def detalle_producto_admin(request, id_producto):
         return render(request, "admin/productos/detalle_producto.html",  {
             "detalle":detalle_producto, "form":form
         })
-    
     else:
         try:
             # Actualizar
@@ -374,7 +358,8 @@ def detalle_producto_admin(request, id_producto):
             messages.error(request, "Ha ocurrido un error en el formulario, intenta actualizar otra vez el producto")
             return render(request, "admin/productos/detalle_producto.html", { "detalle":detalle_producto, "form":form})
 
-# ! corregir
+@login_required(login_url="inicio_sesion")
+@protect_route
 def eliminar_producto(request, id_producto):
     producto = get_object_or_404(Producto, id=id_producto)
     if request.method == "POST":
@@ -382,11 +367,12 @@ def eliminar_producto(request, id_producto):
         messages.success(request,"Producto eliminado")
         return redirect("lista_productos")
     else:
-        messages.error(request,"ERROR")
+        messages.error(request,"Ha ocurrido un error al eliminar un el producto")
     
     
 
 
 @login_required(login_url="inicio_sesion")
+@protect_route
 def lista_categorias(request):
     return render(request, "admin/categoria/lista_categoria.html")
