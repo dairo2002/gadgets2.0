@@ -19,9 +19,11 @@ from carrito.models import Carrito
 
 # API
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+
+# from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
@@ -135,7 +137,7 @@ def inicio_sesion(request):
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
                     )
                     return redirect("panel_admin")
-                elif usuarios.is_staff:                
+                elif usuarios.is_staff:
                     auth.login(request, usuarios)
                     messages.success(
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
@@ -167,45 +169,6 @@ def inicio_sesion(request):
             messages.error(request, "Credenciales incorrectas")
             return redirect("inicio_sesion")
     return render(request, "client/cuenta/inicio_sesion.html")
-
-    # Verificar si hay un producto en el carrito existente y asociarlo al usuario
-    """if usuarios is not None:
-        try:
-            # Obtener la sesion del carrito
-            carrito_sesion = CarritoSesion.objects.get(
-                carrito_session=_carrito_sesion(request)
-            )
-            carrito_existe = Carrito.objects.filter(
-                carritoSesion=carrito_sesion
-            ).exists()
-            if carrito_existe:
-                carrito = Carrito.objects.filter(carritoSesion=carrito_sesion)
-                for articulo in carrito:
-                    articulo.usuario = usuarios
-                    articulo.save()
-        except Exception as e:
-            print(f"Error: ", {e})
-        # Establece la sesion al usuario
-        auth.login(request, usuarios)
-        messages.success(
-        request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
-        )
-        # Creamos la ruta para que nos redirija a pedidos en caso tal que quiera hacer un pedido
-        url = request.META.get("HTTP_REFERER")
-        try:
-            consulta = requests.utils.urlparse(url).query
-            print("Consulta", consulta)
-            params = dict(x.split("=") for x in consulta.split("&"))
-            print("Parametro: ", params)
-            if "next" in params:
-                nextPage = params["next"]
-                return redirect(nextPage)
-        except:                    
-            return redirect("index")
-    else:
-        messages.error(request, "Las credenciales son incorrectas")
-        return redirect("inicio_sesion")
-        return render(request, "client/cuenta/inicio_sesion.html")"""
 
 
 @login_required(login_url="inicio_sesion")
@@ -380,73 +343,75 @@ def login(request):
         usuario = auth.authenticate(
             correo_electronico=correo_electronico, password=password
         )
-
         if usuario is not None:
-            token, created = Token.objects.get_or_create(user=usuario)
-            if created:
-                return Response(
-                    {
-                        "token": token.key,
-                        "success": True,
-                        "message": f"Bienvenido {usuario.nombre} {usuario.apellido}",
-                    },
-                    status=status.HTTP_200_OK,
-                )
-            else:
-                # Elmina las sesiones cuando ingresa un navegador, Le creamo un nuevo token cuando el usuario vaya a iniciar sesion
-                token.delete()
-                token = Token.objects.create(user=usuario)
-                return Response(
-                    {
-                        "token": token.key,
-                        "success": True,
-                        "message": f"Bienvenido {usuario.nombre} {usuario.apellido}",
-                    },
-                    status=status.HTTP_200_OK,
-                )
-        else:
+            token = RefreshToken.for_user(usuario)
             return Response(
-                {"error": False, "message": "Las credenciales son incorrectas"},
+                {
+                    "token": str(token.access_token),
+                    "actualizar ": str(token),
+                    "success": True,
+                    "message": f"Bienvenido {usuario.nombre} {usuario.apellido}",
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+             # Usuario no autenticado
+            return Response(
+                {"error": True, "message": "Las credenciales son incorrectas"},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+    else:
+        return Response(
+            {"error": False, "message": "Método no permitido"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+# @api_view(["POST"])
+# # @permission_classes([IsAuthenticated])
+# def logout(request):
+#     try:
+#         # token = request.GET.get("token") = Query parameter
+#         #  token = request.data.get("token") = JSON
+#         token = request.data.get("token")
+#         token_obj = Token.objects.filter(key=token).first()
+#         if token_obj:
+#             # token.user.auth_token.delete()
+#             token = token_obj.user
+#             token_obj.delete()
+#             return Response(
+#                 {"success": True, "message": "Has cerrado sesión exitosamente."},
+#                 status=status.HTTP_200_OK,
+#             )
+#         return Response(
+#             {
+#                 "error": False,
+#                 "message": "No se ha encontrado un usuario con este token",
+#             },
+#             status=status.HTTP_400_BAD_REQUEST,
+#         )
+#     except:
+#         return Response(
+#             {"error": False, "message": "No se ha encontrado el token en la petición"},
+#             status=status.HTTP_400_BAD_REQUEST,
+#         )
 
 
 @api_view(["POST"])
-# @permission_classes([IsAuthenticated])
-def logout(request):
-    try:
-        # token = request.GET.get("token") = Query parameter
-        #  token = request.data.get("token") = JSON 
-        token = request.data.get("token")
-        token_obj = Token.objects.filter(key=token).first()
-        if token_obj:
-            # token.user.auth_token.delete()
-            token = token_obj.user
-            token_obj.delete()
-            return Response(
-                {"success": True, "message": "Has cerrado sesión exitosamente."},
-                status=status.HTTP_200_OK,
-            )
-        return Response(
-            {
-                "error": False,
-                "message": "No se ha encontrado un usuario con este token",
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    except:
-        return Response(
-            {"error": False, "message": "No se ha encontrado el token en la petición"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+def logoutv2(request):
+    # Cierra la sesión del usuario
+    auth.logout(request)
+    return Response({"success": True, "message": "Sesión cerrada exitosamente."})
 
 
+
+# ? corregir desactivar cuenta
 @api_view(["POST"])
 # @permission_classes([IsAuthenticated])
 def deactivate_account(request):
-    try:        
+    try:
         token = request.data.get("token")
-        token_obj = Token.objects.filter(key=token).first()
+        token_obj = RefreshToken(key=token).first()
 
         if token_obj:
             user = token_obj.user
@@ -478,19 +443,25 @@ def deactivate_account(request):
 # @permission_classes([IsAuthenticated])
 def deactivate_accountV2(request):
     cuenta = Cuenta.objects.get(correo_electronico=request.user)
-    try:
-        cuenta.is_active = False
-        cuenta.is_staff = False
-        cuenta.is_admin = False
-        cuenta.save()
-        # Cerramos la sesión
-        auth.logout(request)
+    if request.method == "POST":
+        if cuenta is not None:
+            cuenta.is_active = False
+            cuenta.is_staff = False
+            cuenta.is_admin = False
+            cuenta.save()
+            # Cerramos la sesión
+            auth.logout(request)
+            return Response(
+                {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"mensaje": "No se puedo encontrar lacuenta"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    else:
         return Response(
-            {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
-        )
-    except:
-        return Response(
-            {"mensaje": "Tu cuenta ha sido desactivada"},
+            {"mensaje": "Ha ocurrido un error"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

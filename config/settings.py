@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from datetime import timedelta
-import os
+import os, secrets
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-szp!n#jdpn!%2(05-!js=-f_fk)fzrx@&gvvb^%jo)^0+4(4$7
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # ! Configurar el token
@@ -42,51 +42,67 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    'rest_framework.authtoken',
-    # 'rest_framework_simplejwt',    
-    'corsheaders',
+    # "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    # 'rest_framework_simplejwt.token_blacklist',
+    "corsheaders",
     # 'bootstrap5',
     "tienda.apps.TiendaConfig",
     "carrito.apps.CarritoConfig",
     "cuenta.apps.CuentaConfig",
     "pedido.apps.PedidoConfig",
-    # "admin_thumbnails",
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', # Autenticación de token estándar
-        #'rest_framework_simplejwt.authentication.JWTAuthentication', # Autenticación JWT
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        # 'rest_framework.authentication.TokenAuthentication', # Autenticación de token estándar
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # Autenticación JWT
     ]
 }
 
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Tiempo de vida del token de acceso
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tiempo de vida del token de refresco
-#     'ROTATE_REFRESH_TOKENS': False,                 # Rotación automática de tokens de refresco
-#     'BLACKLIST_AFTER_ROTATION': True,               # Bloqueo automático de tokens antiguos
-# }
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": secrets.token_urlsafe(32),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    "JTI_CLAIM": "jti",
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+}
 
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-     # Este paquete es útil cuando deseas controlar el tiempo de duración de la sesión de un usuario
-    'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    # Este paquete es útil cuando deseas controlar el tiempo de duración de la sesión de un usuario
+    "django_session_timeout.middleware.SessionTimeoutMiddleware",
     # Configuración del idioma en tu aplicación web.
     "django.middleware.locale.LocaleMiddleware",
 ]
 
 
 SESSION_EXPIRE_SECONDS = 900  # 15 min
-SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # Toma la ultima actividad del usuario 
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True  # Toma la ultima actividad del usuario
 # Despues de que el usuario cumpla el tiempo estimado, sera redirijido al inicio de sesión
 SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion"
 
@@ -160,8 +176,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "es" 
-TIME_ZONE = "America/Bogota" 
+LANGUAGE_CODE = "es"
+TIME_ZONE = "America/Bogota"
 USE_I18N = True
 USE_TZ = True
 
@@ -200,10 +216,9 @@ EMAIL_USE_TLS = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-
 CORS_ALLOWED_ORIGINS = [
-"http://127.0.0.1:8000",
-# "http://localhost:8000"
+    "http://127.0.0.1:8000",
+    # "http://localhost:8000"
 ]
 
 
