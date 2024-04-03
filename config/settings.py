@@ -78,9 +78,22 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+     # Este paquete es útil cuando deseas controlar el tiempo de duración de la sesión de un usuario
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     # Configuración del idioma en tu aplicación web.
     "django.middleware.locale.LocaleMiddleware",
 ]
+
+
+SESSION_EXPIRE_SECONDS = 900  # 15 min
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # Toma la ultima actividad del usuario 
+# Despues de que el usuario cumpla el tiempo estimado, sera redirijido al inicio de sesión
+SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion"
+
+
+# 60 * 5 = 300s equivale a 5 min
+PASSWORD_RESET_TIMEOUT = 60 * 5
+
 
 ROOT_URLCONF = "config.urls"
 
@@ -148,21 +161,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = "es" 
-
 TIME_ZONE = "America/Bogota" 
-
 USE_I18N = True
-
 USE_TZ = True
-
-
-# 60 * 5 = 300s equivale a 5 min
-PASSWORD_RESET_TIMEOUT = 60 * 5
-
-SESSION_EXPIRE_SECONDS = 900  # 15 min
-SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # Toma la ultima actividad del usuario 
-# Despues de que el usuario cumpla el tiempo estimado, sera redirijido al inicio de sesión
-SESSION_TIMEOUT_REDIRECT = "/cuenta/inicio_sesion/"
 
 
 # Static files (CSS, JavaScript, Images)
