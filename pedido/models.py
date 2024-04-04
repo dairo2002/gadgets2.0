@@ -82,7 +82,7 @@ class Ventas(models.Model):
     cantidad = models.IntegerField()
     precio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
     total = models.DecimalField(max_digits=12, decimal_places=2, null=True)
-    fecha = models.DateField(default=timezone.now)
+    fecha = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.producto.nombre

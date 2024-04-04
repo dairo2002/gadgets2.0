@@ -21,9 +21,9 @@ urlpatterns = [
     path("api/v1/signup/", views.signup),
     path("api/v1/login/", views.login),
     # path("api/v1/logout/", views.logout),
-    path("api/v2/logout/", views.logoutv2),
-    path("api/v1/deactivate_account/", views.deactivate_account),
+    path("api/v1/logout/", views.logout),
 
+    path("api/v1/deactivate/", views.deactivate_account),
     path("api/v2/deactivate_account/", views.deactivate_accountV2),
 
     path("api/v1/recover_password/", views.recover_password),

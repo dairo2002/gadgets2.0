@@ -174,14 +174,14 @@ def inicio_sesion(request):
 @login_required(login_url="inicio_sesion")
 def cerrar_sesion(request):
     auth.logout(request)
-    messages.success(request, "Has cerrado sesión exitosamente.")
+    messages.success(request, "Sesión cerrada exitosamente.")
     return redirect("inicio_sesion")
 
 
 @login_required(login_url="inicio_sesion")
 def desactivar_cuenta(request):
     cuenta = Cuenta.objects.get(correo_electronico=request.user)
-    if request.method == "POST":
+    if request.method == "POST":    
         cuenta.is_active = False
         cuenta.is_staff = False
         cuenta.is_admin = False
@@ -355,7 +355,7 @@ def login(request):
                 status=status.HTTP_200_OK,
             )
         else:
-             # Usuario no autenticado
+            # Usuario no autenticado
             return Response(
                 {"error": True, "message": "Las credenciales son incorrectas"},
                 status=status.HTTP_401_UNAUTHORIZED,
@@ -398,11 +398,10 @@ def login(request):
 
 
 @api_view(["POST"])
-def logoutv2(request):
+def logout(request):
     # Cierra la sesión del usuario
     auth.logout(request)
     return Response({"success": True, "message": "Sesión cerrada exitosamente."})
-
 
 
 # ? corregir desactivar cuenta
@@ -425,16 +424,16 @@ def deactivate_account(request):
 
             # auth.logout(request)
             return Response(
-                {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
+                {"message": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
             )
         else:
             return Response(
-                {"mensaje": "No se ha encontrado un usuario con este token"},
+                {"message": "No se ha encontrado un usuario con este token"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
     except:
         return Response(
-            {"mensaje": "Ha ocurrido un error al desactivar la cuenta"},
+            {"message": "Ha ocurrido un error al desactivar la cuenta"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -442,26 +441,27 @@ def deactivate_account(request):
 @api_view(["POST"])
 # @permission_classes([IsAuthenticated])
 def deactivate_accountV2(request):
-    cuenta = Cuenta.objects.get(correo_electronico=request.user)
+    # cuenta = Cuenta.objects.get(correo_electronico=request.user)
     if request.method == "POST":
-        if cuenta is not None:
-            cuenta.is_active = False
-            cuenta.is_staff = False
-            cuenta.is_admin = False
-            cuenta.save()
+        if request.user.is_authenticated: 
+            usuario = request.user
+            usuario.is_active = False
+            usuario.is_staff = False
+            usuario.is_admin = False
+            usuario.save()
             # Cerramos la sesión
             auth.logout(request)
             return Response(
-                {"mensaje": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
+                {"message": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
             )
         else:
             return Response(
-                {"mensaje": "No se puedo encontrar lacuenta"},
+                {"message": "No se puedo encontrar la cuenta"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
     else:
         return Response(
-            {"mensaje": "Ha ocurrido un error"},
+            {"message": "Método no permitido"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -470,7 +470,6 @@ def deactivate_accountV2(request):
 def recover_password(request):
     if request.method == "POST":
         correo_electronico = request.data.get("correo_electronico")
-
         existe_email = Cuenta.objects.filter(
             correo_electronico=correo_electronico
         ).exists()
@@ -505,5 +504,5 @@ def recover_password(request):
             )
         else:
             return Response(
-                {"error": "La cuenta no existe!"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "La cuenta no existe!"}, status=status.HTTP_400_BAD_REQUEST
             )
