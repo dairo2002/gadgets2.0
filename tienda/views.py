@@ -148,38 +148,6 @@ def filtro_rango_precios(request):
     )
 
 
-@api_view(["POST"])
-def range_priceAPIView(request):
-    try:
-        precio_minimo = float(request.GET.get("min_precio").replace(".", ""))
-        precio_maximo = float(request.GET.get("max_precio").replace(".", ""))
-    except ValueError:
-        return Response(
-            {"error": "Los valores de precio son inválidos"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if precio_minimo is not None and precio_maximo is not None:
-        productos = Producto.objects.filter(
-            Q(precio__range=[precio_minimo, precio_maximo])
-        ).order_by("precio")
-                        
-        contar_productos = productos.count()
-        if contar_productos == 0:
-            return Response(
-                {"error":  f"No se encontraron productos dentro del rango de precios de {"{:,.0f}".format(precio_minimo).replace(',', '.')} a {"{:,.0f}".format(precio_maximo).replace(',', '.')}"},status=status.HTTP_400_BAD_REQUEST
-            )
-
-    else:
-        return Response(
-            {"error": "Los valores de precio deben ser número"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    serializer = ProductoSerializer(productos, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 # ? Terminar
 def valoracion(request, producto_id):
     # almacena la ruta anterior, para ser redirijidad
@@ -219,7 +187,7 @@ def categoryAPIView(request):
 
 #  Me trae los productos de una categoría
 @api_view(["GET"])
-def storeAPIView(request, category_id=None):
+def store_categ_prod(request, category_id=None):
     if category_id is not None:
         categorias = get_object_or_404(Categoria, id=category_id)
         productos = Producto.objects.all().filter(categoria=categorias, disponible=True)
@@ -234,7 +202,7 @@ def storeAPIView(request, category_id=None):
 
 # Detalle de un unico producto
 @api_view(["GET"])
-def detail_productsAPIView(request, product_id):
+def detail_products(request, product_id):
     try:
         producto = get_object_or_404(Producto, id=product_id)
 
@@ -249,7 +217,7 @@ def detail_productsAPIView(request, product_id):
 
 # api/v3
 @api_view(["GET"])
-def detail_productAPIView(request, category_slug, product_slug):
+def detail_productV2(request, category_slug, product_slug):
     try:
         # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
         categoria = get_object_or_404(Categoria, slug=category_slug)
@@ -266,7 +234,7 @@ def detail_productAPIView(request, category_slug, product_slug):
 
 # api/v2
 @api_view(["GET"])
-def detail_productAPIView(request, category_id, product_id):
+def detail_productV3(request, category_id, product_id):
     try:
         # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
         categoria = get_object_or_404(Categoria, id=category_id)
@@ -286,6 +254,7 @@ def detail_productAPIView(request, category_id, product_id):
 def searchProductAPIView(request):
     palabra_clave = None
     contar_productos = 0
+    # productos_encontrados = 0
 
     palabra_clave = request.GET.get("txtBusqueda")
 
@@ -299,10 +268,40 @@ def searchProductAPIView(request):
             return Response(
                 {"error": "No se encontraron productos que coincidan con la búsqueda"},
                 status=status.HTTP_404_NOT_FOUND,
+            )   
+    serializer = ProductoSerializer(productos_encontrados, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def range_priceAPIView(request):
+    try:
+        precio_minimo = float(request.GET.get("min_precio").replace(".", ""))
+        precio_maximo = float(request.GET.get("max_precio").replace(".", ""))
+    except ValueError:
+        return Response(
+            {"error": "Los valores de precio son inválidos"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if precio_minimo is not None and precio_maximo is not None:
+        productos = Producto.objects.filter(
+            Q(precio__range=[precio_minimo, precio_maximo])
+        ).order_by("precio")
+                        
+        contar_productos = productos.count()
+        if contar_productos == 0:
+            return Response(
+                {"error":  f"No se encontraron productos dentro del rango de precios de {"{:,.0f}".format(precio_minimo).replace(',', '.')} a {"{:,.0f}".format(precio_maximo).replace(',', '.')}"},status=status.HTTP_400_BAD_REQUEST
             )
 
-    # Serializar todos los productos encontrados, en caso de que no funcion crear un serializer para search product
-    serializer = ProductoSerializer(productos_encontrados, many=True)
+    else:
+        return Response(
+            {"error": "Los valores de precio deben ser número"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    serializer = ProductoSerializer(productos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
