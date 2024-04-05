@@ -1,0 +1,51 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+{% block content %}
+  <section>
+    <div class="container d-flex justify-content-center">
+      <div class="row p-4 w-75">
+        <form action="{% url 'detalle_categoria_admin' detalle.id %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <h4 class="text-center mb-3 text-secondary">Detalle categoría</h4>
+          {% for field in form %}
+            <div class="col-12 mb-3">{{ field.label_tag }}
+              {{ field }}</div>
+          {% endfor %}
+          {% if form.errors %}
+            <ul class="d-flex flex-column list-unstyled">
+              {% for field_errors in form.errors.values %}
+                {% for error in field_errors %}
+                  <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error }}</small>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div class="text-center">
+            <button type="submit" class="btn btn-warning col-4" class="">Modificar <i class="fa-regular fa-pen-to-square"></i></button>
+          </div>
+        </form>
+        <div class="text-center">
+          <button type="button" class="btn btn-danger mt-3 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Eliminar <i class="fa-solid fa-trash"></i></button>
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminar producto</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">¿Está seguro de eliminar este producto?</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form action="{% url 'eliminar_categoria' detalle.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Aceptar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -4,7 +4,7 @@
     <a class="navbar-brand" href="{% url 'panel_admin' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" width="180px" /></a>
     <ul class="nav mb-2 mb-lg-0 colors-texto me-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Historial</a>
+        <a class="nav-link" href="{% url 'lista_venta' %}">Ventas</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'lista_productos' %}">Productos</a>
@@ -13,21 +13,19 @@
         <a class="nav-link" href="{% url 'lista_categorias' %}">Categorías</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Usuarios</a>
+        <a class="nav-link" href="{% url 'lista_usuario' %}">Usuarios</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Pedido</a>
+        <a class="nav-link" href="{% url 'lista_pedido' %}">Pedido</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Pagos</a>
+        <a class="nav-link" href="{% url 'lista_pagos' %}">Pagos</a>
       </li>
     </ul>
     <div class="d-flex ml-auto">
-        {% if user.is_authenticated %}
-          <small class="py-0 my-0 mx-1">
-            Bienvenido <strong>{{ user.nombre}}</strong>
-          </small>
-        {% endif %}
+      {% if user.is_authenticated %}
+        <small class="py-0 my-0 mx-1">Bienvenido <strong>{{ user.nombre }}</strong></small>
+      {% endif %}
 
       <li class="nav-item dropdown list-unstyled">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img (31).webp" class="rounded-circle" height="30" alt="Avatar" /></a>

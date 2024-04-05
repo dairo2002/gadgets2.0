@@ -53,6 +53,26 @@ class CategoriaForm(forms.ModelForm):
             "fecha_inicio",
             "fecha_fin"
         ]
+ 
+    def __init__(self, *args, **kwargs):
+        super(CategoriaForm, self).__init__(*args, **kwargs)
+        self.fields["nombre"].widget.attrs.update(
+            {"placeholder": "Nombre de la categoria "}
+        )
+        self.fields["descuento"].widget.attrs.update(
+            {"placeholder": "Ingrese el porcentaje del descuento", "min": 0}
+        )
+        self.fields["fecha_inicio"].widget =forms.DateTimeInput(
+         attrs={'type':'datetime-local'}
+        )
+
+        self.fields["fecha_fin"].widget=forms.DateTimeInput(
+         attrs={'type':'datetime-local'}
+        )
+
+      
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"
 
 
 class ValoracionesForm(forms.ModelForm):

@@ -4,7 +4,7 @@ from .models import Producto, Categoria, Valoraciones
 from config.decorators import protect_route
 from pedido.models import Pedido
 from django.contrib import messages
-from .forms import ValoracionesForm, ProductoForm
+from .forms import ValoracionesForm, ProductoForm, CategoriaForm
 
 # Q es utilizado para consultas complejas
 from django.db.models import Q
@@ -179,7 +179,7 @@ def valoracion(request, producto_id):
 
 # ? APIS
 @api_view(["GET"])
-def categoryAPIView(request):
+def listCategory(request):
     queryset = Categoria.objects.all()
     serializer = CategoriaSerializer(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -215,39 +215,6 @@ def detail_products(request, product_id):
         )
 
 
-# api/v3
-@api_view(["GET"])
-def detail_productV2(request, category_slug, product_slug):
-    try:
-        # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
-        categoria = get_object_or_404(Categoria, slug=category_slug)
-        producto = get_object_or_404(Producto, categoria=categoria, slug=product_slug)
-
-        serializer = ProductoSerializer(producto)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Producto.DoesNotExist:
-        return Response(
-            {"error": "Lista de productos no encontrado"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-
-
-# api/v2
-@api_view(["GET"])
-def detail_productV3(request, category_id, product_id):
-    try:
-        # Intenta obtener un único producto filtrando por el slug de la categoría y el slug del producto
-        categoria = get_object_or_404(Categoria, id=category_id)
-        producto = get_object_or_404(Producto, categoria=categoria, id=product_id)
-
-        serializer = ProductoSerializer(producto)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Producto.DoesNotExist:
-        return Response(
-            {"error": "Lista de productos no encontrado"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-
 
 # Buscador de un producto
 @api_view(["POST"])
@@ -267,7 +234,7 @@ def searchProductAPIView(request):
         if contar_productos == 0:
             return Response(
                 {"error": "No se encontraron productos que coincidan con la búsqueda"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_200_OK,
             )   
     serializer = ProductoSerializer(productos_encontrados, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -357,6 +324,7 @@ def detalle_producto_admin(request, id_producto):
             messages.error(request, "Ha ocurrido un error en el formulario, intenta actualizar otra vez el producto")
             return render(request, "admin/productos/detalle_producto.html", { "detalle":detalle_producto, "form":form})
 
+
 @login_required(login_url="inicio_sesion")
 @protect_route
 def eliminar_producto(request, id_producto):
@@ -374,4 +342,60 @@ def eliminar_producto(request, id_producto):
 @login_required(login_url="inicio_sesion")
 @protect_route
 def lista_categorias(request):
-    return render(request, "admin/categoria/lista_categoria.html")
+    queryset = Categoria.objects.all()
+
+     # Agregar
+    if request.method == "POST":
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Categoría guardada")
+            form = CategoriaForm()
+        else:
+            messages.error(
+                request,
+                "Ha ocurrido un error en el formulario, intenta agregar otra vez la categoría",
+            )
+    else:
+        form = CategoriaForm()     
+    return render(
+        request,
+       "admin/categoria/lista_categoria.html",
+        {"categoria": queryset, "form": form},
+    )
+
+
+
+
+@login_required(login_url="inicio_sesion")
+@protect_route
+def detalle_categoria_admin(request, id_categoria):
+    if request.method == "GET":
+        detalle_categoria = get_object_or_404(Categoria, pk=id_categoria)
+        form = CategoriaForm(instance=detalle_categoria)
+        return render(request, "admin/categoria/detalle_categoria.html",  {
+            "detalle":detalle_categoria, "form":form
+        })
+    else:
+        try:
+            # Actualizar
+            detalle_categoria = get_object_or_404(Categoria, pk=id_categoria)
+            form = CategoriaForm(request.POST,  instance=detalle_categoria)
+            form.save()
+            messages.success(request, "Categoría actualizada")
+            return redirect("lista_categorias")
+        except:
+            messages.error(request, "Ha ocurrido un error en el formulario, intenta actualizar otra vez la categoría")
+            return render(request, "admin/categoria/detalle_categoria.html", { "detalle":detalle_categoria, "form":form})
+ 
+ 
+@login_required(login_url="inicio_sesion")
+@protect_route
+def eliminar_categoria(request, id_categoria):
+    categoria = get_object_or_404(Categoria, id=id_categoria)
+    if request.method == "POST":
+        categoria.delete()
+        messages.success(request,"Categoría eliminado")
+        return redirect("lista_categorias")
+    else:
+        messages.error(request,"Ha ocurrido un error al eliminar una categoría")

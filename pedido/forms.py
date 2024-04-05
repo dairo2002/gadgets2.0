@@ -1,5 +1,5 @@
 from django import forms
-from .models import Pedido, Pago
+from .models import Pedido, Pago, Ventas
 
 
 class PedidoForm(forms.ModelForm):
@@ -73,7 +73,7 @@ class PedidoForm(forms.ModelForm):
             "placeholder"
         ] = "Casa,apartamento,etc.(opcional)"
         self.fields["direccion_local"].widget.attrs["id"] = "txtDireccionLocal"
-        self.fields["direccion_local"].widget.attrs["style"] = "display:none;"                
+        self.fields["direccion_local"].widget.attrs["style"] = "display:none;"
         self.fields["codigo_postal"].widget.attrs[
             "style"
         ] = "text-transform: uppercase;"
@@ -82,10 +82,164 @@ class PedidoForm(forms.ModelForm):
             self.fields[field].widget.attrs["class"] = "form-control"
 
 
+class PedidoFormA(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = [
+            "usuario",
+            "nombre",
+            "apellido",
+            "correo_electronico",
+            "numero_pedido",
+            "telefono",
+            "direccion",
+            "direccion_local",
+            "departamento",
+            "municipio",
+            "codigo_postal",
+            "total_pedido",
+            "pago",
+            "ordenado",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoFormA, self).__init__(*args, **kwargs)
+        self.fields["nombre"].widget.attrs["placeholder"] = "Nombre"
+
+        self.fields["apellido"].widget.attrs["placeholder"] = "Apellido"
+
+        self.fields["correo_electronico"].widget.attrs[
+            "placeholder"
+        ] = "Dirección correo electrónico"
+
+        self.fields["telefono"].widget.attrs["placeholder"] = "Numero telefónico"
+
+        self.fields["direccion"].widget.attrs["placeholder"] = "Dirección"
+
+        self.fields["direccion_local"].widget.attrs[
+            "placeholder"
+        ] = "Casa,apartamento,etc.(opcional)"
+
+        self.fields["numero_pedido"].widget.attrs.update(
+            {"placeholder": "Número de pedido", "min": 0}
+        )
+
+        self.fields["departamento"].widget.attrs.update({"placeholder": "Departamento"})
+
+        self.fields["total_pedido"].widget.attrs.update(
+            {"placeholder": "Total del pedido", "min": 0}
+        )
+
+        self.fields["pago"].widget.attrs.update({"placeholder": "Pagos", "min": 0})
+
+        self.fields["usuario"].widget.attrs.update({"placeholder": "Nombre de Usuario"})
+
+        self.fields["municipio"].widget.attrs.update(
+            {"placeholder": "Nombre del municipio"}
+        )
+
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"
+
+            self.fields["ordenado"].widget.attrs["class"] = "form-check-input"
+
+
+class VentaForms(forms.ModelForm):
+    class Meta:
+        model = Ventas
+        fields = [
+            "producto",
+            "cantidad",
+            "precio",
+            "pedido",
+            "pago",
+            "usuario",
+            "fecha",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(VentaForms, self).__init__(*args, **kwargs)
+
+        self.fields["producto"].widget.attrs.update(
+            {"placeholder": "Ingrese el producto", "min": 0}
+        )
+
+        self.fields["cantidad"].widget.attrs.update(
+            {"placeholder": "Ingrese la cantidad", "min": 0}
+        )
+
+        self.fields["precio"].widget.attrs.update(
+            {"placeholder": "Ingrese el precio", "min": 0}
+        )
+
+        self.fields["pedido"].widget.attrs.update({"placeholder": "Pedido"})
+
+        self.fields["pago"].widget.attrs.update({"placeholder": "Pago"})
+
+        self.fields["usuario"].widget.attrs.update(
+            {"placeholder": "Ingrese el usuario"}
+        )
+
+        self.fields["fecha"].widget = forms.DateInput(attrs={"type": "date-local"})
+
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"
+
+
+class PagosForms(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = [
+            "metodo_pago",
+            "cantidad_pagada",
+            "estado_pago",
+            "estado_envio",
+            "usuario",
+            "comprobante",
+            "fecha",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(PagosForms, self).__init__(*args, **kwargs)
+
+        self.fields["metodo_pago"].widget.attrs.update(
+            {"placeholder": "Ingrese el metodo de pago"}
+        )
+
+        self.fields["cantidad_pagada"].widget.attrs.update(
+            {"placeholder": "Ingrese la cantidad", "min": 0}
+        )
+
+        self.fields["estado_pago"].widget.attrs.update(
+            {"placeholder": "Estado de pago", "min": 0}
+        )
+
+        self.fields["estado_envio"].widget.attrs.update(
+            {"placeholder": "Estado de envío"}
+        )
+
+        self.fields["usuario"].widget.attrs.update({"placeholder": "Ingresa usuario"})
+
+        self.fields["comprobante"].widget.attrs.update(
+            {
+                "placeholder": "Seleccione un comprobante",
+                "accept": "image/*",  # Esto limitará la selección de archivos a imágenes
+            }
+        )
+
+        self.fields["fecha"].widget = forms.DateTimeInput(
+            attrs={"type": "datetime-local"}
+        )
+
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"
+
+
 class PagoForm(forms.ModelForm):
     OPCIONES_CHOICES = (("Efectivo", "Efectivo"), ("Nequi", "Nequi"))
 
-    metodo_pago = forms.ChoiceField(choices=OPCIONES_CHOICES, widget=forms.RadioSelect)    
+    metodo_pago = forms.ChoiceField(choices=OPCIONES_CHOICES, widget=forms.RadioSelect)
+
     class Meta:
         model = Pago
         fields = [
@@ -95,5 +249,4 @@ class PagoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
-        # self.fields["metodo_pago"].widget.attrs["style"] = "font-size: 50px;"
         self.fields["comprobante"].widget.attrs["class"] = "form-control"

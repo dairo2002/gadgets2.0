@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex justify-content-between my-4">
             <div class="">
-                <h3>Categorías</h3>
+                <h3>Ventas</h3>
             </div>
             <div>
                 <button type="button" class="btn btn-primary rounded-circle" data-bs-toggle="modal"
@@ -21,27 +21,34 @@
                     <table id="tblAdmin" class="table table-hover table-bordered">
                         <thead class="table-active ">
                             <tr>
-                                <th class="col-2" scope="col">Nombre</th>
-                                <th class="col-1" scope="col">Descuento</th>
-                                <th class="col-4" scope="col">Fecha inicio</th>
-                                <th class="col-4" scope="col">Fecha fin</th>
-                                <th class="col-1" scope="col">Acción</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Pedido</th>
+                                <th scope="col">Pago</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for c in categoria %}
+                            {% for v in ventas %}
                             <tr>
                                 <td class="align-middle">
-                                    <span>{{ c.nombre }}</span>
+                                    <span>{{ v.producto }}</span>
                                 </td>
-                                <td class="align-middle">{{ c.descuento }}</td>
-                                <td class="align-middle">{{ c.fecha_inicio }}</td>
-                                <td class="align-middle text-center">{{ c.fecha_fin }}</td>
+                                <td class="align-middle">{{ v.cantidad }}</td>
+                                <td class="align-middle">{{ v.precio }}</td>
+                                <td class="align-middle text-center">{{ v.pedido }}</td>
+                                <td class="align-middle text-center">{{ v.pago }}</td>
+                                <td class="align-middle text-center">{{ v.usuario }}</td>
+                                <td class="align-middle text-center">{{ v.fecha }}</td>
+                           
 
                                 <td class="align-middle">
                                     <div class="d-flex gap-1">
-                                      
-                                        <a href="{% url 'detalle_categoria_admin' c.id %}" class="btn btn-secondary btn-sm">Detalle <i
+
+                                        <a href="{% url 'detalle_venta_admin' v.id %}" class="btn btn-secondary btn-sm">Detalle <i
                                                 class="fa-regular fa-eye"></i></a>
                                     </div>
                                 </td>
@@ -58,30 +65,31 @@
 
     <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregar" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen w-75 h-auto mx-auto mt-5">
-            <form class="row g-3" action="{% url 'lista_categorias' %}" method="POST" enctype="multipart/form-data">
+            <form class="row g-3" action="{% url 'lista_venta' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="modalAgregar">Agregar categoría</h1>
+                        <h1 class="modal-title fs-5" id="modalAgregar">Agregar ventas</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row p-md-4">
 
-                           {% for field in form %}
-                  <div class="col-12 col-md-6 mb-3">{{ field.label_tag }}
-                    {{ field }}</div>
-                {% endfor %}
-                
-                       {% if form.errors %}
-                  <ul class="d-flex flex-column list-unstyled">
-                    {% for field_errors in form.errors.values %}
-                      {% for error in field_errors %}
-                        <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error }}</small>
-                      {% endfor %}
-                    {% endfor %}
-                  </ul>
-                {% endif %} 
+                            {% for field in form %}
+                            <div class="col-12 col-md-6 mb-3">{{ field.label_tag }}
+                                {{ field }}</div>
+                            {% endfor %}
+
+                            {% if form.errors %}
+                            <ul class="d-flex flex-column list-unstyled">
+                                {% for field_errors in form.errors.values %}
+                                {% for error in field_errors %}
+                                <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error
+                                    }}</small>
+                                {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="modal-footer">

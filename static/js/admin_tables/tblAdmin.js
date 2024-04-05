@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#tblProductos').DataTable({
+    $('#tblAdmin').DataTable({
         dom: "Bfrtip",
         buttons: [
             'excel',

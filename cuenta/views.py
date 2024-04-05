@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegistroForms
+from .forms import RegistroForms, CuentaForms
 from .models import Cuenta
 from django.contrib import auth, messages
-from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
+from config.decorators import protect_route
 
 # importaciones email
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from datetime import datetime, timedelta
 
@@ -506,3 +506,65 @@ def recover_password(request):
             return Response(
                 {"error": "La cuenta no existe!"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+
+def listar_usuario(request):
+    queryset = Cuenta.objects.all()
+
+
+ # Agregar
+    if request.method == "POST":
+        form = CuentaForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuario guardada")
+            form = CuentaForms()
+        else:
+            messages.error(
+                request,
+                "Ha ocurrido un error en el formulario, intenta agregar otra vez al usuario",
+            )
+    else:
+        form = CuentaForms()     
+    return render(
+        request,
+        "admin/usuario/lista_usuario.html",
+        {"usuario": queryset,'form': form },
+    )
+
+@login_required(login_url="inicio_sesion")
+@protect_route
+def detalle_usuario_admin(request, id_usuario):
+    if request.method == "GET":
+        detalle_usuario = get_object_or_404(Cuenta, pk=id_usuario)
+        form = CuentaForms(instance=detalle_usuario)
+        return render(request, "admin/usuario/detalle_usuario.html",  {
+            "detalle":detalle_usuario, "form":form
+        })
+    else:
+        try:
+            # Actualizar
+            detalle_usuario = get_object_or_404(Cuenta, pk=id_usuario)
+            form = CuentaForms(request.POST,  instance=detalle_usuario)
+            form.save()
+            messages.success(request, "Usuario actualizada")
+            return redirect("lista_usuario")
+        except:
+            messages.error(request, "Ha ocurrido un error en el formulario, intenta actualizar otra vez el usuario")
+            return render(request, "admin/usuario/detalle_usuario.html", { "detalle":detalle_usuario, "form":form})
+
+
+
+ #Eliminar
+
+@login_required(login_url="inicio_sesion")
+@protect_route
+def eliminar_usuario(request, id_usuario):
+    Usuario = get_object_or_404(Cuenta, id=id_usuario)
+    if request.method == "POST":
+        Usuario.delete()
+        messages.success(request,"Usuario eliminado")
+        return redirect("lista_usuario")
+    else:
+        messages.error(request,"Ha ocurrido un error al eliminar un usuario")

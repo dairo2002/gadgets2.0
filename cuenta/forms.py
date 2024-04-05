@@ -112,3 +112,53 @@ class RegistroForms(forms.ModelForm):
         # Se itera para que cada campo tenga la misma clase
         for field in self.fields:
             self.fields[field].widget.attrs["class"] = "form-control"
+
+
+class CuentaForms(forms.ModelForm):
+    class Meta:
+
+        password = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={"placeholder": "Ingresar contraseña"}),
+    )
+
+        model = Cuenta
+        # Traemos los campos del modelo de cuenta, que son aplicados al formulario,
+        fields = ["nombre", "apellido" ,"username" ,"correo_electronico", "telefono", "password", "is_staff", "is_admin", "is_active"]
+
+        labels = {
+            "telefono": "Teléfono",
+            "correo_electronico": "Correo electrónico",
+            "is_staff": "Usuario",
+            "is_admin": "Administrador",
+            "is_active": "Activo",
+            "username" : "Usuario",
+            "password":"Contraseña"
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(CuentaForms, self).__init__(*args, **kwargs)
+        self.fields["nombre"].widget.attrs["placeholder"] = "Ingrese su nombre"
+        self.fields["apellido"].widget.attrs["placeholder"] = "Ingrese su apellido"
+        self.fields["correo_electronico"].widget.attrs[
+            "placeholder"
+        ] = "Dirección correo electrónico"
+        self.fields["telefono"].widget.attrs["placeholder"] = "Número telefónico"
+        self.fields["username"].widget.attrs["placeholder"] = "Ingrese su nombre de usuario"
+        # self.fields["password"].widget.attrs["placeholder"] = "Ingrese su contraseña"
+        
+        """self.fields["ultimo_acceso"].widget =forms.DateTimeInput(
+         attrs={'type':'datetime-local'}
+            )
+        self.fields["inicio_acceso"].widget =forms.DateTimeInput(
+         attrs={'type':'datetime-local'}
+        )"""
+
+
+        # Se itera para que cada campo tenga la misma clase
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"
+        
+        self.fields["is_staff"].widget.attrs["class"] = "form-check-input"
+        self.fields["is_admin"].widget.attrs["class"] = "form-check-input"
+        self.fields["is_active"].widget.attrs["class"] = "form-check-input"
