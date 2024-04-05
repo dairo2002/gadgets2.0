@@ -307,8 +307,7 @@ def signup(request):
             },
         )
 
-        to_email = correo_electronico
-        # EmailMessage
+        to_email = correo_electronico    
         send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
@@ -321,7 +320,7 @@ def signup(request):
                 "success": True,
                 "message": "Por favor activa la cuenta ingresando al enlace enviado al correo electrónico",
             },
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_200_OK,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
