@@ -44,6 +44,10 @@
                       </a>
                     </li>
                     <li>
+                        {% comment %} {% url 'perfil_usuario' %} {% endcomment %}
+                      <a href="" class="dropdown-item text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Perfil <i class="fa-solid fa-user"></i></a>
+                    </li>
+                    <li>
                       <a href="{% url 'historial_compras' %}" class="dropdown-item text-decoration-none text-dark">Mis compras <i class="fa-solid fa-basket-shopping"></i></a>
                     </li>
                     <li>
@@ -72,16 +76,15 @@
             </div>
           {% endif %}
         </div>
-        
-          <a href="{% url 'mostrar_carrito' %}" class="btn btn_carrito d-flex flex-column align-items-center p-0 btn_carrito">
-            {% if user.is_authenticated %}
-              <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">{{ contador }}</span>
-            {% else %}
-              <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">0</span>
-            {% endif %}
-            <i class="fa-solid fa-cart-arrow-down fa-xl icon-carrito"></i>
-          </a>
-        
+
+        <a href="{% url 'mostrar_carrito' %}" class="btn btn_carrito d-flex flex-column align-items-center p-0 btn_carrito">
+          {% if user.is_authenticated %}
+            <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">{{ contador }}</span>
+          {% else %}
+            <span class="badge rounded-5" style="font-size: 16px; color: #15359B;">0</span>
+          {% endif %}
+          <i class="fa-solid fa-cart-arrow-down fa-xl icon-carrito"></i>
+        </a>
       </div>
     </div>
   </div>

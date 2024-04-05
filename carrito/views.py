@@ -14,7 +14,7 @@ import uuid
 import pdb
 
 
-# @login_required(login_url="inicio_sesion")
+@login_required(login_url="inicio_sesion")
 def mostrar_carrito(request):
     # la Funcionalidad esta en el context_proccesor, nos permiter visualizar los productos donde queremos
     return render(request, "client/tienda/carrito.html")
@@ -84,40 +84,52 @@ def add(request):
     data = json.loads(request.body)
     # producto_id = data["id"]
     producto_id = data.get("id")
-    producto = Producto.objects.get(id=producto_id)
-    if producto.stock > 0:                
-        if request.user.is_authenticated:
-            cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
-            cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)          
+
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return JsonResponse({"redirect": "/carrito/"})
+    
+    if producto.stock > 0:
+        return JsonResponse({"redirect": "/carrito/"})
+               
+    if request.user.is_authenticated:
+        cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
+        cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)          
+        cartitem.cantidad += 1
+        cartitem.save()                    
+    else:
+        try:                                
+            cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
+            cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                           
             cartitem.cantidad += 1
             cartitem.save()                    
-        else:
-            try:                                
-                cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
-                cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                           
-                cartitem.cantidad += 1
-                cartitem.save()                    
-            except:
-                request.session["nonuser"] = str(uuid.uuid4())
-                print(str(uuid.uuid4()))
-                cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
-                cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                            
-                cartitem.cantidad += 1
-                cartitem.save()                                                    
-    else:
-        messages.info(request, 'Lo siento, la cantidad solicitada excede el stock disponible')
-              
+        except:
+            request.session["nonuser"] = str(uuid.uuid4())                
+            cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
+            cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                            
+            cartitem.cantidad += 1
+            cartitem.save()                                                    
     return JsonResponse({"redirect": "/carrito/"})
 
 
-
+# ? Validar stock
 def updates(request):
     data = json.loads(request.body)
-    producto_id = data["id"]
-    nueva_cantidad = int(data["cantidad"])
-    
+    producto_id = data.get("id")
+    cantidad_str = data.get("cantidad")
     producto = Producto.objects.get(id=producto_id)
     
+    try:
+        nueva_cantidad = int(cantidad_str)
+        if nueva_cantidad < 0:            
+            return JsonResponse({"redirect": "/carrito/"})
+        if producto.stock < nueva_cantidad:
+            return JsonResponse({"redirect": "/carrito/"})
+    except:
+        return JsonResponse({"redirect": "/carrito/"})
+    
+  
     if request.user.is_authenticated:
         cart, created = Carrito.objects.get_or_create(
             usuario=request.user, completed=False
@@ -132,7 +144,6 @@ def updates(request):
             cart = Carrito.objects.create(
                 session_id=request.session["nonuser"], completed=False
             )
-
     try:
         cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)        
         if nueva_cantidad == 0:
@@ -141,9 +152,7 @@ def updates(request):
             cartitem.cantidad = nueva_cantidad
             cartitem.save()
     except ItemCarrito.DoesNotExist:
-        pass
-        # Si el producto no está en el carrito, podemos decidir si crear un nuevo
-        # item en el carrito con la cantidad proporcionada, o simplemente ignorar la solicitud.
+        pass        
     return JsonResponse({"redirect": "/carrito/"})
 
 

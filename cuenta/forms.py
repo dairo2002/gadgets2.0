@@ -133,7 +133,7 @@ class CuentaForms(forms.ModelForm):
             "is_admin": "Administrador",
             "is_active": "Activo",
             "username" : "Usuario",
-            "password":"Contraseña"
+            "password": "Contraseña"
         }
     
     def __init__(self, *args, **kwargs):

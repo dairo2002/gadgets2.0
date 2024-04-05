@@ -79,7 +79,7 @@ body {
 .form_pedido select:focus,
 .form_pago input:focus,
 .form_filtro_precio input:focus,
-.inputCantidadCarrito input:focus {
+.form_carrito input:focus {
     box-shadow: none;
     border-color: gray;
     

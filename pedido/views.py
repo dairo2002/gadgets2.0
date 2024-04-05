@@ -139,11 +139,11 @@ def pago(request, id_pedido):
             pedido.save()
 
             messages.success(
-                request, "Pago exitoso, Se verificara si el comprobante es valido"
+                request, "Pago exitoso. Se verificará si el comprobante es válido"
             )
             return redirect("index")
         else:
-            messages.error(request, "Por favor corrija los errores en el formulario.")
+            messages.error(request, "Por favor, corrija los errores en el formulario.")
     else:
         formulario = PagoForm()
     return render(
@@ -267,7 +267,7 @@ def lista_pedido(request):
         form = PedidoFormA(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Pedido guardada")
+            messages.success(request, "Pedido guardado.")
             form = PedidoFormA()
         else:
             messages.error(
@@ -300,7 +300,7 @@ def detalle_pedido_admin(request, id_pedido):
             detalle_pedido = get_object_or_404(Pedido, pk=id_pedido)
             form = PedidoFormA(request.POST, instance=detalle_pedido)
             form.save()
-            messages.success(request, "pedido actualizada")
+            messages.success(request, "Pedido actualizado")
             return redirect("lista_pedido")
         except:
             messages.error(
@@ -337,7 +337,7 @@ def lista_venta(request):
         form = VentaForms(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "venta guardada")
+            messages.success(request, "Venta guardada")
             form = VentaForms()
         else:
             messages.error(
