@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import PedidoForm,PedidoFormA, PagoForm ,VentaForms,PagosForms
+from .forms import PedidoForm, PedidoFormA, PagoForm, VentaForms, PagosForms
 from .models import Pedido, Pago, Departamento, Municipio, Ventas
 from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
@@ -92,6 +92,17 @@ def realizar_pedido(request):
             num_pedido = fecha_actual + str(data.id)
             data.numero_pedido = num_pedido
             data.save()
+
+            mail_subject = "¡Su pedido está en verificación!"
+            mensaje = render_to_string(
+                "client/pedido/email_pedido.html",
+                {"pedido": data},
+            )
+        
+            to_email = data.correo_electronico
+            send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
+            send_email.attach_alternative(mensaje, "text/html")
+            send_email.send()
 
             # Redirigir a la página de pago con el ID del pedido
             return redirect("pago", id_pedido=data.pk)

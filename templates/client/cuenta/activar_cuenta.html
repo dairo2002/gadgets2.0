@@ -15,10 +15,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         
-        .contendor-table {
-            margin: 20px;
-            
-        }
         
         .contenido-texto{
             margin: 20px;
@@ -33,35 +29,6 @@
             margin-bottom: 20px;
         }
         
-        /* Estilos para las tablas */
-        .table1 {
-            width: 100%;
-            border-collapse: collapse;
-            border: 2px solid #bbbbbb;
-        
-        }
-        .table2 {
-            width: 100%;
-            border-collapse: collapse;
-            border: 2px solid #bbbbbb;
-            margin-bottom: 20px;
-        
-        }
-        
-        .thAncho{
-           width: 389px;
-        }
-        
-        th,
-        td {
-            border: 1px solid #856a6a;
-            padding: 8px;
-            text-align: left;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
         
         .h2Centrado {
             text-align: center;
@@ -75,12 +42,7 @@
             color: #ffffff; 
             margin-bottom: 20px; 
         }
-        .ImagenLogo{
-           width:200px ;
-           height:200px;
-           display: block;
-           margin: 0 auto;
-        }
+    
         
     </style>
      
@@ -96,7 +58,7 @@
             <p>Gracias por crear una cuenta en <mark> GadgetsFuture </mark>. Tu nombre de usuario es
                 <strong>{{usuario.username}}</strong>.
                 Puedes confirmar tu registro haciendo clic en el siguiente link:</p>
-                 <a href="http://{{dominio}}{% url 'activar_cuenta' uidb64=uid token=token%}">Confirmar registro</a>
+                <a href="http://{{dominio}}{% url 'activar_cuenta' uidb64=uid token=token%}">Confirmar registro</a>
                 <p class="mt-4">Esperamos verte pronto.</p>              
         </div>
     </div>

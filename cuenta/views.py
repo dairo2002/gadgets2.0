@@ -1,36 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegistroForms, CuentaForms
-from .models import Cuenta
-from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from .forms import RegistroForms, CuentaForms
 from config.decorators import protect_route
+from django.contrib import auth, messages
+from .models import Cuenta
 
 # importaciones email
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
-from django.utils import timezone
+from django.utils.encoding import force_bytes
 from datetime import datetime, timedelta
-
 from carrito.models import Carrito
+from django.utils import timezone
 
 # API
-from rest_framework import status
-
-# from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-
+from rest_framework.response import Response
 from .serializers import CuentaSerializer
+from rest_framework.views import APIView
+from rest_framework import status
 
-from django.http import HttpResponse
 import pdb
 
 
@@ -147,18 +141,16 @@ def inicio_sesion(request):
                         cart = Carrito.objects.get(
                             session_id=request.session["nonuser"], completed=False
                         )
-                        print("inicio sesion ", cart)
+
                         if Carrito.objects.filter(
                             usuario=request.user, completed=False
                         ).exists():
                             cart.usuario = None
                             cart.save()
-                            print("inicio sesion filtro ", cart)
-                            # pdb.set_trace()
+
                         else:
                             cart.usuario = request.user
                             cart.save()
-                            print("inicio sesion NO filtro ", cart)
 
                     except Exception as e:
                         print("Error ", e)
@@ -181,7 +173,7 @@ def cerrar_sesion(request):
 @login_required(login_url="inicio_sesion")
 def desactivar_cuenta(request):
     cuenta = Cuenta.objects.get(correo_electronico=request.user)
-    if request.method == "POST":    
+    if request.method == "POST":
         cuenta.is_active = False
         cuenta.is_staff = False
         cuenta.is_admin = False
@@ -443,7 +435,7 @@ def deactivate_account(request):
 def deactivate_accountV2(request):
     # cuenta = Cuenta.objects.get(correo_electronico=request.user)
     if request.method == "POST":
-        if request.user.is_authenticated: 
+        if request.user.is_authenticated:
             usuario = request.user
             usuario.is_active = False
             usuario.is_staff = False
@@ -508,12 +500,10 @@ def recover_password(request):
             )
 
 
-
 def listar_usuario(request):
     queryset = Cuenta.objects.all()
 
-
- # Agregar
+    # Agregar
     if request.method == "POST":
         form = CuentaForms(request.POST)
         if form.is_valid():
@@ -526,12 +516,13 @@ def listar_usuario(request):
                 "Ha ocurrido un error en el formulario, intenta agregar otra vez al usuario",
             )
     else:
-        form = CuentaForms()     
+        form = CuentaForms()
     return render(
         request,
         "admin/usuario/lista_usuario.html",
-        {"usuario": queryset,'form': form },
+        {"usuario": queryset, "form": form},
     )
+
 
 @login_required(login_url="inicio_sesion")
 @protect_route
@@ -539,24 +530,31 @@ def detalle_usuario_admin(request, id_usuario):
     if request.method == "GET":
         detalle_usuario = get_object_or_404(Cuenta, pk=id_usuario)
         form = CuentaForms(instance=detalle_usuario)
-        return render(request, "admin/usuario/detalle_usuario.html",  {
-            "detalle":detalle_usuario, "form":form
-        })
+        return render(
+            request,
+            "admin/usuario/detalle_usuario.html",
+            {"detalle": detalle_usuario, "form": form},
+        )
     else:
         try:
             # Actualizar
             detalle_usuario = get_object_or_404(Cuenta, pk=id_usuario)
-            form = CuentaForms(request.POST,  instance=detalle_usuario)
+            form = CuentaForms(request.POST, instance=detalle_usuario)
             form.save()
             messages.success(request, "Usuario actualizada")
             return redirect("lista_usuario")
         except:
-            messages.error(request, "Ha ocurrido un error en el formulario, intenta actualizar otra vez el usuario")
-            return render(request, "admin/usuario/detalle_usuario.html", { "detalle":detalle_usuario, "form":form})
+            messages.error(
+                request,
+                "Ha ocurrido un error en el formulario, intenta actualizar otra vez el usuario",
+            )
+            return render(
+                request,
+                "admin/usuario/detalle_usuario.html",
+                {"detalle": detalle_usuario, "form": form},
+            )
 
 
-
- #Eliminar
 
 @login_required(login_url="inicio_sesion")
 @protect_route
@@ -564,7 +562,7 @@ def eliminar_usuario(request, id_usuario):
     Usuario = get_object_or_404(Cuenta, id=id_usuario)
     if request.method == "POST":
         Usuario.delete()
-        messages.success(request,"Usuario eliminado")
+        messages.success(request, "Usuario eliminado")
         return redirect("lista_usuario")
     else:
-        messages.error(request,"Ha ocurrido un error al eliminar un usuario")
+        messages.error(request, "Ha ocurrido un error al eliminar un usuario")

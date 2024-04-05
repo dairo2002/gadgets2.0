@@ -1,0 +1,53 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a Gadgets</title> 
+    <style>
+        .contaniner {
+            width: 90%;
+            margin: 0 auto; 
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+              
+        .h2Centrado {
+            text-align: center;
+        }
+        
+        .contenido-texto{
+            margin: 20px;
+            
+        }
+
+        .header{
+            padding: 10px 20px;
+            background-color: #15359B;    
+            border-radius: 10px 10px 0 0 color;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+      
+    </style>
+</head>
+
+<body>
+    <div class="contaniner">
+        <div class="header">
+            <h2 class="h2Centrado"> Verificación de pago en curso</h2>
+        </div>
+        <div class="contenido-texto">
+            <p>Hola {{pedido.nombre_completo_pedido}}</p>
+            <br>
+            <p>Nos complace informarle que estamos en proceso de verificar el pago de su pedido. Estamos trabajando para verificar el pago lo antes posible. Te mantendremos informado/a. ¡Gracias por tu paciencia!</p>
+            <p class="mt-4">Esperamos verte pronto.</p>
+        </div>
+    </div>
+</body>
+</html>
+{% endautoescape %}
+
