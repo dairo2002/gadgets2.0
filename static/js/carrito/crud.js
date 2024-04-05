@@ -121,7 +121,7 @@ function agregarCarrito(e) {
     })
         .then(response => response.json())
         .then(data => {
-            //window.location.href = data.redirect;
+            window.location.href = data.redirect;
             //Contador de producto
             //document.getElementById("contador").innerHTML = data
             //console.log(data);
