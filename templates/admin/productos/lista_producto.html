@@ -42,7 +42,13 @@
                       <p style="display: -webkit-box;  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ p.descripcion }}</p>
                     </td>
                     <td class="align-middle">{{ p.precio }}</td>
-                    <td class="align-middle text-center">{{ p.stock }}</td>
+                    <td class="align-middle text-center">
+                      {% if p.stock > 0 %}
+                        <p class="text-success">{{ p.stock }}</p>
+                      {% else %}
+                        <p class="text-danger">{{ p.stock }}</p>
+                      {% endif %}
+                    </td>
                     <td class="align-middle text-center">
                       {% if p.disponible %}
                         <i class="fas fa-check-circle fa-xl text-success"></i>

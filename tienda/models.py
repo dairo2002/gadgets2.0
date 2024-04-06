@@ -39,9 +39,9 @@ def _post_save_receiver(sender, instance, **kwargs):
 
 
 class Producto(models.Model):
-    nombre = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(max_length=200, unique=True)
-    descripcion = models.TextField(max_length=1000, blank=True)
+    nombre = models.CharField(max_length=80, unique=True)
+    slug = models.SlugField(max_length=80, unique=True)
+    descripcion = models.TextField(max_length=1000)
     precio = models.DecimalField(max_digits=12, decimal_places=2)
     stock = models.IntegerField()
     # FileExtensionValidator permite cargar imagenes con la extencion especifica que pasamos
