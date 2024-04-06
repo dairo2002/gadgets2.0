@@ -84,18 +84,23 @@ def add(request):
     data = json.loads(request.body)
     # producto_id = data["id"]
     producto_id = data.get("id")
+    # print(producto_id)
 
     try:
         producto = Producto.objects.get(id=producto_id)
     except Producto.DoesNotExist:
         return JsonResponse({"redirect": "/carrito/"})
     
+    # ! Corregir stock
     if producto.stock > 0:
         return JsonResponse({"redirect": "/carrito/"})
                
     if request.user.is_authenticated:
         cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
-        cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)          
+        if not ItemCarrito.objects.filter(carrito=cart, producto=producto).exists():   
+            cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
+        else:
+            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)               
         cartitem.cantidad += 1
         cartitem.save()                    
     else:
@@ -113,7 +118,6 @@ def add(request):
     return JsonResponse({"redirect": "/carrito/"})
 
 
-# ? Validar stock
 def updates(request):
     data = json.loads(request.body)
     producto_id = data.get("id")

@@ -55,12 +55,13 @@ def mostrar_carrito(request):
                     total += subtotal
                 
         # cartitems =  related_name="cartitems"
-        cartitem = cart.cartitems.all()
+        cartitem = cart.cartitems.all()        
         
         # Utilizamos este metodo count() para contar cuantos objetos ahi en el carrito
         contador = cartitem.count()
     except Exception as e:
-        print(e)
+        pass
+        # print(e)
 
     subtotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
     totalFormato = "{:,.0f}".format(total).replace(",", ".")

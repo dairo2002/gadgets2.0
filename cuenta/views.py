@@ -154,7 +154,8 @@ def inicio_sesion(request):
                             cart.save()
 
                     except Exception as e:
-                        print("Error ", e)
+                        # print("Error ", e)
+                        pass
                     return redirect("index")
             else:
                 messages.error(request, "Tu cuenta está desactivada.")
@@ -172,26 +173,22 @@ def perfil(request):
         if formulario.is_valid():
             nombre = formulario.cleaned_data["nombre"]
             apellido = formulario.cleaned_data["apellido"]
-            correo_electronico = formulario.cleaned_data["correo_electronico"]
+            # correo_electronico = formulario.cleaned_data["correo_electronico"]
             telefono = formulario.cleaned_data["telefono"]
             password = formulario.cleaned_data["password"]
 
             # Toma la dirección de correo electrónico y extrae el como nombre de usuario lo que antes símbolo "@", con esto tambien evitamos repetidos
-            usuario = correo_electronico.split("@")[0]
-            
-            if Cuenta.objects.filter(correo_electronico=correo_electronico).exists():
-                raise ValidationError('Este correo electrónico ya existe.')
+            # usuario = correo_electronico.split("@")[0]
+                    
 
-            if Cuenta.objects.filter(username=usuario).exists():
-                messages.error(request, "El nombre de usuario ya existe")
-                return redirect("registrarse")
+            # if Cuenta.objects.filter(username=usuario).exists():
+                # messages.error(request, "El nombre de usuario ya existe")
+                # return redirect("registrarse")
 
             # metodo create_user creado en ManejadorCuenta
             crear_usuario = Cuenta.objects.create_user(
                 nombre=nombre,
-                apellido=apellido,
-                correo_electronico=correo_electronico,
-                username=usuario,
+                apellido=apellido,                                
                 password=password,
             )
             

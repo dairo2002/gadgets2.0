@@ -43,11 +43,11 @@
               <div class="card tarjeta_productos h-100">
                 <div class="card-body contaninerProductos">
                   {% if productos.categoria.descuento %}
-                    <a href="{{ productos.get_url_producto }}">                        
+                    <a href="{{ productos.get_url_producto }}">
                       <span class="badge p-2 text-bg-success z-1 position-absolute rounded-5">{{ productos.porcentajeDescFormtiado }}%</span>
                       <img src="{{ productos.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" />
                     </a>
-                    <h6 class="fw-semibold">{{ productos.nombre }}</h6>
+                    <p class="fw-semibold" style="display: -webkit-box;  -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">{{ productos.nombre }}</p>
                     <div class="d-flex my-2 justify-content-between">
                       <span>$ {{ productos.descuentoFormatiado }}</span>
                       <del>
@@ -56,7 +56,7 @@
                     </div>
                   {% else %}
                     <a href="{{ productos.get_url_producto }}"><img src="{{ productos.imagen.url }}" class="card-img-top rounded-3 mb-2" alt="imagen producto" /></a>
-                    <h6 class="fw-semibold">{{ productos.nombre }}</h6>
+                    <p class="fw-semibold" style="display: -webkit-box;  -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">{{ productos.nombre }}</p>
                     <span class="mb-2">$ {{ productos.precioFormatiado }}</span>
                   {% endif %}
                   {% if productos.stock <= 0 %}
@@ -78,7 +78,7 @@
           <div class="card rounded-5 p-3 bg-light">
             <h3 class="text-center">Descargar</h3>
             <div class="text-center mt-4">
-              <a href=""><a href=""><img class="" src="{% static 'img/logo.svg' %}" alt="descargar mobil" /></a></a>
+              <a href=""><a href=""><img class="" src="{% static 'img/logo.svg' %}" alt="descargar móvil" /></a></a>
             </div>
           </div>
         </div>

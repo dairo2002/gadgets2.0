@@ -38,7 +38,9 @@
                     <td class="align-middle">
                       <span>{{ p.nombre }}</span>
                     </td>
-                    <td class="align-middle">{{ p.descripcion }}</td>
+                    <td class="align-middle">
+                      <p style="display: -webkit-box;  -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ p.descripcion }}</p>
+                    </td>
                     <td class="align-middle">{{ p.precio }}</td>
                     <td class="align-middle text-center">{{ p.stock }}</td>
                     <td class="align-middle text-center">
