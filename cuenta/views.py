@@ -579,6 +579,8 @@ def listar_usuario(request):
     )
 
 
+'''
+
 @login_required(login_url="inicio_sesion")
 @protect_route
 def detalle_usuario_admin(request, id_usuario):
@@ -621,3 +623,4 @@ def eliminar_usuario(request, id_usuario):
         return redirect("lista_usuario")
     else:
         messages.error(request, "Ha ocurrido un error al eliminar un usuario")
+'''

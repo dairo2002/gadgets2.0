@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import PedidoForm, PedidoFormA, PagoForm, VentaForms, PagosForms
+from .forms import PedidoForm, PagoForm, PagosForms
 from .models import Pedido, Pago, Departamento, Municipio, Ventas
 from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
@@ -214,30 +214,6 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.send()
 
 
-# def actualizar_stock(usuario):
-#     cartItem = ItemCarrito.objects.filter(carrito__usuario=usuario).first()
-#     pedido = Pedido.objects.filter(usuario=usuario).first()
-#     pago = Pago.objects.filter(usuario=usuario).first()
-#     if cartItem and pedido and pago:
-#         pedido.ordenado = True
-#         pedido.save()
-
-#         venta = Ventas()
-#         venta.pedido = pedido
-#         venta.pago = pago
-#         venta.usuario_id = usuario.id
-#         venta.producto_id = cartItem.producto_id
-#         venta.cantidad = cartItem.cantidad
-#         venta.precio = cartItem.producto.precio
-#         venta.fecha = timezone.now()
-#         venta.save()
-
-#         prod = Producto.objects.get(pk=cartItem.producto_id)
-#         prod.stock -= cartItem.cantidad
-#         prod.save()
-
-#         # Elimina los producto del carrito
-#         cartItem.delete()
 
 
 def historial_compra(request):
@@ -261,69 +237,12 @@ def orderAPIView(request):
 @protect_route
 def lista_pedido(request):
     queryset = Pedido.objects.all()
-
-    # Agregar
-    if request.method == "POST":
-        form = PedidoFormA(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Pedido guardado.")
-            form = PedidoFormA()
-        else:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta agregar otro pedido",
-            )
-    else:
-        form = PedidoFormA()
     return render(
         request,
         "admin/pedido/lista_pedido.html",
-        {"pedido": queryset, "form": form},
+        {"pedido": queryset},
     )
 
-
-@login_required(login_url="inicio_sesion")
-@protect_route
-def detalle_pedido_admin(request, id_pedido):
-    if request.method == "GET":
-        detalle_pedido = get_object_or_404(Pedido, pk=id_pedido)
-        form = PedidoFormA(instance=detalle_pedido)
-        return render(
-            request,
-            "admin/pedido/detalle_pedido.html",
-            {"detalle": detalle_pedido, "form": form},
-        )
-    else:
-        try:
-            # Actualizar
-            detalle_pedido = get_object_or_404(Pedido, pk=id_pedido)
-            form = PedidoFormA(request.POST, instance=detalle_pedido)
-            form.save()
-            messages.success(request, "Pedido actualizado")
-            return redirect("lista_pedido")
-        except:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta actualizar otra vez el pedido",
-            )
-            return render(
-                request,
-                "admin/pedido/detalle_pedido.html",
-                {"detalle": detalle_pedido, "form": form},
-            )
-
-
-@login_required(login_url="inicio_sesion")
-@protect_route
-def eliminar_pedido(request, id_pedido):
-    pedido = get_object_or_404(Pedido, id=id_pedido)
-    if request.method == "POST":
-        pedido.delete()
-        messages.success(request, "Pedido eliminado")
-        return redirect("lista_pedido")
-    else:
-        messages.error(request, "Ha ocurrido un error al eliminar un pedido")
 
 
 # Ventas
@@ -331,99 +250,20 @@ def eliminar_pedido(request, id_pedido):
 @protect_route
 def lista_venta(request):
     queryset = Ventas.objects.all()
-
-    # Agregar
-    if request.method == "POST":
-        form = VentaForms(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Venta guardada")
-            form = VentaForms()
-        else:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta agregar otra venta",
-            )
-    else:
-        form = VentaForms()
     return render(
         request,
         "admin/venta/lista_venta.html",
-        {"ventas": queryset, "form": form},
+        {"ventas": queryset},
     )
-
-
-@login_required(login_url="inicio_sesion")
-@protect_route
-def detalle_venta_admin(request, id_venta):
-    if request.method == "GET":
-        detalle_venta = get_object_or_404(Ventas, pk=id_venta)
-        form = VentaForms(instance=detalle_venta)
-        return render(
-            request,
-            "admin/venta/detalle_venta.html",
-            {"detalle": detalle_venta, "form": form},
-        )
-    else:
-        try:
-            # Actualizar
-            detalle_venta = get_object_or_404(Ventas, pk=id_venta)
-            form = VentaForms(request.POST, instance=detalle_venta)
-            form.save()
-            messages.success(request, "venta actualizada")
-            return redirect("lista_venta")
-        except:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta actualizar otra vez venta",
-            )
-            return render(
-                request,
-                "admin/venta/detalle_venta.html",
-                {"detalle": detalle_venta, "form": form},
-            )
-
-
-# Eliminar
-
-
-@login_required(login_url="inicio_sesion")
-@protect_route
-def eliminar_venta(request, id_venta):
-    venta = get_object_or_404(Ventas, id=id_venta)
-    if request.method == "POST":
-        venta.delete()
-        messages.success(request, "Venta eliminada")
-        return redirect("lista_venta")
-    else:
-        messages.error(request, "Ha ocurrido un error al eliminar una venta")
-
-    # pagos
-
 
 @login_required(login_url="inicio_sesion")
 @protect_route
 def lista_pagos(request):
     queryset = Pago.objects.all()
-
-    # Agregar
-    if request.method == "POST":
-        form = PagosForms(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Pago guardada")
-            form = PagosForms()
-        else:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta agregar otra vez el pago",
-            )
-    else:
-        form = PagosForms()
     return render(
         request,
         "admin/pagos/lista_pagos.html",
-        {"pagos": queryset, "form": form},
+        {"pagos": queryset},
     )
 
 
@@ -458,16 +298,14 @@ def detalle_pagos_admin(request, id_pagos):
             )
 
 
-# Eliminar
 
-
-@login_required(login_url="inicio_sesion")
-@protect_route
-def eliminar_pagos(request, id_pagos):
-    pagos = get_object_or_404(Pago, id=id_pagos)
-    if request.method == "POST":
-        pagos.delete()
-        messages.success(request, "Pago eliminada")
-        return redirect("lista_pagos")
-    else:
-        messages.error(request, "Ha ocurrido un error al eliminar un pago")
+# @login_required(login_url="inicio_sesion")
+# @protect_route
+# def eliminar_pagos(request, id_pagos):
+#     pagos = get_object_or_404(Pago, id=id_pagos)
+#     if request.method == "POST":
+#         pagos.delete()
+#         messages.success(request, "Pago eliminada")
+#         return redirect("lista_pagos")
+#     else:
+#         messages.error(request, "Ha ocurrido un error al eliminar un pago")

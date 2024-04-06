@@ -33,13 +33,13 @@
                 {% for p in producto %}
                   <tr>
                     <td class="align-middle text-center">
-                      <a href="{{ p.imagen.url }}"><img class="w-50 h-auto" src="{{ p.imagen.url }}" alt="imagen producto" /></a>
+                      <a href="{{ p.imagen.url }}"><img src="{{ p.imagen.url }}" alt="imagen producto" width="70px" /></a>
                     </td>
                     <td class="align-middle">
                       <span>{{ p.nombre }}</span>
                     </td>
                     <td class="align-middle">
-                      <p style="display: -webkit-box;  -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ p.descripcion }}</p>
+                      <p style="display: -webkit-box;  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ p.descripcion }}</p>
                     </td>
                     <td class="align-middle">{{ p.precio }}</td>
                     <td class="align-middle text-center">{{ p.stock }}</td>
