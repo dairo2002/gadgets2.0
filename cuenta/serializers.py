@@ -8,3 +8,7 @@ class CuentaSerializer(serializers.ModelSerializer):
         model = Cuenta
         fields = ["nombre", "apellido", "correo_electronico", "telefono", "password"]
 
+class PerfilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cuenta
+        fields = ["nombre", "apellido", "telefono"]

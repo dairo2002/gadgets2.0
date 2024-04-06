@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import RegistroForms, CuentaForms
+from .forms import RegistroForms, CuentaForms, PerfilForms
 from config.decorators import protect_route
 from django.contrib import auth, messages
 from .models import Cuenta
@@ -22,7 +22,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .serializers import CuentaSerializer
+from .serializers import CuentaSerializer, PerfilSerializer
 from rest_framework.views import APIView
 from rest_framework import status
 
@@ -167,51 +167,37 @@ def inicio_sesion(request):
 
 @login_required(login_url="inicio_sesion")
 def perfil(request):
-    usuario_actual = request.user
+    usuario_actual=request.user    
     if request.method == "POST":
-        formulario = RegistroForms(request.POST)
+        formulario = PerfilForms(request.POST)
         if formulario.is_valid():
             nombre = formulario.cleaned_data["nombre"]
-            apellido = formulario.cleaned_data["apellido"]
-            # correo_electronico = formulario.cleaned_data["correo_electronico"]
+            apellido = formulario.cleaned_data["apellido"]            
             telefono = formulario.cleaned_data["telefono"]
-            password = formulario.cleaned_data["password"]
-
-            # Toma la dirección de correo electrónico y extrae el como nombre de usuario lo que antes símbolo "@", con esto tambien evitamos repetidos
-            # usuario = correo_electronico.split("@")[0]
-                    
-
-            # if Cuenta.objects.filter(username=usuario).exists():
-                # messages.error(request, "El nombre de usuario ya existe")
-                # return redirect("registrarse")
-
-            # metodo create_user creado en ManejadorCuenta
-            crear_usuario = Cuenta.objects.create_user(
-                nombre=nombre,
-                apellido=apellido,                                
-                password=password,
-            )
-            
-            crear_usuario.telefono = telefono
-            crear_usuario.save()   
-            return redirect("index")    
+            password = formulario.cleaned_data["password"]                                                                        
+        
+            cuenta = Cuenta.objects.get(pk=usuario_actual.pk)        
+            cuenta.nombre = nombre
+            cuenta.apellido=apellido                                
+            cuenta.telefono=telefono
+            # Se verifica si se ingreso una nueva contraseña
+            if password:
+                cuenta.set_password(password)
+            cuenta.save()
+            messages.success(request, 'Perfil actualizado correctamente')
+            # return redirect("perfil_usuario")
+        else:                                                                              
+            messages.error(request, 'Ha ocurrido un error al actualizar revisa el formulario otra vez')
+            return redirect("perfil_usuario")
     else:
-        '''obtener_usuario = Cuenta.objects.create_user(
-            nombre=usuario_actual.nombre,
-            apellido=usuario_actual.apellido,
-            correo_electronico=usuario_actual.correo_electronico,            
-            telefono=usuario_actual.telefono,
-        )
-        formulario = RegistroForms(initial=obtener_usuario)'''
         datos_usuario = {
             "nombre": usuario_actual.nombre,
-            "apellido": usuario_actual.apellido,
-            "correo_electronico": usuario_actual.correo_electronico,
+            "apellido": usuario_actual.apellido,            
             "telefono": usuario_actual.telefono,
         }
-        formulario = RegistroForms(initial=datos_usuario)
+        formulario = PerfilForms(initial=datos_usuario)
         
-    return render(request, "client/cuenta/perfil_usuario.html", {"form": formulario})
+    return render(request, "client/cuenta/perfil_usuario.html", {"form": formulario,  "usuario":usuario_actual})
 
 
 @login_required(login_url="inicio_sesion")
@@ -386,7 +372,7 @@ def login(request):
             return Response(
                 {
                     "token": str(token.access_token),
-                    "actualizar ": str(token),
+                    # "actualizar ": str(token),
                     "success": True,
                     "message": f"Bienvenido {usuario.nombre} {usuario.apellido}",
                 },
@@ -403,6 +389,26 @@ def login(request):
             {"error": False, "message": "Método no permitido"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+@api_view(["GET", "PUT"])
+@permission_classes([IsAuthenticated])
+def perfil_api(request):
+    usuario_actual = request.user
+    if request.method == "GET":
+        datos_usuario = {
+            "nombre": usuario_actual.nombre,
+            "apellido": usuario_actual.apellido,
+            "telefono": usuario_actual.telefono,
+        }
+        return Response(datos_usuario)
+    elif request.method == "PUT":
+        formulario = PerfilSerializer(instance=usuario_actual, data=request.data) 
+        if formulario.is_valid():
+            formulario.save()
+            return Response({"message": "Perfil actualizado correctamente"}, status=status.HTTP_204_NO_CONTENT)           
+        else:            
+            return Response({"message": "Ha ocurrido un error al actualizar el perfil"}, formulario.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # @api_view(["POST"])
@@ -546,6 +552,9 @@ def recover_password(request):
             )
 
 
+# ? ADMIN
+@login_required(login_url="inicio_sesion")
+@protect_route
 def listar_usuario(request):
     queryset = Cuenta.objects.all()
 
