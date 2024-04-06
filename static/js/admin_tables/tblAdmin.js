@@ -1,7 +1,7 @@
 new DataTable('#tblAdmin', {
     layout: {
         topStart: {
-            buttons: ['copy', 'excel', 'pdf', 'colvis']
+            buttons: ['print', 'excel', 'pdf', 'colvis']
         }
     },
     language: {
@@ -28,7 +28,6 @@ new DataTable('#tblAdmin', {
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         },
         "buttons": {
-            "copy": "Copiar",
             "colvis": "Visibilidad"
         }
     }
