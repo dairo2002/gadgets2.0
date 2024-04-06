@@ -35,6 +35,12 @@ urlpatterns = [
     path("pedido/", include("pedido.urls")),
     
     # API
-    #  path("", views.productosAPIView), = path("api/list_product/v1/", views.listProductAPIView),
     path("api/list_product/v1/", views.listProductAPIView),
+    # Footer
+    path("sobre_nosotros/", views.sobre_nosotros, name='sobre_nosotros'),
+    path("politicas_privacidad/", views.politicas_privacidad, name='politicas_privacidad'),
+    path("metodo_de_pago/", views.metodo_pago, name='metodo_pago'),
+    path("terminos_y_condiciones/", views.terminos_condiciones, name='terminos_condiciones'),
+    path("manuales/", views.manuales, name='manuales'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

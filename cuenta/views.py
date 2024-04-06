@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import RegistroForms, CuentaForms
@@ -164,6 +165,59 @@ def inicio_sesion(request):
 
 
 @login_required(login_url="inicio_sesion")
+def perfil(request):
+    usuario_actual = request.user
+    if request.method == "POST":
+        formulario = RegistroForms(request.POST)
+        if formulario.is_valid():
+            nombre = formulario.cleaned_data["nombre"]
+            apellido = formulario.cleaned_data["apellido"]
+            correo_electronico = formulario.cleaned_data["correo_electronico"]
+            telefono = formulario.cleaned_data["telefono"]
+            password = formulario.cleaned_data["password"]
+
+            # Toma la dirección de correo electrónico y extrae el como nombre de usuario lo que antes símbolo "@", con esto tambien evitamos repetidos
+            usuario = correo_electronico.split("@")[0]
+            
+            if Cuenta.objects.filter(correo_electronico=correo_electronico).exists():
+                raise ValidationError('Este correo electrónico ya existe.')
+
+            if Cuenta.objects.filter(username=usuario).exists():
+                messages.error(request, "El nombre de usuario ya existe")
+                return redirect("registrarse")
+
+            # metodo create_user creado en ManejadorCuenta
+            crear_usuario = Cuenta.objects.create_user(
+                nombre=nombre,
+                apellido=apellido,
+                correo_electronico=correo_electronico,
+                username=usuario,
+                password=password,
+            )
+            
+            crear_usuario.telefono = telefono
+            crear_usuario.save()   
+            return redirect("index")    
+    else:
+        '''obtener_usuario = Cuenta.objects.create_user(
+            nombre=usuario_actual.nombre,
+            apellido=usuario_actual.apellido,
+            correo_electronico=usuario_actual.correo_electronico,            
+            telefono=usuario_actual.telefono,
+        )
+        formulario = RegistroForms(initial=obtener_usuario)'''
+        datos_usuario = {
+            "nombre": usuario_actual.nombre,
+            "apellido": usuario_actual.apellido,
+            "correo_electronico": usuario_actual.correo_electronico,
+            "telefono": usuario_actual.telefono,
+        }
+        formulario = RegistroForms(initial=datos_usuario)
+        
+    return render(request, "client/cuenta/perfil_usuario.html", {"form": formulario})
+
+
+@login_required(login_url="inicio_sesion")
 def cerrar_sesion(request):
     auth.logout(request)
     messages.success(request, "Sesión cerrada exitosamente.")
@@ -262,9 +316,6 @@ def restablecer_password(request):
 
 
 # ? APIS
-
-
-# Validar que en api que las dos contraseñas concidan, sino hacer la validacion en movil
 @api_view(["POST"])
 def signup(request):
     serializer = CuentaSerializer(data=request.data)
@@ -291,9 +342,8 @@ def signup(request):
             password=password,
         )
         crear_usuario.telefono = telefono
-        crear_usuario.save()
-        # Genera un token para el usuario registrado
-
+        crear_usuario.save()        
+        
         current_site = get_current_site(request)
         mail_subject = "Activar cuenta con Gadgets Future"
         mensaje = render_to_string(

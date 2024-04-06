@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section>
+    <div class="container my-4">
+      <h2 class="text-center mb-3">Sobre nosotros</h2>
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Información de la empresa</button></h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <p>En Gadgets Future nos apasiona la innovación y la tecnología. Estamos orgullosos de ser una tienda en línea que ofrece una amplia selección de productos y dispositivos tecnológicos de alta gama. Nuestra misión es proporcionar productos innovadores que mejoren la vida diaria de nuestros clientes y les permitan mantenerse a la vanguardia de la tecnología. Estamos comprometidos a brindar una experiencia de compra excepcional, productos de calidad, y satisfacción del cliente. En Gadgets Future, creemos que la tecnología tiene el poder de cambiar el mundo y estamos aquí para ayudar a nuestros clientes a ser parte de ese cambio.</p>
+              <ul>
+                <li>Sitio web:  www.gadgetsfuture.com</li>
+                <li>Sector:  Comercio electrónico</li>
+                <li>Tamaño de la empresa: De 2 a 20 empleados</li>
+                <li>Sede: Neiva-Huila</li>
+                <li>Tipo: Empresa propia</li>
+                <li>Fundación: 2022</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Productos destacados</button></h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <ul>
+                <li>Consolas</li>
+                <li>Computadores portátiles</li>
+                <li>Accesorios</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseTwo">Contacto</button></h2>
+          <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <ul>
+                <li>Carrera 5 No. 12-34</li>
+                <li>Neiva-Huila, Colombia</li>
+                <li>Copyright © 2024 Gadgets Future</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

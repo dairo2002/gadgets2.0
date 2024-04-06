@@ -44,8 +44,7 @@
                       </a>
                     </li>
                     <li>
-                        {% comment %} {% url 'perfil_usuario' %} {% endcomment %}
-                      <a href="" class="dropdown-item text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Perfil <i class="fa-solid fa-user"></i></a>
+                      <a href="{% url 'perfil_usuario' %}" class="dropdown-item text-decoration-none text-dark">Perfil <i class="fa-solid fa-user"></i></a>
                     </li>
                     <li>
                       <a href="{% url 'historial_compras' %}" class="dropdown-item text-decoration-none text-dark">Mis compras <i class="fa-solid fa-basket-shopping"></i></a>

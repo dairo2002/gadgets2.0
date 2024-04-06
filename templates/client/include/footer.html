@@ -2,42 +2,42 @@
   <section class="">
     <div class="container d-flex justify-content-center justify-content-sm-start mt-5">
       <div class="row mt-3">
-        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto">
+        <div class="col-md-6 col-xl-5 mx-auto">
           <h6 class="text-uppercase fw-bold mb-4">Software</h6>
-          <p>Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+          <p>Gadgets Future es una plataforma de comercio electrónico diseñada para ofrecer una amplia variedad de Gadgets y dispositivos electrónicos de última generación. Nuestro software proporciona una experiencia de compra en línea intuitiva y conveniente, permitiendo a los usuarios explorar y adquirir una amplia gama de productos tecnológicos desde la comodidad de sus hogares.</p>
         </div>
-        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
+        <div class="col-md-6 col-xl-2 mx-auto">
           <h6 class="text-uppercase fw-bold mb-4">AYUDA</h6>
           <p>
-            <a href="#!" class="text-reset">Sobre nosotros</a>
+            <a href="{% url 'sobre_nosotros' %}" class="text-reset">Sobre nosotros</a>
           </p>
           <p>
-            <a href="#!" class="text-reset">Politicas de privacidad</a>
+            <a href="{% url 'politicas_privacidad' %}" class="text-reset">Políticas de privacidad</a>
           </p>
           <p>
-            <a href="#!" class="text-reset">Metodo de pago</a>
+            <a href="{% url 'metodo_pago' %}" class="text-reset">Método de pago</a>
           </p>
           <p>
-            <a href="#!" class="text-reset">Terminos y condiciones</a>
+            <a href="{% url 'terminos_condiciones' %}" class="text-reset">Términos y condiciones</a>
           </p>
         </div>
-        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
+        <div class="col-md-6 col-xl-2 mx-auto">
           <h6 class="text-uppercase fw-bold mb-4">Tienda</h6>
           <p>
-            <a href="./index.html" class="text-reset">Inicio</a>
+            <a href="{% url 'index' %}" class="text-reset">Inicio</a>
           </p>
           <p>
-            <a href="./login/login.html" class="text-reset">Iniciar sesión</a>
+            <a href="{% url 'inicio_sesion' %}" class="text-reset">Iniciar sesión</a>
           </p>
           <p>
-            <a href="./login/registrarse.html" class="text-reset">Registrarse</a>
+            <a href="{% url 'registrarse' %}" class="text-reset">Registrarse</a>
           </p>
           <p>
             {% comment %} <a href="#" class="text-reset">Descuentos</a> {% endcomment %}
-            <a href="#" class="text-reset">Manuales</a>
+            <a href="{% url 'manuales' %}" class="text-reset">Manuales</a>
           </p>
         </div>
-        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto">
+        <div class="col-md-6 col-xl-3 mx-auto">
           <h6 class="text-uppercase fw-bold mb-4">Contactos</h6>
           <p class="">
             <i class="fa-solid fa-location-dot fa-lg"></i> Neiva, Calle #4
@@ -57,6 +57,6 @@
   </section>
   <div class="text-center my-3 fw-bold">
     <hr />
-    <span class="">© 2024 Copyright</span>
+    <span class="">Copyright © 2024</span>
   </div>
 </footer>

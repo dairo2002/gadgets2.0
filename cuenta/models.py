@@ -54,10 +54,10 @@ class ManejardorCuenta(BaseUserManager):
 
 # Creamos el modelo de usuario personalizado que hereda de AbstractBaseUser
 class Cuenta(AbstractBaseUser):
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    username = models.CharField(max_length=50, unique=True, verbose_name="usuario")
-    correo_electronico = models.EmailField(max_length=100, unique=True)
+    nombre = models.CharField(max_length=25)
+    apellido = models.CharField(max_length=25)
+    username = models.CharField(max_length=25, unique=True, verbose_name="usuario")
+    correo_electronico = models.EmailField(max_length=50, unique=True)
     telefono = models.CharField(max_length=12)
 
     # Permisos campos requeridos

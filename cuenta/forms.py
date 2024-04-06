@@ -63,8 +63,8 @@ class RegistroForms(forms.ModelForm):
         if any(char.isdigit() for char in nombre):
             errores.append("El nombre no puede tener números")
 
-        if len(nombre) < 3 or len(nombre) > 15:
-            errores.append("El nombre debe tener entre 3 y 15 caracteres")
+        if len(nombre) < 3 or len(nombre) > 20:
+            errores.append("El nombre debe tener entre 3 y 20 caracteres")
 
         if errores:
             raise forms.ValidationError(errores)
@@ -78,8 +78,8 @@ class RegistroForms(forms.ModelForm):
         if any(char.isdigit() for char in nombre):
             errores.append("El apellido no puede tener números")
 
-        if len(nombre) < 3 or len(nombre) > 15:
-            errores.append("El apellido debe tener entre 3 y 15 caracteres")
+        if len(nombre) < 3 or len(nombre) > 20:
+            errores.append("El apellido debe tener entre 3 y 20 caracteres")
         if errores:
             raise forms.ValidationError(errores)
 

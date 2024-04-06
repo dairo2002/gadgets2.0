@@ -6,6 +6,7 @@ urlpatterns = [
     path('activar_cuenta/<uidb64>/<token>/', views.activar_cuenta, name='activar_cuenta'),      
     path("inicio_sesion/", views.inicio_sesion, name="inicio_sesion"),
     path("cerrar_sesion/", views.cerrar_sesion, name="cerrar_sesion"),
+    path("perfil/", views.perfil, name="perfil_usuario"),
     path("desactivar_cuenta/", views.desactivar_cuenta, name="desactivar_cuenta"),    
     path("recuperar_password/", views.recuperar_password, name="recuperar_password"),
     path(

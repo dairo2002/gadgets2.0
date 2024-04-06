@@ -27,3 +27,19 @@ def listProductAPIView(request):
     queryset = Producto.objects.all().filter(disponible=True)
     serializer = ProductoSerializer(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Footer
+def sobre_nosotros(request):
+    return render(request, "client/footer/sobre_nosotros.html")
+
+def politicas_privacidad(request):
+    return render(request, "client/footer/politicas_de_privacidad.html")
+
+def metodo_pago(request):
+    return render(request, "client/footer/metodo_pago.html")
+
+def terminos_condiciones(request):
+    return render(request, "client/footer/terminos_y_condiciones.html")
+
+def manuales(request):
+    return render(request, "client/footer/manuales.html")
