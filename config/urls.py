@@ -24,7 +24,7 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-    path("administrador/", admin.site.urls),
+    # path("administrador/", admin.site.urls),
     # Vista principal, inicio
     path("", views.index, name="index"),
     path("admin/dashboard/", views.dashboard, name="dashboard"),       

@@ -10,5 +10,8 @@ urlpatterns = [
     # ? API
     path("api/v1/mostrar_carrito/", views.mostrar_carritoAPI),
     path("api/v1/agregar_carrito/", views.addAPI),
+    path("api/v1/actualizar_carrito/", views.updateAPI),
+    path("api/v1/eliminar_carrito/", views.eliminarAPI),
+
 
 ]
