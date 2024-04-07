@@ -1,8 +1,11 @@
 {% load static %}
 <div class="text-secondary bg-nav">
   <div class="container-fluid my-4 d-lg-flex align-items-center text-center gap-2">
-    <a class="navbar-brand" href="{% url 'panel_admin' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" width="180px" /></a>
+    <a class="navbar-brand" href="{% url 'dashboard' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" width="180px" /></a>
     <ul class="nav mb-2 mb-lg-0 colors-texto me-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard' %}">Inicio</a>
+      </li>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'lista_venta' %}">Ventas</a>
       </li>

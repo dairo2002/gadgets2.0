@@ -1,32 +1,29 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from .models import Pedido, Pago, Departamento, Municipio, Ventas
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm, PagosForms
-from .models import Pedido, Pago, Departamento, Municipio, Ventas
-from tienda.models import Producto
 from carrito.models import Carrito, ItemCarrito
-from django.contrib import messages
+from django.http import JsonResponse
 from config.decorators import protect_route
-
+from django.contrib import messages
+from tienda.models import Producto
 # Nos permiten ejecutar el pago si es valido
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
 # Correo electronico
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-
 from cuenta.models import Cuenta
-
 # API
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import PedidoSerializer
 
-
+from django.db.models.functions import TruncDate,TruncDay, TruncWeek, TruncMonth, TruncYear
+from datetime import timedelta, timezone
+from django.db.models import Sum
 import datetime
-
 
 import pdb
 
@@ -214,16 +211,12 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.send()
 
 
-
-
 def historial_compra(request):
     querset = Ventas.objects.filter(usuario=request.user).order_by("-fecha")
     return render(request, "client/pedido/historial_compra.html", {"ventas": querset})
 
 
 # ? API
-
-
 @api_view(["GET", "POST"])
 def orderAPIView(request):
     if request.method == "POST":
@@ -244,8 +237,6 @@ def lista_pedido(request):
     )
 
 
-
-# Ventas
 @login_required(login_url="inicio_sesion")
 @protect_route
 def lista_venta(request):
@@ -298,7 +289,6 @@ def detalle_pagos_admin(request, id_pagos):
             )
 
 
-
 # @login_required(login_url="inicio_sesion")
 # @protect_route
 # def eliminar_pagos(request, id_pagos):
@@ -309,3 +299,4 @@ def detalle_pagos_admin(request, id_pagos):
 #         return redirect("lista_pagos")
 #     else:
 #         messages.error(request, "Ha ocurrido un error al eliminar un pago")
+

@@ -131,7 +131,7 @@ def inicio_sesion(request):
                     messages.success(
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
                     )
-                    return redirect("panel_admin")
+                    return redirect("dashboard")
                 elif usuarios.is_staff:
                     auth.login(request, usuarios)
                     messages.success(

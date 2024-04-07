@@ -15,4 +15,5 @@ urlpatterns = [
     path("admin/pagos/", views.lista_pagos, name="lista_pagos"),
     path("admin/pagos/<int:id_pagos>/", views.detalle_pagos_admin, name="detalle_pagos_admin"),
     # path("admin/pagos/<int:id_pagos>/eliminar", views.eliminar_pagos, name="eliminar_pagos"),
+    
 ]

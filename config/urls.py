@@ -27,7 +27,7 @@ urlpatterns = [
     path("administrador/", admin.site.urls),
     # Vista principal, inicio
     path("", views.index, name="index"),
-    path("admin/", views.panel_admin, name="panel_admin"),
+    path("admin/dashboard/", views.dashboard, name="dashboard"),       
 
     path("tienda/", include("tienda.urls")),
     path("carrito/", include("carrito.urls")),
