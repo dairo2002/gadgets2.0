@@ -8,6 +8,7 @@ urlpatterns = [
     path("eliminar_carrito/", views.delete, name="delete_carrito"), 
 
     # ? API
+    path("api/v1/mostrar_carrito/", views.mostrar_carritoAPI),
     path("api/v1/agregar_carrito/", views.addAPI),
 
 ]

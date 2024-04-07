@@ -1,12 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from .serializers import CarritoSerializer, ItemCarritoSerializer
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from tienda.models import Producto
 from .models import Carrito, ItemCarrito
-from django.urls import resolve
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 import json
@@ -19,102 +19,55 @@ def mostrar_carrito(request):
     # la Funcionalidad esta en el context_proccesor, nos permiter visualizar los productos donde queremos
     return render(request, "client/tienda/carrito.html")
 
-
-# @login_required(login_url="inicio_sesion")
-# def mostrar_carrito(request):
-#     cartitem = []
-#     descuento = 0
-#     subtotal = 0
-#     cantidad = 0
-#     contador = 0
-#     total = 0
-#     cart = None
-
-#     # data = json.loads(request.body)
-#     try:
-#         if request.user.is_authenticated:
-#             cart = Carrito.objects.get(usuario=request.user, completed=False)
-#         else:
-#             cart = Carrito.objects.get(
-#                 session_id=request.session["nonuser"], completed=False
-#             )
-
-#         item = ItemCarrito.objects.filter(carrito=cart)
-#         for articulo in item:
-#             if articulo.producto.aplicar_descuento:
-#                 descuento = articulo.producto.aplicar_descuento()
-#                 cantidad = articulo.cantidad
-#                 subtotal = descuento * cantidad
-#                 total += subtotal
-#             else:
-#                 precio = articulo.producto.precio
-#                 cantidad = articulo.cantidad
-#                 subtotal = precio * cantidad
-#                 total += subtotal
-
-#             cartitem.append(
-#                 {
-#                     "id": articulo.id,
-#                     "producto": articulo.producto.nombre,
-#                     "imagen": articulo.producto.imagen.url,
-#                     "cantidad": cantidad,                    
-#                 }
-#             )
-
-#         # cartitem = list(cart.cartitems.all())
-#         contador = len(cartitem)
-#     except Exception as e:
-#         print(e)
-
-#     subtotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
-#     totalFormato = "{:,.0f}".format(total).replace(",", ".")
-
-#     data = {
-#         "articulo_carrito": cartitem,
-#         "subtotal": subtotalFormato,
-#         "total": totalFormato,
-#         "contador": contador,
-#     }
-
-#     print(data)
-#     return JsonResponse({'data': data})
-
-# ? validar stock
 def add(request):
     data = json.loads(request.body)
-    # producto_id = data["id"]
     producto_id = data.get("id")
-    # print(producto_id)
 
     try:
         producto = Producto.objects.get(id=producto_id)
     except Producto.DoesNotExist:
         return JsonResponse({"redirect": "/carrito/"})
-    
-    # ! Corregir stock
-    if producto.stock > 0:
-        return JsonResponse({"redirect": "/carrito/"})
-               
+
+    # Verificar si el producto está en stock
+    # if producto.stock <= 0:
+    #     return JsonResponse({"redirect": "/carrito/"})
+
     if request.user.is_authenticated:
+        # Manejar usuarios autenticados
         cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
-        if not ItemCarrito.objects.filter(carrito=cart, producto=producto).exists():   
-            cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
-        else:
-            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)               
-        cartitem.cantidad += 1
-        cartitem.save()                    
+        try:
+            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+            if cartitem.cantidad < producto.stock:
+                cartitem.cantidad += 1
+                cartitem.save()
+            else:
+                # Mensaje de error si la cantidad excede el stock disponible
+                return JsonResponse({"redirect": "/carrito/"})
+        except ItemCarrito.DoesNotExist:
+            if producto.stock > 0:
+                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
+            else:
+                return JsonResponse({"redirect": "/carrito/"})
+
     else:
-        try:                                
-            cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
-            cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                           
-            cartitem.cantidad += 1
-            cartitem.save()                    
-        except:
-            request.session["nonuser"] = str(uuid.uuid4())                
-            cart = Carrito.objects.create(session_id=request.session["nonuser"], completed=False)
-            cartitem, created = ItemCarrito.objects.get_or_create(carrito=cart, producto=producto)                            
-            cartitem.cantidad += 1
-            cartitem.save()                                                    
+        # Manejar usuarios no autenticados con sesión
+        session_id = request.session.get("nonuser")
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            request.session["nonuser"] = session_id
+        cart, created = Carrito.objects.get_or_create(session_id=session_id, completed=False)
+        try:
+            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+            if cartitem.cantidad < producto.stock:
+                cartitem.cantidad += 1
+                cartitem.save()
+            else:                
+                return JsonResponse({"redirect": "/carrito/"})
+        except ItemCarrito.DoesNotExist:
+            if producto.stock > 0:
+                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
+            else:
+                return JsonResponse({"redirect": "/carrito/"})
     return JsonResponse({"redirect": "/carrito/"})
 
 
@@ -184,50 +137,108 @@ def delete(request):
         return JsonResponse({"redirect": "/carrito/"})    
         
 
-
-
-
-
-
-
+# ? API
 @api_view(["POST"])
 def addAPI(request):
-    # Corregir data.get("id") a  data["id"]
-    data = json.loads(request.body)
-    #  data["id"]
-    producto_id = data.get(
-        "id"
-    )  # Usamos .get() para evitar KeyError si 'id' no está presente en el JSON
-    try:
-        producto = Producto.objects.get(id=producto_id)
-    except Producto.DoesNotExist:
-        return Response(
-            {"error": "Producto no encontrado"}, status=status.HTTP_400_BAD_REQUEST
-        )
+    data = request.data
+    producto_id = data.get("id")
 
+    # Verificar si el producto existe
+    producto = get_object_or_404(Producto, id=producto_id)
+
+    # Obtener el carrito del usuario autenticado o crear uno nuevo para el usuario anónimo
     if request.user.is_authenticated:
-        cart, created = Carrito.objects.get_or_create(
-            usuario=request.user, completed=False
-        )
+        cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
     else:
-        session_id = request.session.get("nonuser") or str(uuid.uuid4())
-        request.session["nonuser"] = session_id
-        cart, created = Carrito.objects.get_or_create(
-            session_id=session_id, completed=False
-        )
+        session_id = request.session.get("nonuser")
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            request.session["nonuser"] = session_id
+        cart, created = Carrito.objects.get_or_create(session_id=session_id, completed=False)
 
-    cart_item, created = ItemCarrito.objects.get_or_create(
-        carrito=cart, producto=producto
-    )
-    cart_item.cantidad += 1
-    cart_item.save()
+    # Verificar si el item ya está en el carrito y actualizar su cantidad, o crear uno nuevo
+    try:
+        item = ItemCarrito.objects.get(carrito=cart, producto=producto)
+        if item.cantidad < producto.stock:
+            item.cantidad += 1
+            item.save()
+        else:
+            return Response({"message": "La cantidad solicitada excede el stock disponible"}, status=status.HTTP_400_BAD_REQUEST)
+    except ItemCarrito.DoesNotExist:
+        if producto.stock > 0:
+            # item = ItemCarrito.objects.create(carrito=cart, producto=producto, cantidad=1)
+            item = ItemCarrito.objects.create(carrito=cart, producto=producto)
+        else:
+            return Response({"message": "El producto está agotado"}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response(
-        {"message": "Producto agregado al carrito correctamente"},
-        status=status.HTTP_200_OK,
-    )
+    # Serializar la respuesta
+    carrito_serializer = CarritoSerializer(cart)
+    item_carrito_serializer = ItemCarritoSerializer(item)
 
+    # Devolver la respuesta con los datos serializados
+    return Response({
+        "carrito": carrito_serializer.data,
+        "item_carrito": item_carrito_serializer.data,
+    }, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+def mostrar_carritoAPI(request):
+    cartitem = []
+    descuento = 0
+    subtotal = 0
+    cantidad = 0
+    contador = 0
+    total = 0
+    cart = None
+    
+    try:
+        if request.user.is_authenticated:
+            cart = Carrito.objects.get(usuario=request.user, completed=False)
+            item = ItemCarrito.objects.filter(carrito=cart)
+            for articulo in item:
+                if articulo.producto.aplicar_descuento:
+                    descuento = articulo.producto.aplicar_descuento()
+                    cantidad = articulo.cantidad
+                    subtotal = descuento * cantidad
+                    total += subtotal
+                else:
+                    precio = articulo.producto.precio
+                    cantidad = articulo.cantidad
+                    subtotal = precio * cantidad
+                    total += subtotal
+        else:
+            cart = Carrito.objects.get(
+                session_id=request.session["nonuser"], completed=False
+            )
+            item = ItemCarrito.objects.filter(carrito=cart)
+            for articulo in item:
+                if articulo.producto.aplicar_descuento:
+                    descuento = articulo.producto.aplicar_descuento()
+                    cantidad = articulo.cantidad
+                    subtotal = descuento * cantidad
+                    total += subtotal
+                else:
+                    precio = articulo.producto.precio
+                    cantidad = articulo.cantidad
+                    subtotal = precio * cantidad
+                    total += subtotal
+                
+        carrito_serializado = CarritoSerializer(cart)
+        cartitem_serializado = ItemCarritoSerializer(cartitem, many=True)
+        
+        subtotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
+        totalFormato = "{:,.0f}".format(total).replace(",", ".")
+
+        # Retorno de los datos en formato JSON
+        return Response({
+            "carrito": carrito_serializado.data,
+            "articulo_carrito": cartitem_serializado.data,
+            "subtotal": subtotalFormato,
+            "total": totalFormato,
+            "contador": contador,
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "Ha ocurrido un error al procesar la solicitud"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
