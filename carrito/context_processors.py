@@ -58,7 +58,7 @@ def mostrar_carrito(request):
         cartitem = cart.cartitems.all()        
         
         # Utilizamos este metodo count() para contar cuantos objetos ahi en el carrito
-        contador = cartitem.count()
+        # contador = cartitem.count()
     except Exception as e:
         pass
         # print(e)
@@ -69,7 +69,7 @@ def mostrar_carrito(request):
         articulo_carrito=cartitem,
         subtotal=subtotalFormato,
         total=totalFormato,
-        contador=contador,
+        contador=len(cartitem),
     )
 
 

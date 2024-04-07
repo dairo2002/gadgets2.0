@@ -174,7 +174,7 @@ def mostrar_carritoAPI(request):
         total = subtotal
 
         # Serializar el carrito y los elementos del carrito
-        carrito_serializado = CarritoSerializer(cart)
+        # carrito_serializado = CarritoSerializer(cart)
         cartitem_serializado = ItemCarritoSerializer(cartitems, many=True)
 
         # Formatear subtotal y total
@@ -182,13 +182,22 @@ def mostrar_carritoAPI(request):
         totalFormato = "{:,.0f}".format(total).replace(",", ".")
 
         # Retornar los datos en formato JSON
-        return Response({
-            "carrito": carrito_serializado.data,
+        # return Response(           
+        #     cartitem_serializado.data,{
+        #         "subtotal": subtotalFormato,
+        #         "total": totalFormato,
+        #         "contador": len(cartitems),
+        #     },
+        #  status=status.HTTP_200_OK)
+              
+        return Response({            
             "articulo_carrito": cartitem_serializado.data,
             "subtotal": subtotalFormato,
             "total": totalFormato,
-            "contador": len(cartitems),  # Contar los elementos del carrito
+            "contador": len(cartitems),
         }, status=status.HTTP_200_OK)
+        
+        
 
     except Exception as e:
         # Manejar errores y retornar una respuesta de error
@@ -231,15 +240,15 @@ def addAPI(request):
             return Response({"message": "El producto está agotado"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Serializar la respuesta
-    carrito_serializer = CarritoSerializer(cart)
+    # carrito_serializer = CarritoSerializer(cart)
     item_carrito_serializer = ItemCarritoSerializer(item)
 
     # Devolver la respuesta con los datos serializados
-    return Response({
-        "carrito": carrito_serializer.data,
-        "item_carrito": item_carrito_serializer.data,
-    }, status=status.HTTP_200_OK)
-    # return Response({item_carrito_serializer.data}, status=status.HTTP_200_OK)
+    # return Response({
+    #     "carrito": carrito_serializer.data,
+    #     "item_carrito": item_carrito_serializer.data,
+    # }, status=status.HTTP_200_OK)
+    return Response(item_carrito_serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
