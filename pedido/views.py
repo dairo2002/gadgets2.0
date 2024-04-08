@@ -119,6 +119,10 @@ def regiones(request):
     return JsonResponse({"municipios": lista})
 
 
+def direccionIP(request):
+    ip = request.META.get('REMOTE_ADDR')
+    return {"direccionIP":ip} 
+
 @login_required(login_url="inicio_sesion")
 def pago(request, id_pedido):
     pedido = get_object_or_404(Pedido, pk=id_pedido)
@@ -216,15 +220,6 @@ def historial_compra(request):
     return render(request, "client/pedido/historial_compra.html", {"ventas": querset})
 
 
-# ? API
-@api_view(["GET", "POST"])
-def orderAPIView(request):
-    if request.method == "POST":
-        serializer = PedidoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
-
 # ? ADMIN
 @login_required(login_url="inicio_sesion")
 @protect_route
@@ -240,6 +235,7 @@ def lista_pedido(request):
 @login_required(login_url="inicio_sesion")
 @protect_route
 def lista_venta(request):
+    # fecha_hoy = datetime.now()
     queryset = Ventas.objects.all()
     return render(
         request,
@@ -260,33 +256,50 @@ def lista_pagos(request):
 
 @login_required(login_url="inicio_sesion")
 @protect_route
-def detalle_pagos_admin(request, id_pagos):
-    if request.method == "GET":
-        detalle_pagos = get_object_or_404(Pago, pk=id_pagos)
-        form = PagosForms(instance=detalle_pagos)
-        return render(
-            request,
-            "admin/pagos/detalle_pagos.html",
-            {"detalle": detalle_pagos, "form": form},
-        )
-    else:
-        try:
-            # Actualizar
-            detalle_pagos = get_object_or_404(Pago, pk=id_pagos)
-            form = PagosForms(request.POST, instance=detalle_pagos)
+def detalle_pagos_admin(request, id_pagos):    
+    detalle_pagos = get_object_or_404(Pago, pk=id_pagos)           
+    form = PagosForms(request.POST, instance=detalle_pagos)
+    if request.method == 'POST':
+        if form.is_valid():
             form.save()
-            messages.success(request, "Pago actualizado")
+            messages.success(request, "La verificación del pago fue actualizada")
             return redirect("lista_pagos")
-        except:
-            messages.error(
-                request,
-                "Ha ocurrido un error en el formulario, intenta actualizar otra vez pago",
-            )
-            return render(
-                request,
-                "admin/pagos/detalle_pagos.html",
-                {"detalle": detalle_pagos, "form": form},
-            )
+        else:
+            messages.error(request, "Ha ocurrido un error en el formulario")
+    return render(
+        request,
+        "admin/pagos/detalle_pagos.html",
+        {"detalle": detalle_pagos, "form": form})
+    
+    
+# def detalle_pagos_admin(request, id_pagos):
+#     detalle_pagos = get_object_or_404(Pago, pk=id_pagos)
+#     if request.method == "GET":
+#         form = PagosForms(instance=detalle_pagos)        
+#         return render(
+#             request,
+#             "admin/pagos/detalle_pagos.html",
+#             {"detalle": detalle_pagos, "form": form},
+#         )
+#     else:
+#         try:
+#             form_update = PagosForms(request.POST, instance=detalle_pagos)
+#             if form_update.is_valid():
+#                 form_update.save()
+#                 messages.success(request, "Pago actualizado")
+#                 return redirect("lista_pagos")
+#             else:
+#                 messages.error(request, "Ha ocurrido un error en el formulario")
+#         except:
+#             messages.error(
+#                 request,
+#                 "Ha ocurrido un error en el formulario, intenta actualizar otra vez pago",
+#             )
+#             return render(
+#                 request,
+#                 "admin/pagos/detalle_pagos.html",
+#                 {"detalle": detalle_pagos, "form": form},
+#             )
 
 
 # @login_required(login_url="inicio_sesion")
@@ -300,3 +313,10 @@ def detalle_pagos_admin(request, id_pagos):
 #     else:
 #         messages.error(request, "Ha ocurrido un error al eliminar un pago")
 
+# ? API
+@api_view(["GET", "POST"])
+def orderAPIView(request):
+    if request.method == "POST":
+        serializer = PedidoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()

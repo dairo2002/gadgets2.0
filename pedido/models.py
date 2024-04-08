@@ -3,29 +3,26 @@ from carrito.models import ItemCarrito
 from cuenta.models import Cuenta
 from tienda.models import Producto
 from django.utils import timezone
-from django.db.models import Q
-from django.core.validators import EmailValidator
 from django.core.validators import validate_image_file_extension
-from django.core.validators import FileExtensionValidator
 
 
 class Pago(models.Model):
     OPCIONES_ESTADO_PAGOS = [
-        ("Verificacion", "Verificacion"),
+        ("En espera de verificación", "En espera de verificación"),
         ("Aprobado", "Aprobado"),
         ("Rechazado", "Rechazado"),
     ]
 
     OPCIONES_ENVIO = [
-        ("En espera de pago", "En espera de pago"),
-        ("Enviado", "Enviado"),
+        ("En espera de verificación", "En espera de verificación"),
+        ("Aprobado", "Aprobado"),
         ("Rechazado", "Rechazado"),
         # Entregado
     ]
 
-    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
-    metodo_pago = models.CharField(max_length=50)
-    cantidad_pagada = models.DecimalField(max_digits=12, decimal_places=2)
+    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE, null=True, blank=True)
+    metodo_pago = models.CharField(max_length=50, null=True, blank=True)
+    cantidad_pagada = models.DecimalField(max_digits=12, decimal_places=2,  null=True, blank=True)
     comprobante = models.ImageField(
         upload_to="comprobantes/",
         validators=[validate_image_file_extension],

@@ -72,10 +72,6 @@ def mostrar_carrito(request):
         contador=len(cartitem),
     )
 
-
-
-
-
 # def mostrar_carrito(request):
 #     cartitem = []
 #     descuento = 0

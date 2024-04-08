@@ -86,9 +86,6 @@ class PagosForms(forms.ModelForm):
     class Meta:
         model = Pago
         fields = [
-            "usuario",
-            "metodo_pago",
-            "cantidad_pagada",
             "comprobante",
             "estado_pago",
             "estado_envio",
@@ -96,20 +93,9 @@ class PagosForms(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        super(PagosForms, self).__init__(*args, **kwargs)
-        self.fields["metodo_pago"].widget.attrs.update(
-            {"placeholder": "Ingrese el metodo de pago", "disabled": True}
-        )
-        self.fields["cantidad_pagada"].widget.attrs.update(
-            {"placeholder": "Ingrese la cantidad", "min": 0, "disabled": True}
-        )
-        self.fields["estado_pago"].widget.attrs.update(
-            {"placeholder": "Estado de pago", "min": 0}
-        )
-        self.fields["estado_envio"].widget.attrs.update(
-            {"placeholder": "Estado de envío"}
-        )
-        self.fields["usuario"].widget.attrs.update({"placeholder": "Ingresa usuario", "disabled": True})
+        super(PagosForms, self).__init__(*args, **kwargs)        
+        self.fields["estado_pago"].widget.attrs.update()
+        self.fields["estado_envio"].widget.attrs.update()
         self.fields["comprobante"].widget.attrs.update(
             {
                 "placeholder": "Seleccione un comprobante",
@@ -124,6 +110,7 @@ class PagosForms(forms.ModelForm):
 
         for field in self.fields:
             self.fields[field].widget.attrs["class"] = "form-control"
+
 
 
 class PagoForm(forms.ModelForm):

@@ -16,8 +16,8 @@ class Categoria(models.Model):
     descuento = models.DecimalField(
         max_digits=12, decimal_places=2, null=True, blank=True
     )
-    fecha_inicio = models.DateTimeField(null=True, blank=True)
-    fecha_fin = models.DateTimeField(null=True, blank=True)
+    fecha_inicio = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    fecha_fin = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     """
         - reverse: Función de Django para obtener URLs de vistas.
