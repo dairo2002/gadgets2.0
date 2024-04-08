@@ -92,6 +92,10 @@ def filtro_buscar_producto(request):
             palabra_busqueda = Producto.objects.filter(
                 Q(nombre__icontains=txtBusqueda) | Q(descripcion__icontains=txtBusqueda)
             )
+            # palabra_busqueda = Categoria.objects.filter(
+            #     Q(nombre__icontains=txtBusqueda)
+            # )        
+            # print(palabra_busqueda)    
             # Contador de productos encontrados
             contar_productos = palabra_busqueda.count()
             if contar_productos == 0:
@@ -238,6 +242,33 @@ def searchProductAPIView(request):
             )   
     serializer = ProductoSerializer(productos_encontrados, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# V2
+@api_view(["POST"])
+def searchProductAPI(request):
+    palabra_clave = None
+    palabra_clave = request.GET.get("txtBusqueda")
+    # contar_productos = 0
+    
+    if palabra_clave:
+        productos_encontrados = Producto.objects.filter(
+            categoria__nombre__icontains=palabra_clave
+        )
+
+        if not productos_encontrados.exists():
+            return Response(
+                {"error": "No se encontraron productos que coincidan con la búsqueda"},
+                status=status.HTTP_404_NOT_FOUND,
+            )   
+
+        serializer = ProductoSerializer(productos_encontrados, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(
+            {"error": "Por favor proporciona una palabra para la búsqueda"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 @api_view(["POST"])

@@ -26,6 +26,7 @@ urlpatterns = [
   
     # Filtros
     path("api/v1/search_product/", views.searchProductAPIView),
+    path("api/v2/search_product/", views.searchProductAPI),
     path("api/v1/range_price/", views.range_priceAPIView),
     # ? ADMIN
     path("admin/productos/", views.listar_productos, name="lista_productos"),
