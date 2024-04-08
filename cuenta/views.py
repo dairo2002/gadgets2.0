@@ -448,44 +448,15 @@ def logout(request):
     return Response({"success": True, "message": "Sesión cerrada exitosamente."})
 
 
-# ? corregir desactivar cuenta
 @api_view(["POST"])
-# @permission_classes([IsAuthenticated])
-def deactivate_account(request):
-    try:
-        token = request.data.get("token")
-        token_obj = RefreshToken(key=token).first()
-
-        if token_obj:
-            user = token_obj.user
-            user.is_active = False
-            user.is_staff = False
-            user.is_admin = False
-            user.save()
-
-            # Eliminar el token de autenticación
-            token_obj.delete()
-
-            # auth.logout(request)
-            return Response(
-                {"message": "Tu cuenta ha sido desactivada"}, status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                {"message": "No se ha encontrado un usuario con este token"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-    except:
-        return Response(
-            {"message": "Ha ocurrido un error al desactivar la cuenta"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
+@permission_classes([IsAuthenticated])
+def logoutV2(request):
+    auth.logout(request)
+    return Response({"success": True, "message": "Sesión cerrada exitosamente."})
 
 @api_view(["POST"])
-# @permission_classes([IsAuthenticated])
-def deactivate_accountV2(request):
-    # cuenta = Cuenta.objects.get(correo_electronico=request.user)
+@permission_classes([IsAuthenticated])
+def deactivate_account(request):    
     if request.method == "POST":
         if request.user.is_authenticated:
             usuario = request.user
