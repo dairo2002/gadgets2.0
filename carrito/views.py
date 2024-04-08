@@ -156,7 +156,6 @@ def mostrar_carritoAPI(request):
 
         # Obtener los elementos del carrito asociados al carrito encontrado
         cartitems = ItemCarrito.objects.filter(carrito=cart)
-
         # Calcular el subtotal y el total
         for articulo in cartitems:
             if articulo.producto.aplicar_descuento:
@@ -181,15 +180,7 @@ def mostrar_carritoAPI(request):
         subtotalFormato = "{:,.0f}".format(subtotal).replace(",", ".")
         totalFormato = "{:,.0f}".format(total).replace(",", ".")
 
-        # Retornar los datos en formato JSON
-        # return Response(           
-        #     cartitem_serializado.data,{
-        #         "subtotal": subtotalFormato,
-        #         "total": totalFormato,
-        #         "contador": len(cartitems),
-        #     },
-        #  status=status.HTTP_200_OK)
-              
+        # Retornar los datos en formato JSON      
         return Response({            
             "articulo_carrito": cartitem_serializado.data,
             "subtotal": subtotalFormato,
