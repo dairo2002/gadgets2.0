@@ -359,6 +359,7 @@ def signup(request):
 
 
 @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
 def login(request):
     if request.method == "POST":
         correo_electronico = request.data.get("correo_electronico")

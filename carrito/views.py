@@ -141,6 +141,59 @@ def delete(request):
 # ? API
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
+def mostrar_carrito_api(request):
+    cartitem = []
+    subtotal = 0
+    total = 0
+    contador = 0
+
+    try:
+        if request.user.is_authenticated:
+            cart = Carrito.objects.get(usuario=request.user, completed=False)
+        else:
+            cart = Carrito.objects.get(
+                session_id=request.session["nonuser"], completed=False
+            )
+
+        items = ItemCarrito.objects.filter(carrito=cart)
+        for item in items:
+            cantidad = item.cantidad
+            if item.producto.aplicar_descuento:
+                descuento = item.producto.aplicar_descuento()
+                subtotal = descuento * cantidad
+            else:
+                precio = item.producto.precio
+                subtotal = precio * cantidad
+            total += subtotal
+
+            cartitem.append({
+                "id": item.id,
+                "producto": item.producto.nombre,
+                "precio": item.producto.precio,
+                "imagen": item.producto.imagen.url,
+                "cantidad": cantidad,
+            })
+
+        contador = len(cartitem)
+    except Exception as e:
+        print(e)
+
+    subtotal_formato = "{:,.0f}".format(subtotal).replace(",", ".")
+    total_formato = "{:,.0f}".format(total).replace(",", ".")
+
+    # data = {
+    #     "articulo_carrito": cartitem,
+    #     "subtotal": subtotal_formato,
+    #     "total": total_formato,
+    #     "contador": contador,
+    # }
+
+    return Response(cartitem)
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def mostrar_carritoAPI(request):
     try:
         cart = None
@@ -181,13 +234,14 @@ def mostrar_carritoAPI(request):
         totalFormato = "{:,.0f}".format(total).replace(",", ".")
 
         # Retornar los datos en formato JSON      
-        return Response({            
-            "articulo_carrito": cartitem_serializado.data,
-            "subtotal": subtotalFormato,
-            "total": totalFormato,
-            "contador": len(cartitems),
-        }, status=status.HTTP_200_OK)
-        
+        return Response(cartitem_serializado.data, status=status.HTTP_200_OK)
+
+        #    return Response({            
+        #     "articulo_carrito": cartitem_serializado.data,
+        #     "subtotal": subtotalFormato,
+        #     "total": totalFormato,
+        #     "contador": len(cartitems),
+        # }, status=status.HTTP_200_OK)        
         
 
     except Exception as e:
@@ -222,7 +276,7 @@ def addAPI(request):
             item.cantidad += 1
             item.save()
         else:
-            return Response({"message": "La cantidad solicitada excede el stock disponible"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "La cantidad solicitada excede el stock disponible"}, status=status.HTTP_200_OK)
     except ItemCarrito.DoesNotExist:
         if producto.stock > 0:
             # item = ItemCarrito.objects.create(carrito=cart, producto=producto, cantidad=1)
