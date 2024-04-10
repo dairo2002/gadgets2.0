@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from .decorators import protect_route
 from django.shortcuts import render
-from tienda.models import Producto
+from tienda.models import Producto, Categoria
 from pedido.models import Ventas
 
 from rest_framework import status
@@ -26,6 +26,34 @@ def listProductAPIView(request):
     queryset = Producto.objects.all().filter(disponible=True)
     serializer = ProductoSerializer(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def listProductAPIView(request):
+    queryset = Producto.objects.all().filter(disponible=True)
+    serializer = ProductoSerializer(queryset, many=True)
+
+    # Obtener la lista de categorías con descuento activo
+    categorias_descuento = Categoria.objects.filter(
+        fecha_inicio__lte=timezone.now(),
+        fecha_fin__gte=timezone.now()
+    )
+
+    # Crear un diccionario que mapee los nombres de las categorías a sus descuentos
+    descuentos_por_categoria = {categoria.nombre: categoria.descuento for categoria in categorias_descuento}
+
+    # Agregar los descuentos a cada producto en la lista de productos
+    for producto_data in serializer.data:
+        categoria_producto = producto_data['categoria']
+        if categoria_producto in descuentos_por_categoria:
+            producto_data['descuento_categoria'] = descuentos_por_categoria[categoria_producto]
+        else:
+            producto_data['descuento_categoria'] = None
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 # Admin

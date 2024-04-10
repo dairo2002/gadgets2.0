@@ -296,7 +296,8 @@ def addAPI(request):
     return Response(item_carrito_serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
+# @api_view(["POST"])
+@api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def updateAPI(request):
     try:
@@ -358,14 +359,14 @@ def eliminarAPI(request):
 
     # Se verifica si se proporcionó el ID del producto
     if not producto_id:
-        return Response({"error": "ID del producto no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "ID del producto no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         # Se busca el producto por su ID en la base de datos
         producto = Producto.objects.get(id=producto_id)
     except Producto.DoesNotExist:
         # Si el producto no existe, se devuelve un error
-        return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Producto no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Se verifica si el usuario está autenticado
     if request.user.is_authenticated:
@@ -375,7 +376,7 @@ def eliminarAPI(request):
         # Si no está autenticado, se obtiene el carrito asociado a la sesión del usuario anónimo
         cart_id = request.session.get("nonuser")
         if not cart_id:
-            return Response({"error": "El carrito no existe"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "El carrito no existe"}, status=status.HTTP_400_BAD_REQUEST)
         cart, _ = Carrito.objects.get_or_create(session_id=cart_id, completed=False)
     try:
         # Se busca el elemento del carrito asociado al carrito y al producto
@@ -385,4 +386,4 @@ def eliminarAPI(request):
         return Response({"message": "Producto eliminado del carrito"}, status=status.HTTP_200_OK)        
     except ItemCarrito.DoesNotExist:
         # Si el elemento del carrito no existe, se devuelve una respuesta indicando que no se encontró el producto
-        return Response({"message": "Producto no encontrado en el carrito"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Producto no encontrado en el carrito"}, status=status.HTTP_400_BAD_REQUEST)
