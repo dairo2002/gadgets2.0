@@ -36,7 +36,7 @@ urlpatterns = [
     
     # API
     path("api/list_product/v1/", views.listProductAPIView),
-    path("api/list_product/v2/", views.listProductAPIView),
+    # path("api/list_product/v2/", views.listProductAPIView),
     # Footer
     path("sobre_nosotros/", views.sobre_nosotros, name='sobre_nosotros'),
     path("politicas_privacidad/", views.politicas_privacidad, name='politicas_privacidad'),

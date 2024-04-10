@@ -120,102 +120,6 @@ def regiones(request):
     return JsonResponse({"municipios": lista})
 
 
-
-@api_view(['POST'])
-def pedidoAPI(request):
-    total = 0
-
-    # Obtener los datos del pedido del cuerpo de la solicitud
-    data = request.data
-
-    # Calcular el total del pedido
-    # (Nota: Este cálculo puede necesitar ajustes dependiendo de cómo esté estructurado tu modelo)
-    for articulo in data['items']:
-        if articulo['producto']['aplicar_descuento']:
-            descuento = articulo['producto']['aplicar_descuento']
-            cantidad = articulo['cantidad']
-            subtotal = descuento * cantidad
-            total += subtotal
-        else:
-            precio = articulo['producto']['precio']
-            cantidad = articulo['cantidad']
-            subtotal = precio * cantidad
-            total += subtotal
-
-    # Validar y guardar el pedido
-    serializer = PedidoSerializer(data=data)
-    if serializer.is_valid():
-        pedido = serializer.save(total_pedido=total)
-        return Response({'id_pedido': pedido.id}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def departamentos_api(request):
-    if request.method == 'GET':
-        departamentos = Departamento.objects.all()
-        serializer = DepartamentoSerializer(departamentos, many=True)
-        return Response(serializer.data)
-
-@api_view(['GET'])
-def municipios_por_departamento_api(request):
-    codigo_departamento = request.GET.get('codigo_departamento')
-    municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)
-    serializer = MunicipioSerializer(municipios, many=True)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def realizar_pedido_api(request):
-    if request.method == 'POST':
-        # Recuperar el carrito del usuario
-        cart = Carrito.objects.get(usuario=request.user, completed=False)
-        items_carrito = ItemCarrito.objects.filter(carrito=cart)
-
-        # Calcular el total del pedido
-        total = 0
-        for item in items_carrito:
-            if item.producto.aplicar_descuento:
-                descuento = item.producto.aplicar_descuento()
-                subtotal = descuento * item.cantidad
-                total += subtotal
-            else:
-                precio = item.producto.precio
-                subtotal = precio * item.cantidad
-                total += subtotal
-
-        # Validar el formulario de pedido
-        pedido_serializer = PedidoSerializer(data=request.data)
-        if pedido_serializer.is_valid():
-            # Guardar el pedido con el total calculado
-            pedido = pedido_serializer.save(total_pedido=total, usuario=request.user)
-
-            # Generar el número de pedido
-            year = int(datetime.date.today().strftime("%Y"))
-            months = int(datetime.date.today().strftime("%m"))
-            day = int(datetime.date.today().strftime("%d"))
-            dt = datetime.date(year, months, day)
-            fecha_actual = dt.strftime("%Y%m%d")
-            num_pedido = fecha_actual + str(pedido.id)
-            pedido.numero_pedido = num_pedido
-            pedido.save()
-
-            # Enviar correo electrónico de notificación al usuario
-            mail_subject = "¡Su pedido está en verificación!"
-            mensaje = render_to_string(
-                "client/pedido/email_pedido.html",
-                {"pedido": pedido},
-            )
-            to_email = pedido.correo_electronico
-            send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
-            send_email.attach_alternative(mensaje, "text/html")
-            send_email.send()
-
-            return Response({"pedido_id": pedido.id}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(pedido_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 @login_required(login_url="inicio_sesion")
 def pago(request, id_pedido):
     pedido = get_object_or_404(Pedido, pk=id_pedido)
@@ -260,7 +164,7 @@ def email_info_pedido(sender, instance, **kwargs):
         ped.ordenado = True
         ped.save()
 
-    if instance.estado_pago == "Aprobado" and instance.estado_envio == "Enviado":
+    if instance.estado_pago == "Aprobado" and instance.estado_envio == "Aprobado":
         if cartItem and pedido and pago:
             # Lista para almacenar todas las ventas realizadas
             list_prod_venta = []
@@ -378,18 +282,98 @@ def detalle_pagos_admin(request, id_pagos):
 #         messages.error(request, "Ha ocurrido un error al eliminar un pago")
 
 # ? API
-@api_view(["GET"])
-def regionesAPI(request):
-    codigo_departamento = request.GET.get("codigo_departamento")
+
+@api_view(['POST'])
+def pedidoAPI(request):
+    total = 0
+
+    # Obtener los datos del pedido del cuerpo de la solicitud
+    data = request.data
+
+    # Calcular el total del pedido
+    # (Nota: Este cálculo puede necesitar ajustes dependiendo de cómo esté estructurado tu modelo)
+    for articulo in data['items']:
+        if articulo['producto']['aplicar_descuento']:
+            descuento = articulo['producto']['aplicar_descuento']
+            cantidad = articulo['cantidad']
+            subtotal = descuento * cantidad
+            total += subtotal
+        else:
+            precio = articulo['producto']['precio']
+            cantidad = articulo['cantidad']
+            subtotal = precio * cantidad
+            total += subtotal
+
+    # Validar y guardar el pedido
+    serializer = PedidoSerializer(data=data)
+    if serializer.is_valid():
+        pedido = serializer.save(total_pedido=total)
+        return Response({'id_pedido': pedido.id}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def departamentos_api(request):
+    if request.method == 'GET':
+        departamentos = Departamento.objects.all()
+        serializer = DepartamentoSerializer(departamentos, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def municipios_por_departamento_api(request):
+    codigo_departamento = request.GET.get('codigo_departamento')
     municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)
-    lista = list(municipios.values("codigo", "nombre"))
-    return Response({"municipios": lista})
+    serializer = MunicipioSerializer(municipios, many=True)
+    return Response(serializer.data)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def realizar_pedido_api(request):
+    if request.method == 'POST':
+        # Recuperar el carrito del usuario
+        cart = Carrito.objects.get(usuario=request.user, completed=False)
+        items_carrito = ItemCarrito.objects.filter(carrito=cart)
 
+        # Calcular el total del pedido
+        total = 0
+        for item in items_carrito:
+            if item.producto.aplicar_descuento:
+                descuento = item.producto.aplicar_descuento()
+                subtotal = descuento * item.cantidad
+                total += subtotal
+            else:
+                precio = item.producto.precio
+                subtotal = precio * item.cantidad
+                total += subtotal
 
-@api_view(["GET", "POST"])
-def orderAPIView(request):
-    if request.method == "POST":
-        serializer = PedidoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        # Validar el formulario de pedido
+        pedido_serializer = PedidoSerializer(data=request.data)
+        if pedido_serializer.is_valid():
+            # Guardar el pedido con el total calculado
+            pedido = pedido_serializer.save(total_pedido=total, usuario=request.user)
+
+            # Generar el número de pedido
+            year = int(datetime.date.today().strftime("%Y"))
+            months = int(datetime.date.today().strftime("%m"))
+            day = int(datetime.date.today().strftime("%d"))
+            dt = datetime.date(year, months, day)
+            fecha_actual = dt.strftime("%Y%m%d")
+            num_pedido = fecha_actual + str(pedido.id)
+            pedido.numero_pedido = num_pedido
+            pedido.save()
+
+            # Enviar correo electrónico de notificación al usuario
+            mail_subject = "¡Su pedido está en verificación!"
+            mensaje = render_to_string(
+                "client/pedido/email_pedido.html",
+                {"pedido": pedido},
+            )
+            to_email = pedido.correo_electronico
+            send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
+            send_email.attach_alternative(mensaje, "text/html")
+            send_email.send()
+
+            return Response({"pedido_id": pedido.id}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(pedido_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

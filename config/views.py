@@ -28,7 +28,7 @@ def listProductAPIView(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
+'''@api_view(["GET"])
 def listProductAPIView(request):
     queryset = Producto.objects.all().filter(disponible=True)
     serializer = ProductoSerializer(queryset, many=True)
@@ -51,7 +51,7 @@ def listProductAPIView(request):
             producto_data['descuento_categoria'] = None
 
     return Response(serializer.data, status=status.HTTP_200_OK)
-
+'''
 
 
 

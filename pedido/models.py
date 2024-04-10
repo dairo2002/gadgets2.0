@@ -28,10 +28,10 @@ class Pago(models.Model):
         validators=[validate_image_file_extension],
     )
     estado_pago = models.CharField(
-        max_length=50, choices=OPCIONES_ESTADO_PAGOS, default="Verificacion"
+        max_length=50, choices=OPCIONES_ESTADO_PAGOS, default="En espera de verificación"
     )
     estado_envio = models.CharField(
-        max_length=50, choices=OPCIONES_ENVIO, default="En espera de pago"
+        max_length=50, choices=OPCIONES_ENVIO, default="En espera de verificación"
     )
     fecha = models.DateTimeField(default=timezone.now)
 
