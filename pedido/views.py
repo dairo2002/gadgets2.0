@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pedido, Pago, Departamento, Municipio, Ventas
+from .models import Pedido, Pago, Departamento, Municipio, Ventas, HistorialPedido
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm, PagosForms
 from carrito.models import Carrito, ItemCarrito
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from config.decorators import protect_route
 from django.contrib import messages
@@ -66,12 +67,19 @@ def realizar_pedido(request):
             data.direccion_local = formulario.cleaned_data["direccion_local"]
             data.codigo_postal = formulario.cleaned_data["codigo_postal"]
             data.total_pedido = total
+            # data.producto=articulo.producto
             # Se guarda para obtener el id, y ser utilizado en el numero del pedido
             data.save()
 
             cod_departamento = request.POST.get("selectDepartamento")
-            departamento = Departamento.objects.get(codigo=cod_departamento)
-            data.departamento = departamento.nombre
+            try:
+                departamento = Departamento.objects.get(codigo=cod_departamento)
+                data.departamento = departamento.nombre
+            except ObjectDoesNotExist:
+                # Manejar el caso en el que el departamento no existe
+                # Por ejemplo, puedes asignar un valor predeterminado o mostrar un mensaje de error.
+                # Aquí un ejemplo de asignar un valor predeterminado:
+                data.departamento = "Departamento no encontrado"
 
             cod_municipio = request.POST.get("selectMunicipio")
             municipio = Municipio.objects.filter(
@@ -135,6 +143,8 @@ def pago(request, id_pedido):
 
             pedido.pago = data
             pedido.save()
+            
+            historial_pedidos(request)
 
             messages.success(
                 request, "Pago exitoso. Se verificará si el comprobante es válido"
@@ -212,9 +222,25 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.send()
 
 
+# no
 def historial_compra(request):
     querset = Ventas.objects.filter(usuario=request.user).order_by("-fecha")
     return render(request, "client/pedido/historial_compra.html", {"ventas": querset})
+
+def historial_pedidos(request):
+    usuario = request.user
+    cart = Carrito.objects.get(usuario=usuario, completed=False)
+    cartItem = ItemCarrito.objects.filter(carrito=cart)
+    pago = Pago.objects.filter(usuario=usuario).first()
+    if cartItem and pago:
+            # Lista para almacenar todas las ventas realizadas
+        historial = []
+        for item in cartItem:
+            hisPedido = HistorialPedido()
+            hisPedido.producto = item.producto
+            hisPedido.cantidad = item.cantidad
+            hisPedido.pago = pago
+            historial.append(hisPedido)
 
 
 # ? ADMIN
@@ -269,17 +295,6 @@ def detalle_pagos_admin(request, id_pagos):
         "admin/pagos/detalle_pagos.html",
         {"detalle": detalle_pagos, "form": form})
     
-
-# @login_required(login_url="inicio_sesion")
-# @protect_route
-# def eliminar_pagos(request, id_pagos):
-#     pagos = get_object_or_404(Pago, id=id_pagos)
-#     if request.method == "POST":
-#         pagos.delete()
-#         messages.success(request, "Pago eliminada")
-#         return redirect("lista_pagos")
-#     else:
-#         messages.error(request, "Ha ocurrido un error al eliminar un pago")
 
 # ? API
 

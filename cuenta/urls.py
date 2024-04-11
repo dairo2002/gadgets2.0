@@ -27,10 +27,14 @@ urlpatterns = [
     # ? API
     path("api/v1/signup/", views.signup),
     path("api/v1/login/", views.login),
-    path("api/v1/profile/", views.perfil_api),
     path("api/v1/logout/", views.logout),    
     path("api/v2/logout/", views.logoutV2),
 
+    # Perfil
+    path("api/v1/profile/", views.perfil_api),
+    path("api/v1/get_profile/", views.get_profile),
+    path("api/v1/put_profile/", views.put_profile),
+    
     path("api/v1/deactivate account/", views.deactivate_account),   
     path("api/v1/recover_password/", views.recover_password),
     

@@ -5,22 +5,22 @@
   <section>
     <div class="container">
       <h2 class="text-center my-4">Mis compras</h2>
-      {% if not ventas %}
+      {% if not pedidos %}
         <h4 class="mt-5 text-center text-muted" >No tiene ningún registro de una compra</h4>    
         <div class="text-center">
           <a href="{% url 'tienda' %}" class="btn btn-dark mb-5">Continuar comprando <i class="fa-solid fa-store"></i></a>
         </div>
       {% else %}
-        {% for venta in ventas %}
+        {% for p in pedidos %}
           <div class="col-12 cardview">
             <div class="d-flex justify-content-between align-items-center">
-              <h5>{{ venta.fecha }}</h5>
-              <p style="color: #0dda29">{{ venta.pago.estado_pago }}</p>
+              <h5>{{ p.pago.fecha }}</h5>
+              <p style="color: #0dda29">{{ p.pago.estado_pago }}</p>
             </div>
             <hr />
             <div class="d-flex row">
               <div class="col-5 col-lg-2 contenedor-imagen d-flex">
-                <img class="imagenleft" src="{{ venta.producto.imagen.url }}" alt="imagen producto" />
+                <img class="imagenleft" src="{{ p.producto.imagen.url }}" alt="imagen producto" />
                 {% comment %} <div class="row">
                   <p style="color: #0dda29">{{ venta.pago.estado_pago }}</p>
                   <p style="color: #0dda29">{{ venta.pago.estado_envio }}</p>
@@ -28,14 +28,14 @@
               </div>
               <div class="col-7 col-lg-8 textoCard">
                 <p class="mt-4 mb-0">
-                  Producto: <span class="text-muted">{{ venta.producto }}</span>
+                  Producto: <span class="text-muted">{{ p.producto }}</span>
                 </p>
                 <p class="">
                   Cantidad: <span class="text-muted">{{ venta.cantidad }}</span>
                 </p>
               </div>
               <div class="col-12 col-lg-2 text-center">
-                <a href="{{ venta.producto.get_url_producto }}" class="btn btn-outline-dark mt-4">Volver a comprar</a>
+                <a href="{{ p.producto.get_url_producto }}" class="btn btn-outline-dark mt-4">Volver a comprar</a>
               </div>
             </div>
           </div>

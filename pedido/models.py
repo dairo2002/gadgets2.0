@@ -17,7 +17,6 @@ class Pago(models.Model):
         ("En espera de verificación", "En espera de verificación"),
         ("Aprobado", "Aprobado"),
         ("Rechazado", "Rechazado"),
-        # Entregado
     ]
 
     usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE, null=True, blank=True)
@@ -44,8 +43,7 @@ class Pedido(models.Model):
     # null = acepta valores nulos
     # blank = Permite dejar el campo en blanco, opcional
     usuario = models.ForeignKey(Cuenta, on_delete=models.SET_NULL, null=True)
-    pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, blank=True, null=True)
-    # producto = models.ForeignKey(Producto, on_delete=models.CASCADE) 
+    pago = models.ForeignKey(Pago, on_delete=models.CASCADE, blank=True, null=True)
     numero_pedido = models.CharField(max_length=50)
     correo_electronico = models.EmailField(max_length=100)
     nombre = models.CharField(max_length=50)
@@ -70,6 +68,12 @@ class Pedido(models.Model):
 
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"
+
+class HistorialPedido(models.Model):
+    pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    fecha = models.DateTimeField(default=timezone.now)
 
 
 class Ventas(models.Model):

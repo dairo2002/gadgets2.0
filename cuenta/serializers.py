@@ -11,4 +11,4 @@ class CuentaSerializer(serializers.ModelSerializer):
 class PerfilSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cuenta
-        fields = ["nombre", "apellido", "telefono"]
+        fields = ["nombre", "apellido", "telefono", "password"]

@@ -67,7 +67,7 @@ class PedidoForm(forms.ModelForm):
         self.fields["correo_electronico"].widget.attrs[
             "placeholder"
         ] = "Dirección correo electrónico"
-        self.fields["telefono"].widget.attrs["placeholder"] = "Numero telefónico"
+        self.fields["telefono"].widget.attrs["placeholder"] = "Número telefónico"
         self.fields["direccion"].widget.attrs["placeholder"] = "Dirección"
         self.fields["direccion_local"].widget.attrs[
             "placeholder"

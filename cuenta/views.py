@@ -10,6 +10,7 @@ from .models import Cuenta
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.hashers import make_password
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.encoding import force_bytes
@@ -392,6 +393,16 @@ def login(request):
         )
 
 
+# ? 2 formas de actualizar el perfil de un usuario
+
+'''
+Api perfil
+
+Se maneja dos metodos primero se consulta los datos del usuario y despues se actualizan 
+GET=consulta 
+PUT=Actualiza 
+'''
+
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
 def perfil_api(request):
@@ -404,12 +415,53 @@ def perfil_api(request):
         }
         return Response(datos_usuario)
     elif request.method == "PUT":
-        formulario = PerfilSerializer(instance=usuario_actual, data=request.data) 
+        # Copia los datos de la solicitud
+        datos = request.data.copy()
+        # Encripta la contraseña si está presente en los datos
+        if 'password' in datos:
+            datos['password'] = make_password(datos['password'])
+        # Utiliza el serializador para validar y guardar los datos
+        formulario = PerfilSerializer(instance=usuario_actual, data=datos) 
         if formulario.is_valid():
             formulario.save()
             return Response({"message": "Perfil actualizado correctamente"}, status=status.HTTP_204_NO_CONTENT)           
         else:            
             return Response({"message": "Ha ocurrido un error al actualizar el perfil"}, formulario.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+'''
+APIS Perfil, otra forma por separado
+
+- get_profile = Primero se puede consultar los datos del usuario, y se muestran
+- put_profile = Segundo se llama la api de actualizar los datos en el formario
+
+'''
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    usuario_actual = request.user
+    datos_usuario = {
+        "nombre": usuario_actual.nombre,
+        "apellido": usuario_actual.apellido,
+        "telefono": usuario_actual.telefono,
+    }
+    return Response(datos_usuario)
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def put_profile(request):
+    usuario_actual = request.user
+    datos = request.data.copy()
+    if 'password' in datos:
+        datos['password'] = make_password(datos['password'])
+    formulario = PerfilSerializer(instance=usuario_actual, data=datos) 
+    if formulario.is_valid():
+        formulario.save()
+        return Response({"message": "Perfil actualizado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response({"message": "Ha ocurrido un error al actualizar el perfil"}, formulario.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # @api_view(["POST"])
