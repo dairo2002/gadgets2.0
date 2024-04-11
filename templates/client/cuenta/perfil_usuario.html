@@ -28,7 +28,7 @@
               <strong>Correo electrónico:</strong> {{ usuario.correo_electronico }}
             </p>
             <div class="text-center">
-              <button class="btn btn-secondary rounded-pill fw-semibold" onclick="habilitarEdicion()">Actualizar Información</button>
+              <button class="btn btn-secondary rounded-pill fw-semibold" onclick="habilitarEdicion()">Datos de tu cuenta</button>
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@
                   {% for field in form %}
                     <div class="col-12 mb-3">{{ field.label_tag }}
                       {{ field }}</div>
-                  {% endfor %}
+                  {% endfor %}                
                   <div>
                     {% if form.errors %}
                       <ul class="d-flex flex-column list-unstyled">
@@ -68,7 +68,7 @@
     function habilitarEdicion() {
       document.getElementById('col-editable').style.display = 'block'
     }
-    
+
     function disabled(x) {
       x.disabled = true
     }

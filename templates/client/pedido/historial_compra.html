@@ -15,7 +15,7 @@
           <div class="col-12 cardview">
             <div class="d-flex justify-content-between align-items-center">
               <h5>{{ venta.fecha }}</h5>
-              {% comment %} <p style="color: #0dda29">{{ venta.pago.estado_pago }}</p> {% endcomment %}
+              <p style="color: #0dda29">{{ venta.pago.estado_pago }}</p>
             </div>
             <hr />
             <div class="d-flex row">
@@ -35,7 +35,7 @@
                 </p>
               </div>
               <div class="col-12 col-lg-2 text-center">
-                <a href="{{ venta.producto.get_url_producto }}" class="btn btn-outline-dark mt-4">Volver a compra</a>
+                <a href="{{ venta.producto.get_url_producto }}" class="btn btn-outline-dark mt-4">Volver a comprar</a>
               </div>
             </div>
           </div>

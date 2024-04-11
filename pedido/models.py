@@ -45,6 +45,7 @@ class Pedido(models.Model):
     # blank = Permite dejar el campo en blanco, opcional
     usuario = models.ForeignKey(Cuenta, on_delete=models.SET_NULL, null=True)
     pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, blank=True, null=True)
+    # producto = models.ForeignKey(Producto, on_delete=models.CASCADE) 
     numero_pedido = models.CharField(max_length=50)
     correo_electronico = models.EmailField(max_length=100)
     nombre = models.CharField(max_length=50)

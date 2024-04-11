@@ -177,18 +177,18 @@ def perfil(request):
             password = formulario.cleaned_data["password"]                                                                        
         
             cuenta = Cuenta.objects.get(pk=usuario_actual.pk)        
-            cuenta.nombre = nombre
+            cuenta.nombre=nombre
             cuenta.apellido=apellido                                
             cuenta.telefono=telefono
+            cuenta.password=password
             # Se verifica si se ingreso una nueva contraseña
             if password:
                 cuenta.set_password(password)
             cuenta.save()
             messages.success(request, 'Perfil actualizado correctamente')
-            # return redirect("perfil_usuario")
+            
         else:                                                                              
-            messages.error(request, 'Ha ocurrido un error al actualizar revisa el formulario otra vez')
-            return redirect("perfil_usuario")
+            messages.error(request, 'Ha ocurrido un error al actualizar tu perfil, revisa el formulario otra vez')        
     else:
         datos_usuario = {
             "nombre": usuario_actual.nombre,
