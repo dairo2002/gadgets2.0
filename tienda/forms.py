@@ -1,5 +1,5 @@
 from django import forms
-from .models import Valoraciones, Producto, Categoria
+from .models import Producto, Categoria
 
 
 class ProductoForm(forms.ModelForm):
@@ -75,7 +75,4 @@ class CategoriaForm(forms.ModelForm):
             self.fields[field].widget.attrs["class"] = "form-control"
 
 
-class ValoracionesForm(forms.ModelForm):
-    class Meta:
-        model = Valoraciones
-        fields = ["comentario", "calificacion"]
+

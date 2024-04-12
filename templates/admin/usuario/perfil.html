@@ -1,0 +1,76 @@
+{% extends 'admin/base_admin.html' %}
+{% block content %}
+  <section>
+    <div class="container">
+      <div class="d-flex justify-content-end">
+        <div class="my-2 mx-5 w-auto z-2 position-absolute">
+          {% include 'client/include/alertas.html' %}
+        </div>
+      </div>
+      <div class="d-md-flex justify-content-center gap-3">
+        <div class="col-12 col-md-5 mt-3 card p-4 mb-4">
+          <div>
+            <h4>Información de tu perfil</h4>
+            <hr />
+            <p>
+              <strong>Nombre:</strong> {{ usuario.nombre }}
+            </p>
+            <p>
+              <strong>Apellido:</strong> {{ usuario.apellido }}
+            </p>
+            <p>
+              <strong>Teléfono:</strong> {{ usuario.telefono }}
+            </p>
+            <p>
+              <strong>Usuario:</strong> {{ usuario.username }}
+            </p>
+            <p>
+              <strong>Correo electrónico:</strong> {{ usuario.correo_electronico }}
+            </p>
+            <div class="text-center">
+              <button class="btn btn-secondary rounded-pill fw-semibold" onclick="habilitarEdicion()">Datos de tu cuenta</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-7 mt-3" id="col-editable" style="display: none;">
+          <div class="card p-4 mb-4">
+            <form action="{% url 'perfil_admin' %}" method="POST" id="form_registrarse" class="row g-3 p-3 form_registrarse">
+              {% csrf_token %}
+              <div class="d-flex">
+                <div class="row">
+                  {% for field in form %}
+                    <div class="col-12 mb-3">{{ field.label_tag }}
+                      {{ field }}</div>
+                  {% endfor %}                
+                  <div>
+                    {% if form.errors %}
+                      <ul class="d-flex flex-column list-unstyled">
+                        {% for field_errors in form.errors.values %}
+                          {% for error in field_errors %}
+                            <small><i class="fa-solid fa-circle-exclamation" style="color: #c60c0c;"></i> {{ error }}</small>
+                          {% endfor %}
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center">
+                <button class="btn btn-secondary col-6 rounded-pill fw-semibold" type="submit" onclick="disabled(this)">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    function habilitarEdicion() {
+      document.getElementById('col-editable').style.display = 'block'
+    }
+
+    function disabled(x) {
+      x.disabled = true
+    }
+  </script>
+{% endblock %}

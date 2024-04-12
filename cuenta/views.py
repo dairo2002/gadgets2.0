@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.encoding import force_bytes
 from datetime import datetime, timedelta
-from carrito.models import Carrito
+from carrito.models import Carrito, ItemCarrito
 from django.utils import timezone
 
 # API
@@ -139,24 +139,21 @@ def inicio_sesion(request):
                         request, f"Bienvenido {usuarios.nombre} {usuarios.apellido}"
                     )
 
-                    try:
-                        cart = Carrito.objects.get(
-                            session_id=request.session["nonuser"], completed=False
-                        )
-
-                        if Carrito.objects.filter(
-                            usuario=request.user, completed=False
-                        ).exists():
-                            cart.usuario = None
-                            cart.save()
-
-                        else:
-                            cart.usuario = request.user
-                            cart.save()
-
-                    except Exception as e:
+                    if "nonuser" in request.session:
+                        try:
+                            cartNoneUser = Carrito.objects.get(session_id=request.session["nonuser"], completed=False)
+                            items_non_user = ItemCarrito.objects.filter(carrito=cartNoneUser)
+                            if items_non_user:
+                                cart_user = Carrito.objects.get(usuario=request.user, completed=False)
+                                for item_non_user in items_non_user:
+                                    # Crea un nuevo ItemCarrito asociado al carrito del usuario autenticado
+                                    nuevo_item = ItemCarrito.objects.create(carrito=cart_user, producto=item_non_user.producto, cantidad=item_non_user.cantidad)
+                                    nuevo_item.save()
+                                # Elimina el carrito del usuario no autenticado
+                                # cartNoneUser.delete()
+                        except Exception as e:
                         # print("Error ", e)
-                        pass
+                            pass
                     return redirect("index")
             else:
                 messages.error(request, "Tu cuenta está desactivada.")
@@ -186,8 +183,8 @@ def perfil(request):
             if password:
                 cuenta.set_password(password)
             cuenta.save()
-            messages.success(request, 'Perfil actualizado correctamente')
-            
+            messages.success(request, 'Perfil actualizado correctamente, Inicia sesión nuevamente')
+            return redirect("inicio_sesion")
         else:                                                                              
             messages.error(request, 'Ha ocurrido un error al actualizar tu perfil, revisa el formulario otra vez')        
     else:
@@ -601,6 +598,43 @@ def listar_usuario(request):
         "admin/usuario/lista_usuario.html",
         {"usuario": queryset, "form": form},
     )
+
+
+
+@login_required(login_url="inicio_sesion")
+@protect_route
+def perfil_admin(request):
+    usuario_actual=request.user    
+    if request.method == "POST":
+        formulario = PerfilForms(request.POST)
+        if formulario.is_valid():
+            nombre = formulario.cleaned_data["nombre"]
+            apellido = formulario.cleaned_data["apellido"]            
+            telefono = formulario.cleaned_data["telefono"]
+            password = formulario.cleaned_data["password"]                                                                        
+        
+            cuenta = Cuenta.objects.get(pk=usuario_actual.pk)        
+            cuenta.nombre=nombre
+            cuenta.apellido=apellido                                
+            cuenta.telefono=telefono
+            cuenta.password=password
+            # Se verifica si se ingreso una nueva contraseña
+            if password:
+                cuenta.set_password(password)
+            cuenta.save()
+            messages.success(request, 'Perfil actualizado correctamente, Inicia sesión nuevamente')
+            return redirect("inicio_sesion")
+        else:                                                                              
+            messages.error(request, 'Ha ocurrido un error al actualizar tu perfil, revisa el formulario otra vez')        
+    else:
+        datos_usuario = {
+            "nombre": usuario_actual.nombre,
+            "apellido": usuario_actual.apellido,            
+            "telefono": usuario_actual.telefono,
+        }
+        formulario = PerfilForms(initial=datos_usuario)
+        
+    return render(request, "admin/usuario/perfil.html", {"form": formulario,  "usuario":usuario_actual})
 
 
 '''

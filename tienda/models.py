@@ -87,23 +87,6 @@ class Producto(models.Model):
                 return self.precio
         return self.precio        
 
-    def promedioCalificacion(self):
-        revisar = Valoraciones.objects.filter(producto=self, estado=True).aggregate(
-            promedio=Avg("calificacion")
-        )
-        avg = 0
-        if revisar["promedio"] is not None:
-            avg = float(revisar["promedio"])
-        return avg
-
-    def contarCalificaciones(self):
-        revisar = Valoraciones.objects.filter(producto=self, estado=True).aggregate(
-            contar=Count("id")
-        )
-        contar = 0
-        if revisar["contar"] is not None:
-            contar = int(revisar["contar"])
-        return contar
 
 
 # se ejecuta antes de que el objecto llege a la DB
@@ -113,20 +96,6 @@ def _post_save_receiver(sender, instance, **kwargs):
         instance.slug = slugify(instance.nombre)
 
 
-
-class Valoraciones(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(Cuenta, on_delete=models.CASCADE)
-    comentario = models.CharField(max_length=500)
-    calificacion = models.FloatField()
-    estado = models.BooleanField(default=True)
-    creado = models.DateField(default=timezone.now)
-    actualizado = models.DateField(default=timezone.now)
-
-    def __str__(self):
-        return self.usuario.username
-
-    # TODO Explicacion
 
     # ? Metodos get_url_categoria y get_url_producto
     # categoria_a_producto es el nombre de la URL, de la categoria

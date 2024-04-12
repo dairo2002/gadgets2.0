@@ -15,7 +15,6 @@ urlpatterns = [
     # Ruta busqueda de un producto
     path("buscar/", views.filtro_buscar_producto, name="buscar_producto"),
     path("filtro_precio/", views.filtro_rango_precios, name="filtro_precios"),
-    path("valoracion/<int:producto_id>/", views.valoracion, name="valoraciones"),
     # ? APIS
     # Lista de categorías
     path("api/v1/lista_categorias/", views.listCategory),

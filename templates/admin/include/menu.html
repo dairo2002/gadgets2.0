@@ -29,12 +29,11 @@
       {% if user.is_authenticated %}
         <small class="py-0 my-0 mx-1">Bienvenido <strong>{{ user.nombre }}</strong></small>
       {% endif %}
-
       <li class="nav-item dropdown list-unstyled">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img (31).webp" class="rounded-circle" height="30px" width="30px" alt="Avatar" /></a>
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user-large fa-xl"></i></a>
         <ul class="dropdown-menu">
           <li>
-            <a class="dropdown-item" href="#">Perfil</a>
+            <a class="dropdown-item" href="{% url 'perfil_admin' %}">Perfil</a>
           </li>
           <li>
             <a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>

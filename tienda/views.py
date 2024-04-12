@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Producto, Categoria, Valoraciones
+from .models import Producto, Categoria
 from config.decorators import protect_route
 from pedido.models import Pedido
 from django.contrib import messages
-from .forms import ValoracionesForm, ProductoForm, CategoriaForm
+from .forms import ProductoForm, CategoriaForm
 
 # Q es utilizado para consultas complejas
 from django.db.models import Q
@@ -68,14 +68,11 @@ def detalle_producto(request, categoria_slug, producto_slug):
     else:
         pedido = None
 
-    reviews = Valoraciones.objects.filter(producto_id=producto_unico.id, estado=True)
-
     return render(
         request,
         "client/tienda/detalle_producto.html",
         {
             "producto_unico": producto_unico,
-            "review": reviews,
             "pedido": pedido,
         },
     )
@@ -151,34 +148,6 @@ def filtro_rango_precios(request):
         {"filtro_precio": productos, "contador_producto": contar_productos},
     )
 
-
-# ? Terminar
-def valoracion(request, producto_id):
-    # almacena la ruta anterior, para ser redirijidad
-    url = request.META.get("HTTP_REFERER")
-    if request.method == "POST":
-        try:
-            # ? __id una forma de acceder al id, del ese modelo
-            valoracion = Valoraciones.objects.get(
-                usuario__id=request.user.id, producto__id=producto_id
-            )
-            # Trear el formulario
-            # pasamos una instanca si el usuario ya tiene una reseña, entonces para que pueda actualizar esa reseña
-            form = ValoracionesForm(request.POST, instance=valoracion)
-            form.save()
-            messages.success(request, "Tu reseña ha sido actualizada")
-            return redirect(url)
-        except Valoraciones.DoesNotExist:
-            form = ValoracionesForm(request.POST)
-            if form.is_valid():
-                data = Valoraciones()
-                data.calificacion = form.cleaned_data["calificacion"]
-                data.comentario = form.cleaned_data["comentario"]
-                data.producto_id = producto_id
-                data.usuario_id = request.user.id
-                data.save()
-                messages.success(request, "Tu reseña ha sido enviada")
-                return redirect(url)
 
 
 # ? APIS

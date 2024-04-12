@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pedido, Pago, Departamento, Municipio, Ventas, HistorialPedido
+from .models import Pedido, Pago, Departamento, Municipio, Ventas, HistorialPedidos
 from django.contrib.auth.decorators import login_required
 from .forms import PedidoForm, PagoForm, PagosForms
 from carrito.models import Carrito, ItemCarrito
@@ -144,7 +144,7 @@ def pago(request, id_pedido):
             pedido.pago = data
             pedido.save()
             
-            historial_pedidos(request)
+            historico_pedidos(request)
 
             messages.success(
                 request, "Pago exitoso. Se verificará si el comprobante es válido"
@@ -177,7 +177,7 @@ def email_info_pedido(sender, instance, **kwargs):
     if instance.estado_pago == "Aprobado" and instance.estado_envio == "Aprobado":
         if cartItem and pedido and pago:
             # Lista para almacenar todas las ventas realizadas
-            list_prod_venta = []
+            prod_venta = []
             for item in cartItem:
                 venta = Ventas()
                 venta.pedido = ped
@@ -189,7 +189,7 @@ def email_info_pedido(sender, instance, **kwargs):
                 venta.total = ped.total_pedido
                 venta.save()
 
-                list_prod_venta.append(venta)
+                prod_venta.append(venta)
 
                 # Stock
                 prod = Producto.objects.get(pk=item.producto_id)
@@ -202,7 +202,7 @@ def email_info_pedido(sender, instance, **kwargs):
         mail_subject = "¡Su pedido ha sido aprobado!"
         mensaje = render_to_string(
             "client/pedido/email_pago.html",
-            {"producto": list_prod_venta, "venta": venta},
+            {"producto": prod_venta, "venta": venta},
         )
         # to_email = ped.correo_electronico
         to_email = ped.correo_electronico
@@ -210,37 +210,48 @@ def email_info_pedido(sender, instance, **kwargs):
         send_email.attach_alternative(mensaje, "text/html")
         send_email.send()
     elif instance.estado_pago == "Rechazado" and instance.estado_envio == "Rechazado":
-        mail_subject = "¡El pedido ha sido cancelado!"
-        mensaje = render_to_string(
-            "client/pedido/email_pago_cancelado.html",
-            {"venta": ped},
-        )
+        for ped in pedido:
+            mail_subject = "¡El pedido ha sido cancelado!"
+            mensaje = render_to_string(
+                "client/pedido/email_pago_cancelado.html",
+                {"venta": ped},
+            )
 
-        to_email = ped.correo_electronico
-        send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
-        send_email.attach_alternative(mensaje, "text/html")
-        send_email.send()
-
+            to_email = ped.correo_electronico
+            send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
+            send_email.attach_alternative(mensaje, "text/html")
+            send_email.send()
 
 # no
 def historial_compra(request):
     querset = Ventas.objects.filter(usuario=request.user).order_by("-fecha")
     return render(request, "client/pedido/historial_compra.html", {"ventas": querset})
 
-def historial_pedidos(request):
+def historico_pedidos(request):
+    # Suponiendo que tienes acceso al usuario actual y al carrito actual
     usuario = request.user
     cart = Carrito.objects.get(usuario=usuario, completed=False)
     cartItem = ItemCarrito.objects.filter(carrito=cart)
     pago = Pago.objects.filter(usuario=usuario).first()
-    if cartItem and pago:
-            # Lista para almacenar todas las ventas realizadas
-        historial = []
-        for item in cartItem:
-            hisPedido = HistorialPedido()
-            hisPedido.producto = item.producto
-            hisPedido.cantidad = item.cantidad
-            hisPedido.pago = pago
-            historial.append(hisPedido)
+    pedido = Pedido.objects.filter(usuario=usuario).first()
+
+    # Itera sobre los elementos del carrito y crea una entrada en el historial de pedidos para cada uno
+    for item in cartItem:
+        historial = HistorialPedidos(
+            pedido=pedido,
+            pago=pago,
+            producto=item.producto,
+            cantidad=item.cantidad
+        )
+                
+        # historial.pedido.pago.estado_pago = pago.estado_pago
+        historial.save()
+
+
+def historial_pedidos (request):
+    usuario = request.user
+    historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
+    return render(request, "client/pedido/historial_compra.html", {"historial": historial})
 
 
 # ? ADMIN
@@ -297,7 +308,6 @@ def detalle_pagos_admin(request, id_pagos):
     
 
 # ? API
-
 @api_view(['POST'])
 def pedidoAPI(request):
     total = 0

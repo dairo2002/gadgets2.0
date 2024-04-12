@@ -20,8 +20,7 @@ urlpatterns = [
     
     # ? ADMIN
     path("admin/usuario/", views.listar_usuario, name="lista_usuario"),
-    # path("admin/usuario/<int:id_usuario>/", views.detalle_usuario_admin, name="detalle_usuario_admin"),
-    # path("admin/usuario/<int:id_usuario>/eliminar", views.eliminar_usuario, name="eliminar_usuario"),
+    path("admin/perfil/", views.perfil_admin, name="perfil_admin"),
 
 
     # ? API

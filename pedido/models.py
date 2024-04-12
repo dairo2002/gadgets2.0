@@ -69,12 +69,13 @@ class Pedido(models.Model):
     def direccion_completa(self):
         return f"{self.direccion} {self.direccion_local}"
 
-class HistorialPedido(models.Model):
-    pago = models.ForeignKey(Pago, on_delete=models.CASCADE)
+class HistorialPedidos(models.Model): 
+    pago = models.ForeignKey(Pago, on_delete=models.CASCADE, blank=True, null=True)   
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    fecha = models.DateTimeField(default=timezone.now)
-
+    
+    
 
 class Ventas(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)

@@ -15,7 +15,7 @@ import uuid
 import pdb
 
 
-@login_required(login_url="inicio_sesion")
+#@login_required(login_url="inicio_sesion")
 def mostrar_carrito(request):
     # la Funcionalidad esta en el context_proccesor, nos permiter visualizar los productos donde queremos
     return render(request, "client/tienda/carrito.html")

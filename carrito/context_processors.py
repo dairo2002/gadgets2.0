@@ -21,22 +21,30 @@ def mostrar_carrito(request):
     contador = 0
     total = 0
     cart = None
-
     try:
         if request.user.is_authenticated:
-            cart = Carrito.objects.get(usuario=request.user, completed=False)
-            item = ItemCarrito.objects.filter(carrito=cart)
-            for articulo in item:
-                if articulo.producto.aplicar_descuento:
-                    descuento = articulo.producto.aplicar_descuento()
-                    cantidad = articulo.cantidad
-                    subtotal = descuento * cantidad
-                    total += subtotal
-                else:
-                    precio = articulo.producto.precio
-                    cantidad = articulo.cantidad
-                    subtotal = precio * cantidad
-                    total += subtotal
+            #hay elemenntos en el noneuser
+            #si los hay agregarlos al carrito del usuario autenticado
+            #mostrar los productos del usuario con el noneuser
+            cartNoneUser = Carrito.objects.get(
+                session_id=request.session["nonuser"], completed=False)
+            
+            itemNoneUser = ItemCarrito.objects.filter(carrito=cartNoneUser)
+            print(itemNoneUser)
+            if itemNoneUser:
+                cart = Carrito.objects.get(usuario=request.user, completed=False)
+                item = ItemCarrito.objects.filter(carrito=cart)
+                for articulo in item:
+                    if articulo.producto.aplicar_descuento:
+                        descuento = articulo.producto.aplicar_descuento()
+                        cantidad = articulo.cantidad
+                        subtotal = descuento * cantidad
+                        total += subtotal
+                    else:
+                        precio = articulo.producto.precio
+                        cantidad = articulo.cantidad
+                        subtotal = precio * cantidad
+                        total += subtotal
         else:
             cart = Carrito.objects.get(
                 session_id=request.session["nonuser"], completed=False
