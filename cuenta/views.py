@@ -70,7 +70,7 @@ def registrarse(request):
                     "dominio": current_site,
                     "uid": urlsafe_base64_encode(force_bytes(crear_usuario.id)),
                     "token": default_token_generator.make_token(crear_usuario),
-                    "expiracion": timezone.now() + timedelta(minutes=5),
+                    "expiracion": timezone.now() + timedelta(hours=1),
                 },
             )
 
@@ -114,8 +114,8 @@ def activar_cuenta(request, uidb64, token):
 
 
 def inicio_sesion(request):
-    if request.user.is_authenticated:
-        return redirect("index")
+    # if request.user.is_authenticated:
+    #     return redirect("index")
 
     # Verifica si la solicitud al servidor es de tipo POST
     if request.method == "POST":
@@ -144,15 +144,21 @@ def inicio_sesion(request):
                             cartNoneUser = Carrito.objects.get(session_id=request.session["nonuser"], completed=False)
                             items_non_user = ItemCarrito.objects.filter(carrito=cartNoneUser)
                             if items_non_user:
-                                cart_user = Carrito.objects.get(usuario=request.user, completed=False)
-                                for item_non_user in items_non_user:
-                                    # Crea un nuevo ItemCarrito asociado al carrito del usuario autenticado
-                                    nuevo_item = ItemCarrito.objects.create(carrito=cart_user, producto=item_non_user.producto, cantidad=item_non_user.cantidad)
-                                    nuevo_item.save()
+                                if request.user.is_authenticated:
+                                    cart_user, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
+                                    for item_non_user in items_non_user:
+                                        # Verificar si el producto ya está en el carrito del usuario autenticado
+                                        existing_item = ItemCarrito.objects.filter(carrito=cart_user, producto=item_non_user.producto).first()
+                                        if existing_item:
+                                            existing_item.cantidad += item_non_user.cantidad
+                                            existing_item.save()
+                                        else:
+                                            # Crea un nuevo ItemCarrito asociado al carrito del usuario autenticado
+                                            nuevo_item = ItemCarrito.objects.create(carrito=cart_user, producto=item_non_user.producto, cantidad=item_non_user.cantidad)
                                 # Elimina el carrito del usuario no autenticado
-                                # cartNoneUser.delete()
+                                cartNoneUser.delete()
                         except Exception as e:
-                        # print("Error ", e)
+                            print("Error al transferir productos:", e)
                             pass
                     return redirect("index")
             else:
@@ -334,7 +340,7 @@ def signup(request):
                 "dominio": current_site,
                 "uid": urlsafe_base64_encode(force_bytes(crear_usuario.id)),
                 "token": default_token_generator.make_token(crear_usuario),
-                "expiracion": timezone.now() + timedelta(minutes=5),
+                "expiracion": timezone.now() + timedelta(hours=1),
             },
         )
 
@@ -459,36 +465,6 @@ def put_profile(request):
         return Response({"message": "Perfil actualizado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     else:
         return Response({"message": "Ha ocurrido un error al actualizar el perfil"}, formulario.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# @api_view(["POST"])
-# # @permission_classes([IsAuthenticated])
-# def logout(request):
-#     try:
-#         # token = request.GET.get("token") = Query parameter
-#         #  token = request.data.get("token") = JSON
-#         token = request.data.get("token")
-#         token_obj = Token.objects.filter(key=token).first()
-#         if token_obj:
-#             # token.user.auth_token.delete()
-#             token = token_obj.user
-#             token_obj.delete()
-#             return Response(
-#                 {"success": True, "message": "Has cerrado sesión exitosamente."},
-#                 status=status.HTTP_200_OK,
-#             )
-#         return Response(
-#             {
-#                 "error": False,
-#                 "message": "No se ha encontrado un usuario con este token",
-#             },
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
-#     except:
-#         return Response(
-#             {"error": False, "message": "No se ha encontrado el token en la petición"},
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
 
 
 @api_view(["POST"])

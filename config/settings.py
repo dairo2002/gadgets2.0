@@ -142,26 +142,27 @@ AUTH_USER_MODEL = "cuenta.Cuenta"
 
 
 # Conexion MySQL:  https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "gadgets",
-#         "USER": "root",
-#         "PASSWORD": "",
-#         "HOST": "localhost",
-#         "PORT": "3306",
-#     }
-# }
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "srv5_gadgets",
-        "USER": "srv5_dairosantana",
-        "PASSWORD": "L6o^d5jkau*PJH3P",
+        "NAME": "gadgets",
+        "USER": "root",
+        "PASSWORD": "",
         "HOST": "localhost",
         "PORT": "3306",
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "srv5_gadgets",
+#         "USER": "srv5_dairosantana",
+#         "PASSWORD": "L6o^d5jkau*PJH3P",
+#         "HOST": "localhost",
+#         "PORT": "3306",
+#     }
+# }
 
 
 # Password validation

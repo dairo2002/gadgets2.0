@@ -15,7 +15,7 @@ import uuid
 import pdb
 
 
-#@login_required(login_url="inicio_sesion")
+# @login_required(login_url="inicio_sesion")
 def mostrar_carrito(request):
     # la Funcionalidad esta en el context_proccesor, nos permiter visualizar los productos donde queremos
     return render(request, "client/tienda/carrito.html")
@@ -29,12 +29,53 @@ def add(request):
     except Producto.DoesNotExist:
         return JsonResponse({"redirect": "/carrito/"})
 
-    # Verificar si el producto está en stock
-    # if producto.stock <= 0:
-    #     return JsonResponse({"redirect": "/carrito/"})
-
     if request.user.is_authenticated:
         # Manejar usuarios autenticados
+        cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
+        try:
+            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+            if cartitem.cantidad < producto.stock:
+                cartitem.cantidad += 1
+                cartitem.save()
+            else:
+                return JsonResponse({"redirect": "/carrito/"})
+        except ItemCarrito.DoesNotExist:
+            if producto.stock > 0:
+                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
+            else:
+                return JsonResponse({"redirect": "/carrito/"})
+    else:
+        # Manejar usuarios no autenticados con sesión
+        session_id = request.session.get("nonuser")
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            request.session["nonuser"] = session_id
+        cart, created = Carrito.objects.get_or_create(session_id=session_id, completed=False)
+        try:
+            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+            if cartitem.cantidad < producto.stock:
+                cartitem.cantidad += 1
+                cartitem.save()
+            else:                
+                return JsonResponse({"redirect": "/carrito/"})
+        except ItemCarrito.DoesNotExist:
+            if producto.stock > 0:
+                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
+            else:
+                return JsonResponse({"redirect": "/carrito/"})
+    return JsonResponse({"redirect": "/carrito/"})
+
+
+'''def add(request):
+    data = json.loads(request.body)
+    producto_id = data.get("id")
+
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return JsonResponse({"redirect": "/carrito/"})
+
+    if request.user.is_authenticated:
         cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
         try:
             cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
@@ -69,7 +110,7 @@ def add(request):
                 cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
             else:
                 return JsonResponse({"redirect": "/carrito/"})
-    return JsonResponse({"redirect": "/carrito/"})
+    return JsonResponse({"redirect": "/carrito/"})'''
 
 
 def updates(request):
