@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pedido, Municipio, Departamento
+from .models import Pedido, Municipio, Departamento, HistorialPedidos
 
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,5 +28,18 @@ class MunicipioSerializer(serializers.ModelSerializer):
         fields = ['nombre', 'codigo', 'codigo_departamento']
 
 
+class HistorialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistorialPedidos
+        fields = ['nombre', 'codigo', 'codigo_departamento']
+
+        
+    '''
+        pago = models.ForeignKey(Pago, on_delete=models.CASCADE, blank=True, null=True)   
+        producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+        pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+        cantidad = models.IntegerField()
+    '''
+        
         
         # municipios = MunicipioSerializer(many=True, read_only=True)

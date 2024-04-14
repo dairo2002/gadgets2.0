@@ -219,8 +219,8 @@ def mostrar_carrito_api(request):
     except Exception as e:
         print(e)
 
-    subtotal_formato = "{:,.0f}".format(subtotal).replace(",", ".")
-    total_formato = "{:,.0f}".format(total).replace(",", ".")
+    # subtotal_formato = "{:,.0f}".format(subtotal).replace(",", ".")
+    # total_formato = "{:,.0f}".format(total).replace(",", ".")
 
     # data = {
     #     "articulo_carrito": cartitem,
@@ -289,6 +289,24 @@ def mostrar_carritoAPI(request):
         # Manejar errores y retornar una respuesta de error
         return Response({"error": "Ha ocurrido un error al procesar la solicitud"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def contar_productos(request):
+    try:
+        if request.user.is_authenticated:
+            cart = Carrito.objects.get(usuario=request.user, completed=False)
+        else:
+            cart = Carrito.objects.get(
+                session_id=request.session["nonuser"], completed=False
+            )
+        items = ItemCarrito.objects.filter(carrito=cart)
+        contador = items.count()
+        return Response({'contador': contador}, status=status.HTTP_200_OK)
+    except Carrito.DoesNotExist:
+        return Response({'error': 'Carrito no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
