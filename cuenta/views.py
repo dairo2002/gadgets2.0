@@ -368,7 +368,6 @@ def login(request):
     if request.method == "POST":
         correo_electronico = request.data.get("correo_electronico")
         password = request.data.get("password")
-
         usuario = auth.authenticate(
             correo_electronico=correo_electronico, password=password
         )

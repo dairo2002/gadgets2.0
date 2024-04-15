@@ -34,7 +34,7 @@ urlpatterns = [
     path("api/v1/get_profile/", views.get_profile),
     path("api/v1/put_profile/", views.put_profile),
     
-    path("api/v1/deactivate account/", views.deactivate_account),   
+    path("api/v1/deactivate_account/", views.deactivate_account),   
     path("api/v1/recover_password/", views.recover_password),
     
 ]
