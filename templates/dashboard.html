@@ -121,8 +121,7 @@
                 <tr>
                   <th scope="col">Producto</th>
                   <th scope="col">Precio</th>
-                  <th scope="col">Cantidad</th>
-                  <th scope="col">total</th>
+                  <th scope="col">Cantidad</th>            
                 </tr>
               </thead>
               <tbody>
@@ -130,14 +129,36 @@
                   <tr>
                     <td class="align-middle">{{ producto.producto__nombre }}</td>
                     <td class="align-middle">{{ producto.producto__precio }}</td>
-                    <td class="align-middle">{{ producto.cantidad }}</td>
-                    <td class="align-middle">{{ producto.total_ventas }}</td>
+                    <td class="align-middle">{{ producto.cantidad }}</td>                    
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
         </div>
+        <div class="col-12 col-md-4 mt-2">
+            <h6>Productos menos vendidos</h6>
+            <div class="table-responsive">
+              <table id="tblAdmin" class="table table-hover table-bordered">
+                <thead class="table-active">
+                  <tr>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Cantidad</th>            
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for producto in prod_menos_vendido %}
+                    <tr>
+                      <td class="align-middle">{{ producto.producto__nombre }}</td>
+                      <td class="align-middle">{{ producto.producto__precio }}</td>
+                      <td class="align-middle">{{ producto.cantidad }}</td>                    
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
         <div class="col-12 col-md-4 mt-2">
           <h6>Productos con el precio más alto</h6>
           <div class="table-responsive">

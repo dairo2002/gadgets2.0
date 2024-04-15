@@ -47,8 +47,9 @@ def dashboard(request):
     inicio_semana = fecha_actual - timedelta(days=fecha_actual.weekday())
     fin_semana = inicio_semana + timedelta(days=7)
     ventas_semana = Ventas.objects.filter(fecha__date__range=[inicio_semana, fin_semana])
-        
-    prod_mas_vendido = Ventas.objects.values('producto__nombre','producto__precio','cantidad',).annotate(total_ventas=Sum('total'))[:5]
+    
+    prod_mas_vendido = Ventas.objects.values('producto__nombre','producto__precio','cantidad',).annotate(cantidad_vendida=Sum('cantidad')).order_by('-cantidad_vendida')[:5]
+    prod_menos_vendido = Ventas.objects.values('producto__nombre','producto__precio','cantidad',).annotate(cantidad_vendida=Sum('cantidad')).order_by('cantidad_vendida')[:5]
     
     precio_mayor = Producto.objects.order_by('-precio')[:5]
     stock_mayor = Producto.objects.order_by('-stock')[:5]
@@ -59,7 +60,8 @@ def dashboard(request):
         "dashboard.html",
         {"ventas_dia": ventas_dia,
          "ventas_week": ventas_semana,     
-         "prod_mas_vendido":prod_mas_vendido,  
+         "prod_mas_vendido":prod_mas_vendido,
+         "prod_menos_vendido":prod_menos_vendido,  
          "precio_mayor":precio_mayor,
          "stock_mayor":stock_mayor,
          "stock_menor":stock_menor,

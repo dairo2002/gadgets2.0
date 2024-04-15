@@ -24,7 +24,7 @@ class Pago(models.Model):
     cantidad_pagada = models.DecimalField(max_digits=12, decimal_places=2,  null=True, blank=True)
     comprobante = models.ImageField(
         upload_to="comprobantes/",
-        validators=[validate_image_file_extension],
+        validators=[validate_image_file_extension]
     )
     estado_pago = models.CharField(
         max_length=50, choices=OPCIONES_ESTADO_PAGOS, default="En espera de verificación"
@@ -74,6 +74,7 @@ class HistorialPedidos(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
+
     
     
 

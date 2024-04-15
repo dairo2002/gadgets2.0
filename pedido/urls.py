@@ -15,9 +15,10 @@ urlpatterns = [
     path("admin/pagos/<int:id_pagos>/", views.detalle_pagos_admin, name="detalle_pagos_admin"),
     # path("admin/pagos/<int:id_pagos>/eliminar", views.eliminar_pagos, name="eliminar_pagos"),
     # APIS  
+    
     # path("api/v1/regiones/", views.regionesAPI),
-    path("api/v1/realizar_pedidosss/", views.pedidoAPI),
-    # 
+    path("api/v1/realizar_pedidos/", views.pedidoAPI),
+    path("api/v1/historial_pedidos/", views.historial_pedidosAPI),
     path("api/v1/departamento/", views.departamentos_api),
     path("api/v1/municipio/", views.municipios_por_departamento_api),
     path("api/v1/realizar_pedido/", views.realizar_pedido_api),    

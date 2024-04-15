@@ -222,10 +222,7 @@ def email_info_pedido(sender, instance, **kwargs):
             send_email.attach_alternative(mensaje, "text/html")
             send_email.send()
 
-# no
-def historial_compra(request):
-    querset = Ventas.objects.filter(usuario=request.user).order_by("-fecha")
-    return render(request, "client/pedido/historial_compra.html", {"ventas": querset})
+
 
 def historico_pedidos(request):
     # Suponiendo que tienes acceso al usuario actual y al carrito actual
@@ -253,6 +250,26 @@ def historial_pedidos (request):
     historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
     return render(request, "client/pedido/historial_compra.html", {"historial": historial})
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def historial_pedidosAPI (request):
+    usuario = request.user
+    historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
+    return Response({
+            "historial": [
+                {
+                    "id": pedido.id,
+                    "nombre": pedido.producto.nombre,
+                    "imagen":pedido.producto.imagen.url,
+                    "estado": pedido.pago.estado_pago,
+                    "fecha": pedido.pago.fecha,
+                    "cantidad": pedido.cantidad,
+                    # Agrega más campos según sea necesario
+                }
+                for pedido in historial
+            ]
+        })
 
 # ? ADMIN
 @login_required(login_url="inicio_sesion")
