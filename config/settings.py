@@ -165,14 +165,16 @@ DATABASES = {
 
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.mysql",
+#         "ENGINE": "django.db.backends.sqlite3",
 #         "NAME": "srv5_gadgets",
 #         "USER": "srv5_dairosantana",
 #         "PASSWORD": "L6o^d5jkau*PJH3P",
-#         "HOST": "localhost",
-#         "PORT": "3306",
 #     }
 # }
+
+
+#         "HOST": "localhost",
+#         "PORT": "3306",
 
 
 # Password validation

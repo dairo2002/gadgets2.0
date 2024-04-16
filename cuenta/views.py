@@ -114,10 +114,6 @@ def activar_cuenta(request, uidb64, token):
 
 
 def inicio_sesion(request):
-    # if request.user.is_authenticated:
-    #     return redirect("index")
-
-    # Verifica si la solicitud al servidor es de tipo POST
     if request.method == "POST":
         correo_electronico = request.POST["correo_electronico"]
         password = request.POST["password"]
@@ -354,7 +350,6 @@ def signup(request):
         # )
         return Response(
             {
-                "success": True,
                 "message": "Por favor activa la cuenta ingresando al enlace enviado al correo electrónico",
             },
             status=status.HTTP_200_OK,
