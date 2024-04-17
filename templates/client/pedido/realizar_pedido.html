@@ -23,7 +23,7 @@
                 <div class="col-md-4">
                   <label class="form-label">Departamento</label>
                   <select id="selectDepartamento" name="selectDepartamento" class="form-select" aria-label="Default select example" required>
-                    <option selected disabled>Seleccionar</option>
+                    <option selected disabled >Seleccionar</option>
                     {% for d in departamneto %}
                       <option value="{{ d.codigo }}">{{ d.nombre }}</option>
                     {% endfor %}

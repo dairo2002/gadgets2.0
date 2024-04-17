@@ -72,20 +72,34 @@ def realizar_pedido(request):
             data.save()
 
             cod_departamento = request.POST.get("selectDepartamento")
-            try:
-                departamento = Departamento.objects.get(codigo=cod_departamento)
-                data.departamento = departamento.nombre
-            except ObjectDoesNotExist:
-                # Manejar el caso en el que el departamento no existe
-                # Por ejemplo, puedes asignar un valor predeterminado o mostrar un mensaje de error.
-                # Aquí un ejemplo de asignar un valor predeterminado:
-                data.departamento = "Departamento no encontrado"
-
             cod_municipio = request.POST.get("selectMunicipio")
-            municipio = Municipio.objects.filter(
-                codigo=cod_municipio, codigo_departamento=cod_departamento
-            ).first()
-            data.municipio = municipio.nombre
+
+            if cod_departamento and cod_municipio:  # Verifica que ambos códigos no sean None
+                try:
+                    departamento = Departamento.objects.get(codigo=cod_departamento)
+                    municipio = Municipio.objects.filter(
+                        codigo=cod_municipio, codigo_departamento=cod_departamento
+                    ).first()
+
+                    if departamento and municipio:  # Verifica que ambos objetos no sean None
+                        data.departamento = departamento.nombre
+                        data.municipio = municipio.nombre
+                    else:
+                        # Manejar el caso en el que no se encontró el departamento o el municipio
+                        # Por ejemplo, puedes mostrar una alerta al usuario
+                        # y no continuar con el proceso de asignación de valores.
+                        # Aquí se muestra un mensaje de alerta genérico:
+                        messages.error(request, "Departamento o municipio no encontrados.")
+                        redirect()
+                except Departamento.DoesNotExist:
+                    # Manejar el caso en el que el departamento no existe
+                    # Por ejemplo, puedes mostrar una alerta al usuario
+                    # y no continuar con el proceso de asignación de valores.
+                    # Aquí se muestra un mensaje de alerta genérico:
+                    messages.error(request, "Departamento no encontrado.")
+            else:
+                # Si los campos están vacíos, muestra una alerta al usuario informándole que los campos son obligatorios.
+                messages.error(request, "Los campos de departamento y municipio son obligatorios.")
 
             # Numero del pedido: fecha del año, mes, y dia
             year = int(datetime.date.today().strftime("%Y"))
