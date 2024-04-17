@@ -212,6 +212,7 @@ def mostrar_carrito_api(request):
                 "producto": item.producto.nombre,
                 "precio": item.producto.precio,
                 "imagen": item.producto.imagen.url,
+                "id_producto":item.producto.id,
                 "cantidad": cantidad,
             })
 
@@ -409,7 +410,7 @@ def updateAPI(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(["DELETE"])
+'''@api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def eliminarAPI(request):
     # Se obtiene el ID del producto del cuerpo de la solicitud JSON
@@ -443,6 +444,37 @@ def eliminarAPI(request):
         cartitem.delete()
         # Se devuelve una respuesta indicando la eliminación exitosa
         return Response({"message": "Producto eliminado del carrito"}, status=status.HTTP_200_OK)        
+    except ItemCarrito.DoesNotExist:
+        # Si el elemento del carrito no existe, se devuelve una respuesta indicando que no se encontró el producto
+        return Response({"message": "Producto no encontrado en el carrito"}, status=status.HTTP_400_BAD_REQUEST)'''
+    
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def eliminarAPI(request, producto_id):
+    try:
+        # Se busca el producto por su ID en la base de datos
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        # Si el producto no existe, se devuelve un error
+        return Response({"message": "Producto no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Se verifica si el usuario está autenticado
+    if request.user.is_authenticated:
+        # Si está autenticado, se obtiene el carrito asociado al usuario
+        cart, _ = Carrito.objects.get_or_create(usuario=request.user, completed=False)
+    else:
+        # Si no está autenticado, se obtiene el carrito asociado a la sesión del usuario anónimo
+        cart_id = request.session.get("nonuser")
+        if not cart_id:
+            return Response({"message": "El carrito no existe"}, status=status.HTTP_400_BAD_REQUEST)
+        cart, _ = Carrito.objects.get_or_create(session_id=cart_id, completed=False)
+
+    try:
+        # Se busca el elemento del carrito asociado al carrito y al producto
+        cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
+        cartitem.delete()
+        # Se devuelve una respuesta indicando la eliminación exitosa
+        return Response({"message": "Producto eliminado del carrito"}, status=status.HTTP_200_OK)
     except ItemCarrito.DoesNotExist:
         # Si el elemento del carrito no existe, se devuelve una respuesta indicando que no se encontró el producto
         return Response({"message": "Producto no encontrado en el carrito"}, status=status.HTTP_400_BAD_REQUEST)

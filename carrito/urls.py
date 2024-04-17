@@ -13,7 +13,7 @@ urlpatterns = [
     path("api/v1/contar_productos/", views.contar_productos),
     path("api/v1/agregar_carrito/", views.addAPI),
     path("api/v1/actualizar_carrito/", views.updateAPI),
-    path("api/v1/eliminar_carrito/", views.eliminarAPI),
+    path("api/v1/eliminar_carrito/<int:producto_id>/", views.eliminarAPI),
 
 
 ]
