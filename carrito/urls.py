@@ -14,6 +14,5 @@ urlpatterns = [
     path("api/v1/agregar_carrito/", views.addAPI),
     path("api/v1/actualizar_carrito/", views.updateAPI),
     path("api/v1/eliminar_carrito/<int:producto_id>/", views.eliminarAPI),
-
-
+    
 ]
