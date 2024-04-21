@@ -21,6 +21,7 @@ urlpatterns = [
     path("api/v1/historial_pedidos/", views.historial_pedidosAPI),
     path("api/v1/departamento/", views.departamentos_api),
     path("api/v1/municipio/", views.municipios_por_departamento_api),
+    path("api/v2/municipio/<str:codigo_departamento>/", views.municipios_departamento_api),
     path("api/v1/realizar_pedido/", views.realizar_pedido_api),    
      
     

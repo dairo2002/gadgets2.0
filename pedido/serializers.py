@@ -28,6 +28,8 @@ class MunicipioSerializer(serializers.ModelSerializer):
         fields = ['nombre', 'codigo', 'codigo_departamento']
 
 
+
+# ! Corregir que fue lo que hice aca.
 class HistorialSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistorialPedidos

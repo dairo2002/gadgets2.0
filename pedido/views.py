@@ -141,7 +141,6 @@ def regiones(request):
     lista = list(municipios.values("codigo", "nombre"))
     return JsonResponse({"municipios": lista})
 
-
 @login_required(login_url="inicio_sesion")
 def pago(request, id_pedido):
     pedido = get_object_or_404(Pedido, pk=id_pedido)
@@ -235,7 +234,6 @@ def email_info_pedido(sender, instance, **kwargs):
             send_email = EmailMultiAlternatives(mail_subject, mensaje, to=[to_email])
             send_email.attach_alternative(mensaje, "text/html")
             send_email.send()
-
 
 
 def historico_pedidos(request):
@@ -367,13 +365,20 @@ def pedidoAPI(request):
         return Response({'id_pedido': pedido.id}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 def departamentos_api(request):
     if request.method == 'GET':
-        departamentos = Departamento.objects.all()
+        departamentos = Departamento.objects.all().order_by('nombre')
         serializer = DepartamentoSerializer(departamentos, many=True)
         return Response(serializer.data)
+
+
+@api_view(['GET'])
+def municipios_departamento_api(request, codigo_departamento):
+    municipios = Municipio.objects.filter(codigo_departamento=codigo_departamento)
+    serializer = MunicipioSerializer(municipios, many=True)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 def municipios_por_departamento_api(request):

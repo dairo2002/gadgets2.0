@@ -65,54 +65,6 @@ def add(request):
                 return JsonResponse({"redirect": "/carrito/"})
     return JsonResponse({"redirect": "/carrito/"})
 
-
-'''def add(request):
-    data = json.loads(request.body)
-    producto_id = data.get("id")
-
-    try:
-        producto = Producto.objects.get(id=producto_id)
-    except Producto.DoesNotExist:
-        return JsonResponse({"redirect": "/carrito/"})
-
-    if request.user.is_authenticated:
-        cart, created = Carrito.objects.get_or_create(usuario=request.user, completed=False)
-        try:
-            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
-            if cartitem.cantidad < producto.stock:
-                cartitem.cantidad += 1
-                cartitem.save()
-            else:
-                # Mensaje de error si la cantidad excede el stock disponible
-                return JsonResponse({"redirect": "/carrito/"})
-        except ItemCarrito.DoesNotExist:
-            if producto.stock > 0:
-                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
-            else:
-                return JsonResponse({"redirect": "/carrito/"})
-
-    else:
-        # Manejar usuarios no autenticados con sesión
-        session_id = request.session.get("nonuser")
-        if not session_id:
-            session_id = str(uuid.uuid4())
-            request.session["nonuser"] = session_id
-        cart, created = Carrito.objects.get_or_create(session_id=session_id, completed=False)
-        try:
-            cartitem = ItemCarrito.objects.get(carrito=cart, producto=producto)
-            if cartitem.cantidad < producto.stock:
-                cartitem.cantidad += 1
-                cartitem.save()
-            else:                
-                return JsonResponse({"redirect": "/carrito/"})
-        except ItemCarrito.DoesNotExist:
-            if producto.stock > 0:
-                cartitem = ItemCarrito.objects.create(carrito=cart, producto=producto)
-            else:
-                return JsonResponse({"redirect": "/carrito/"})
-    return JsonResponse({"redirect": "/carrito/"})'''
-
-
 def updates(request):
     data = json.loads(request.body)
     producto_id = data.get("id")
@@ -186,7 +138,7 @@ def mostrar_carrito_api(request):
     cartitem = []
     subtotal = 0
     total = 0
-    contador = 0
+
 
     try:
         if request.user.is_authenticated:
@@ -197,15 +149,17 @@ def mostrar_carrito_api(request):
             )
 
         items = ItemCarrito.objects.filter(carrito=cart)
+        # cartitemss = cart.cartitems.all()
         for item in items:
-            cantidad = item.cantidad
-            if item.producto.aplicar_descuento:
+            if item.producto.aplicar_descuento():
                 descuento = item.producto.aplicar_descuento()
-                subtotal = descuento * cantidad
+                cantidad = item.cantidad
+                subtotal += descuento * cantidad
             else:
                 precio = item.producto.precio
-                subtotal = precio * cantidad
-            total += subtotal
+                cantidad = item.cantidad
+                subtotal += precio * cantidad
+            total = subtotal
 
             cartitem.append({
                 "id": item.id,
@@ -213,12 +167,24 @@ def mostrar_carrito_api(request):
                 "precio": item.producto.precio,
                 "imagen": item.producto.imagen.url,
                 "id_producto":item.producto.id,
-                "cantidad": cantidad,
+                "cantidad": cantidad
             })
+        
+            total_formato = "{:,.0f}".format(total).replace(",", ".")
+            total = {
+                "total": total_formato
+            }
 
-        contador = len(cartitem)
+            data_json = {
+                "total":total,
+                "cartitem":cartitem
+            }
     except Exception as e:
         print(e)
+
+    return Response(data_json)
+
+
 
     # subtotal_formato = "{:,.0f}".format(subtotal).replace(",", ".")
     # total_formato = "{:,.0f}".format(total).replace(",", ".")
@@ -229,10 +195,6 @@ def mostrar_carrito_api(request):
     #     "total": total_formato,
     #     "contador": contador,
     # }
-
-    return Response(cartitem)
-
-
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -339,21 +301,28 @@ def addAPI(request):
             return Response({"message": "La cantidad solicitada excede el stock disponible"}, status=status.HTTP_200_OK)
     except ItemCarrito.DoesNotExist:
         if producto.stock > 0:
-            # item = ItemCarrito.objects.create(carrito=cart, producto=producto, cantidad=1)
             item = ItemCarrito.objects.create(carrito=cart, producto=producto)
         else:
             return Response({"message": "El producto está agotado"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Serializar la respuesta
-    # carrito_serializer = CarritoSerializer(cart)
     item_carrito_serializer = ItemCarritoSerializer(item)
-
-    # Devolver la respuesta con los datos serializados
-    # return Response({
-    #     "carrito": carrito_serializer.data,
-    #     "item_carrito": item_carrito_serializer.data,
-    # }, status=status.HTTP_200_OK)
     return Response(item_carrito_serializer.data, status=status.HTTP_200_OK)
+
+
+def update(request):
+    # Obtener el ID del elemento del carrito a actualizar
+    item_id = request.data.get('id')
+    try:
+        # Obtener el objeto del carrito a actualizar
+        cart_item = ItemCarrito.objects.get(id=item_id)
+    except ItemCarrito.DoesNotExist:
+        return Response({'error': 'El elemento del carrito no existe'}, status=status.HTTP_404_NOT_FOUND)
+    # Actualizar el elemento del carrito con los datos proporcionados en la solicitud
+    serializer = ItemCarritoSerializer(cart_item, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # @api_view(["POST"])
@@ -408,7 +377,7 @@ def updateAPI(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 '''@api_view(["DELETE"])
 @permission_classes([IsAuthenticated])

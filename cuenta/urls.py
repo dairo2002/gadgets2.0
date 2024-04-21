@@ -9,19 +9,12 @@ urlpatterns = [
     path("perfil/", views.perfil, name="perfil_usuario"),
     path("desactivar_cuenta/", views.desactivar_cuenta, name="desactivar_cuenta"),    
     path("recuperar_password/", views.recuperar_password, name="recuperar_password"),
-    path(
-        "cambiar_password/<uidb64>/<token>/",
-        views.enlace_cambiar_pwd,
-        name="enlace_cambiar_pwd",
-    ),
-    path(
-        "restablecer_password/", views.restablecer_password, name="restablecer_password"
-    ),
+    path("cambiar_password/<uidb64>/<token>/",views.enlace_cambiar_pwd,name="enlace_cambiar_pwd",),
+    path("restablecer_password/", views.restablecer_password, name="restablecer_password"),
     
     # ? ADMIN
     path("admin/usuario/", views.listar_usuario, name="lista_usuario"),
     path("admin/perfil/", views.perfil_admin, name="perfil_admin"),
-
 
     # ? API
     path("api/v1/signup/", views.signup),

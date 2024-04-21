@@ -8,8 +8,6 @@ class ItemCarritoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CarritoSerializer(serializers.ModelSerializer):
-    cartitems = ItemCarritoSerializer(many=True, read_only=True)
-
     class Meta:
         model = Carrito
         fields = '__all__'
