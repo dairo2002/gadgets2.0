@@ -16,16 +16,18 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from cuenta.models import Cuenta
 # API
-from .serializers import PedidoSerializer, DepartamentoSerializer, MunicipioSerializer
+from .serializers import PedidoSerializer, DepartamentoSerializer, MunicipioSerializer, PagoSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.db.models.functions import TruncDate,TruncDay, TruncWeek, TruncMonth, TruncYear
-from datetime import timedelta, timezone
-from django.db.models import Sum
+
 import datetime
+from django.contrib.auth import authenticate, login
 
 import pdb
 
@@ -158,7 +160,6 @@ def pago(request, id_pedido):
             pedido.save()
             
             historico_pedidos(request)
-
             messages.success(
                 request, "Pago exitoso. Se verificará si el comprobante es válido"
             )
@@ -172,6 +173,23 @@ def pago(request, id_pedido):
     )
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def pago_api(request, id_pedido):
+    pedido = get_object_or_404(Pedido, pk=id_pedido)
+    serializer = PagoSerializer(data=request.data)
+    print("seralizer: ",serializer)
+    if serializer.is_valid():
+        serializer.save(usuario=request.user, cantidad_pagada=pedido.total_pedido)
+        pedido.pago = serializer.instance
+        pedido.save()
+        historico_pedidos(request)
+        return Response({"message": "Pago exitoso. Se verificará si el comprobante es válido"}, status=status.HTTP_200_OK)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    
 @receiver(post_save, sender=Pago)
 def email_info_pedido(sender, instance, **kwargs):
     usuario = instance.usuario
@@ -262,26 +280,6 @@ def historial_pedidos (request):
     historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
     return render(request, "client/pedido/historial_compra.html", {"historial": historial})
 
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def historial_pedidosAPI (request):
-    usuario = request.user
-    historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
-    return Response({
-            "historial": [
-                {
-                    "id": pedido.id,
-                    "nombre": pedido.producto.nombre,
-                    "imagen":pedido.producto.imagen.url,
-                    "estado": pedido.pago.estado_pago,
-                    "fecha": pedido.pago.fecha,
-                    "cantidad": pedido.cantidad,
-                    # Agrega más campos según sea necesario
-                }
-                for pedido in historial
-            ]
-        })
 
 # ? ADMIN
 @login_required(login_url="inicio_sesion")
@@ -438,3 +436,21 @@ def realizar_pedido_api(request):
         else:
             return Response(pedido_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def historial_pedidosAPI (request):
+    usuario = request.user
+    historial = HistorialPedidos.objects.filter(pedido__usuario=usuario)
+    return Response({
+            "historial": [
+                {
+                    "id": pedido.id,
+                    "nombre": pedido.producto.nombre,
+                    "imagen":pedido.producto.imagen.url,
+                    "estado": pedido.pago.estado_pago,
+                    "fecha": pedido.pago.fecha,
+                    "cantidad": pedido.cantidad,                
+                }
+                for pedido in historial
+            ]
+        })

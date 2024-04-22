@@ -1,5 +1,18 @@
 from rest_framework import serializers
-from .models import Pedido, Municipio, Departamento, HistorialPedidos
+from .models import Pedido, Municipio, Departamento, HistorialPedidos, Pago
+from django.core.files.base import ContentFile
+import base64
+
+
+class PagoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pago
+        fields = [
+            "metodo_pago",
+            "comprobante",
+        ]
+
+
 
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
